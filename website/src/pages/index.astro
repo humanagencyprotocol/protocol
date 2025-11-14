@@ -275,8 +275,34 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const response = await fetch('/context.txt');
             const text = await response.text();
 
-            // Copy to clipboard
-            await navigator.clipboard.writeText(text);
+            // Try modern clipboard API first
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(text);
+                } catch (clipboardErr) {
+                    // Fallback for iOS and other browsers
+                    const textarea = document.createElement('textarea');
+                    textarea.value = text;
+                    textarea.style.position = 'fixed';
+                    textarea.style.opacity = '0';
+                    document.body.appendChild(textarea);
+                    textarea.focus();
+                    textarea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textarea);
+                }
+            } else {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.focus();
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
 
             // Success feedback
             button.textContent = 'Copied! Paste it in your AI Chat';
