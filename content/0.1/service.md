@@ -1,76 +1,56 @@
 ---
-title: "HAP Service – Technical Specification"
+title: "HAP Service Providers"
 version: "v0.1"
 date: "November 2025"
 ---
 
-# Human Agency Protocol (HAP) Service – Technical Specification
+A **HAP Service Provider** is the connective layer of the Human Agency Protocol ecosystem. It enables human-first applications to access shared inquiry infrastructure—**without exposing private data or rebuilding the foundation themselves.**
 
-**Version:** 0.1
-**Date:** November 2025
-**Status:** Draft for Implementation
+Rather than managing user interactions directly, a service provider manages **the structure of interaction**—how systems ask, reflect, and align around meaning and purpose. It translates the open Human Agency Protocol into real, usable APIs and ensures every inquiry or feedback loop follows strict rules of **privacy, transparency, and authorship integrity.**
 
----
-
-## 1. Purpose
-
-The **Human Agency Protocol (HAP) Service** provides a centralized and open infrastructure for running and managing HAP-compliant systems.  
-It enables any educational or collaborative platform to **integrate agency-aware interaction logic**—without building complex infrastructure from scratch.
+Service Providers act as **technical stewards** for the protocol. They maintain the infrastructure, validate blueprints, and handle feedback signals while ensuring no personal or semantic data ever leaves local custody. Each provider operates independently but under a shared commitment: keep human agency measurable, protected, and sovereign inside every AI interaction.
 
 ---
 
-## 2. Why We Build It
+## What Service Providers Do
 
-The age of intelligent automation creates a paradox: **intelligence becomes abundant, but human agency becomes scarce**.  
-HAP exists to restore that balance by giving platforms the ability to:
+| Role                       | Description                                                                                                                                                |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Protocol Custodian**     | Implements and maintains the technical infrastructure of the Human Agency Protocol—managing inquiry and feedback flows between AI systems and human users. |
+| **Privacy Guardian**       | Guarantees that all exchanged data is structural, anonymized, and compliant with strict privacy-by-architecture rules.                                     |
+| **Schema Enforcer**        | Validates that all systems adhere to HAP’s standard schemas and inquiry structures to maintain interoperability and trust.                                 |
+| **Registry Steward**       | Publishes and maintains inquiry blueprints and signal guides, ensuring transparency and consistent evolution of the protocol.                              |
+| **Governance Participant** | Upholds non-extraction and authorship principles, submitting periodic proof-of-compliance to remain certified within the ecosystem.                        |
 
-- Run **human-first AI interactions** that protect autonomy.  
-- Measure **qualitative signals** (feeling understood, alignment, recognition) instead of efficiency-only metrics.  
-- Maintain **privacy-by-design**, avoiding data centralization or content sharing.  
-- Contribute to a shared, evolving protocol that defines *how AI and humans collaborate responsibly.*
-
----
-
-## 3. Key Benefits for Platforms
-
-| Benefit | Description |
-|----------|--------------|
-| **Faster Integration** | Prebuilt Inquiry and Feedback APIs—no need to implement HAP logic locally. |
-| **Qualitative Intelligence** | Understand interaction quality (recognition, alignment, agency) without storing private content. |
-| **Privacy Compliance** | No transcripts or personal data are collected—only structural, anonymized signals. |
-| **Open Protocol, Central Service** | Platforms stay independent but use shared infrastructure that enforces HAP rules. |
-| **Future-Proof** | Schema versioning ensures compatibility as the HAP standard evolves. |
+Service Providers form a **distributed network of trust.** They don’t own data, users, or models—they maintain the **conditions under which meaningful, ethical collaboration between humans and intelligent systems can occur.**
 
 ---
 
-## 4. System Overview
+## System Overview
 
 ### Core Components
 
-1. **Inquiry API** – Delivers HAP Blueprints and Signal Guides to local runtimes.  
-2. **Feedback API** – Receives anonymized structural feedback from platform interactions.  
-3. **Registry Management** – Allows creation, validation, and versioning of blueprints per tenant.  
+1. **Inquiry API** – Delivers HAP Blueprints and Signal Guides to local runtimes.
+2. **Feedback API** – Receives anonymized structural feedback from platform interactions.
+3. **Registry Management** – Allows creation, validation, and versioning of blueprints per tenant.
 4. **Governance Engine** – Enforces schema rules and prevents “precision drift” (mixing reflective and convergent modes).
 
 ### Supported Modes
 
-| Mode | Focus | Allowed Metrics |
-|------|--------|-----------------|
-| **Reflective** | Recognition and understanding | `recognition_confirms`, `reflection_cycles`, `alignment_stability` |
-| **Convergent** | Decision-making and collaboration | `shared_reference_detected`, `phase_advanced`, `owner_assigned` |
+| Mode           | Focus                             | Allowed Metrics                                                    |
+| -------------- | --------------------------------- | ------------------------------------------------------------------ |
+| **Reflective** | Recognition and understanding     | `recognition_confirms`, `reflection_cycles`, `alignment_stability` |
+| **Convergent** | Decision-making and collaboration | `shared_reference_detected`, `phase_advanced`, `owner_assigned`    |
 
 ---
 
-## 5. Data Flow Summary
+## How It Works
 
-1. **Platform requests Inquiry Blueprint** via `/v1/inquiry/blueprints`  
-2. **Local system runs interaction** using the Blueprint logic  
-3. **Feedback summary** (signals only, no text/media) is sent to `/v1/feedback/instances`  
-4. **Aggregated results** generate anonymized scorecards for tenants
-
----
-
-## 6. Architecture Diagram
+1. **A local platform** (e.g., a classroom tool, creative studio, or civic forum) calls the HAP **Inquiry API** to request structured blueprints for reflection or collaboration.
+2. The **Service Provider** responds with validated structural templates—never with user data.
+3. During use, the local system measures engagement and understanding through **signal detection** and submits anonymized results to the **Feedback API**.
+4. The Service Provider aggregates only structural signals, computes metrics like recognition or alignment, and produces anonymized reports or scorecards.
+5. These signals feed back into the shared registry, improving the quality of global blueprints—without ever revealing private content.
 
 ```
 Platform Runtime ──► Inquiry API ──► Blueprint Registry
@@ -82,196 +62,56 @@ Platform Runtime ──► Inquiry API ──► Blueprint Registry
 
 ---
 
-## 7. Development Plan
+## Privacy & Trust by Design
 
-### Phase 1: Core APIs (Weeks 1–4)
-- Implement Inquiry and Feedback endpoints  
-- Validate against HAP schemas (reflective/convergent modes)  
-- Add tenant authentication and namespace isolation  
-- Support JSON snapshot export for offline runtimes
+* **No transcripts or raw media** are stored—only anonymized, structural data.
+* **No model training** occurs on interaction signals.
+* **Every tenant owns their namespace**, with full rights to export or delete it at any time.
+* **All schema validations are enforced server-side**, blocking arbitrary or malformed data.
+* **Reflective vs. convergent boundaries** are enforced to protect against manipulative or precision-optimized behavior.
 
-**Outcome:** Platforms can fetch blueprints and submit structural feedback.
-
----
-
-### Phase 2: Feedback Intelligence (Weeks 5–8)
-- Add structural analytics and scorecards  
-- Implement k-anonymity and differential privacy thresholds  
-- Build admin dashboard for tenants to manage namespaces  
-- Enable batch feedback ingestion
-
-**Outcome:** Platforms gain analytics on recognition quality and agency metrics without privacy risk.
+Service Providers are audited for compliance and transparency. Their qualification in the global registry depends on published proof-of-privacy and adherence to non-extraction principles.
 
 ---
 
-### Phase 3: Federation and Governance (Weeks 9–12)
-- Add review queue for blueprint publication to global registry  
-- Support versioning, deprecation, and schema validation  
-- Enforce mode-based rules (reflective/convergent guardrails)  
-- Generate signed snapshots for external HAP runtimes
+## Continuous Improvement
 
-**Outcome:** Platforms can publish blueprints globally and trust the central registry as a standards authority.
-
----
-
-## 8. Technical Stack
-
-| Layer | Technology |
-|--------|-------------|
-| **API Framework** | FastAPI (Python) |
-| **Database** | PostgreSQL (JSONB storage) |
-| **Cache** | Redis |
-| **Authentication** | OAuth2 / JWT |
-| **Deployment** | Docker containers |
-| **Data Export** | Signed JSON snapshots |
-
----
-
-## 9. Security & Privacy Principles
-
-- No raw text, transcripts, or media are ever stored.  
-- All data is **structural**, aggregated, and anonymized.  
-- Each tenant owns their namespace and can export or delete it anytime.  
-- All schema validations are enforced server-side—no arbitrary JSON accepted.  
-- Governance ensures reflective systems cannot drift into precision optimization.
-
----
-
-## 10. Future Extensions
-
-- Public global registry of verified blueprints  
-- SDKs for JavaScript, Python, and Go runtimes  
-- Integration templates for educational and collaboration tools  
-- Optional on-premise deployment for sensitive institutions
-
----
-
-## 11. Registry Management and Continuous Improvement
-
-The **Registry** stores, validates, and evolves all blueprints and signal guides while preserving integrity and privacy.
+The Service Provider’s **Registry** stores, validates, and evolves all inquiry blueprints and signal guides. Each iteration is versioned and signed, ensuring a verifiable chain of trust.
 
 ### Blueprint Lifecycle
 
-| State | Description |
-|--------|--------------|
-| **Draft** | Created by a tenant within their namespace. |
-| **Candidate** | Under review; schema and mode checks applied. |
-| **Stable** | Approved and used in production. |
-| **Deprecated** | Retired; replaced by a newer version. |
+| State          | Description                                 |
+| -------------- | ------------------------------------------- |
+| **Draft**      | Created locally within a tenant namespace.  |
+| **Candidate**  | Under review for schema and mode integrity. |
+| **Stable**     | Approved and used in production.            |
+| **Deprecated** | Retired; replaced by newer versions.        |
 
-Each blueprint is **mode-locked** (reflective or convergent). Platform owners can manage drafts, publish stable versions, and export signed JSON snapshots for their runtimes.
-
-### Iterating and Improving Blueprints
-
-Platforms enhance their blueprints through a **structured experimentation cycle**:
-
-1. Detect friction or low recognition stability.  
-2. Clone the current blueprint and adjust a single constraint (tone, word count, etc.).  
-3. Run A/B testing between the versions.  
-4. Collect structural feedback (`recognition_confirms`, `alignment_stability`, etc.).  
-5. Compare results; promote winning variant to stable.  
-
-**Reflective improvement:** deeper understanding, fewer corrections.  
-**Convergent improvement:** clearer shared purpose, fewer reopenings.
-
-### Governance Rules
-
-- No free-text fields or raw content storage.  
-- One controlled change per version for clean evaluation.  
-- Scorecards only aggregate cohorts above anonymity thresholds.  
-- Full tenant control—export or delete data at any time.
+Blueprints evolve through **evidence-based refinement**. Platforms can experiment safely—comparing variants, analyzing anonymized signals, and promoting proven improvements to the shared registry.
 
 ---
 
-## 12. Summary
+## The Role in the Ecosystem
 
-The HAP Service is **infrastructure for human autonomy in intelligent systems**.  
-It lets any platform participate in the Human Agency Protocol ecosystem—responsibly, safely, and without rebuilding the foundation.
+HAP Service Providers don’t compete for data—they collaborate to sustain human autonomy. Each verified provider:
 
-> “HAP turns qualitative understanding into a scalable standard—without reducing it to numbers.”
+* Extends the Human Agency Protocol into new domains.
+* Provides access to shared inquiry infrastructure.
+* Protects privacy and ensures data integrity.
+* Publishes transparent operational logs and proof-of-compliance.
+
+By combining these practices, Service Providers enable a decentralized yet coherent ecosystem where **human meaning stays in human hands** while AI assists responsibly.
+
+> **HAP Service Providers make human-first AI practical—scalable without becoming extractive.**
 
 ---
 
----
+## Summary
 
-## 13. Signal Guides
+The **HAP Service Provider Network** is the operational backbone of a human-first digital world.
+It transforms abstract ethical commitments—privacy, transparency, agency—into measurable, enforceable, and interoperable standards.
 
-**Signal Guides** are independent reference definitions that describe the meaning, structure, and validation rules of each measurable signal in the Human Agency Protocol.
-
-They are versioned separately from Blueprints to preserve consistency across platforms and ensure interpretability across contexts.
-
-### Structure Overview
-
-```
-/registry/
-  ├── blueprints/
-  │    └── reflect-meaning-restate-01@0.2.2.json
-  ├── signal_guides/
-  │    ├── recognition_confirms@1.0.0.json
-  │    ├── alignment_stability@1.1.0.json
-  │    └── phase_advanced@1.0.1.json
-```
-
-### In a Blueprint
-
-Each blueprint references the signals it emits or expects:
-
-```json
-{
-  "id": "reflect-meaning-restate-01",
-  "version": "0.2.2",
-  "mode": "reflective",
-  "expected_signals": [
-    {"id": "recognition_confirms", "version": "1.0.0"},
-    {"id": "alignment_stability", "version": "1.1.0"}
-  ],
-  "prohibited_signals": ["phase_advanced"],
-  "constraints": {
-    "tone": "neutral",
-    "word_count": "60-90"
-  }
-}
-```
-
-### Signal Guide Example
-
-```json
-{
-  "id": "recognition_confirms",
-  "version": "1.0.0",
-  "agency_mode": "reflective",
-  "definition": "Indicates that the system’s recognition of a human’s state was confirmed by the user.",
-  "data_schema": {
-    "type": "object",
-    "properties": {
-      "valence": {"type": "number", "minimum": -1, "maximum": 1},
-      "confidence": {"type": "number", "minimum": 0, "maximum": 1}
-    },
-    "required": ["confidence"]
-  },
-  "emission_rules": {
-    "only_after": "recognition_turn",
-    "max_frequency": "1_per_session"
-  }
-}
-```
-
-### Registry Validation Rules
-
-- All `expected_signals` in a blueprint must reference valid Signal Guides.  
-- Mode consistency is enforced: reflective blueprints cannot use convergent signals.  
-- Signal versions must match or be backward-compatible.  
-- Tenants may propose new signals through a review process before federation.
-
-### Why Separation Matters
-
-| Benefit | Description |
-|----------|--------------|
-| **Stability** | Blueprints evolve rapidly; signals remain stable for long-term analysis. |
-| **Cross-Domain Reuse** | Shared signal definitions enable interoperability between different HAP systems. |
-| **Governance Clarity** | Signal semantics can be reviewed independently from private blueprint logic. |
-| **Evolution** | New signals can be added experimentally without breaking old versions. |
-
-> The blueprint defines *the choreography*, the signal guide defines *the language each step speaks.*
+Every provider that joins strengthens the global architecture of trust.
+Together, they ensure that intelligent systems remain **in service of human direction, not in command of it.**
 
 ---

@@ -5,14 +5,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="Human Agency Protocol — Infrastructure for Choice in the Age of Automation">
     <section class="hero">
         <div class="version">Version 0.1 — November 2025</div>
-        <h1>When AI can do everything, the scarce thing becomes <span class="highlight">knowing what's worth doing</span></h1>
+        <h1>When AI does everything, <span class="highlight">build for human agency</span></h1>
         <p class="subtitle">
-            A global protocol that helps systems strengthen human agency—without ever sharing your content.
-            Infrastructure for choice in the age of automation.
+            A global protocol that helps AI systems create human value where automation can't — without ever sharing your content.
         </p>
         <div class="cta-group">
             <a href="/protocol" class="btn btn-primary">Explore the Protocol</a>
-            <a href="/about" class="btn btn-secondary">Why we built this</a>
+            <button id="copy-context" class="btn btn-secondary">Copy as AI Context</button>
         </div>
     </section>
 
@@ -59,8 +58,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             <a href="/service" class="protocol-link">
                 <div class="label">Implementation</div>
-                <h3>Service Layer</h3>
-                <p>Technical specification for the HAP Service—centralized infrastructure for running HAP-compliant systems at scale.</p>
+                <h3>Service Providers</h3>
+                <p>Technical specification for HAP Service Providers—infrastructure for running HAP-compliant systems at scale.</p>
                 <div class="arrow">View architecture →</div>
             </a>
 
@@ -249,3 +248,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         }
     }
 </style>
+
+<script>
+    document.getElementById('copy-context')?.addEventListener('click', async () => {
+        const button = document.getElementById('copy-context');
+        const originalText = button?.textContent;
+
+        try {
+            button.textContent = 'Copying...';
+
+            // Fetch the context page
+            const response = await fetch('/context.txt');
+            const text = await response.text();
+
+            // Copy to clipboard
+            await navigator.clipboard.writeText(text);
+
+            // Success feedback
+            button.textContent = 'Copied!';
+            setTimeout(() => {
+                if (button) button.textContent = originalText;
+            }, 2000);
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            button.textContent = 'Failed to copy';
+            setTimeout(() => {
+                if (button) button.textContent = originalText;
+            }, 2000);
+        }
+    });
+</script>

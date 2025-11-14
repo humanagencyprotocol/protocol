@@ -21,18 +21,22 @@ const { title, description = "A global protocol for strengthening human agency i
     <nav>
         <div class="container">
             <a href="/" class="logo">Human Agency Protocol</a>
-            <ul>
+            <button class="burger" id="burger-menu" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul id="nav-menu">
                 <li><a href="/protocol">Protocol</a></li>
-                <li><a href="/service">Service</a></li>
+                <li><a href="/service">Service Providers</a></li>
                 <li><a href="/governance">Governance</a></li>
-                <li><a href="/about">About</a></li>
             </ul>
         </div>
     </nav>
 
     <slot />
 
-    <footer id="about">
+    <footer>
         <div class="footer-content">
             <div class="footer-section">
                 <h4>Protocol</h4>
@@ -45,9 +49,9 @@ const { title, description = "A global protocol for strengthening human agency i
             </div>
 
             <div class="footer-section">
-                <h4>Implementation</h4>
+                <h4>Service Providers</h4>
                 <ul>
-                    <li><a href="/service">Service API</a></li>
+                    <li><a href="/service">Overview</a></li>
                     <li><a href="/service#architecture">Architecture</a></li>
                     <li><a href="/service#privacy">Privacy Model</a></li>
                     <li><a href="/service#registry">Registry</a></li>
@@ -58,25 +62,13 @@ const { title, description = "A global protocol for strengthening human agency i
                 <h4>Community</h4>
                 <ul>
                     <li><a href="/governance">Governance</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="https://github.com">GitHub</a></li>
-                    <li><a href="/about#contribute">Contribute</a></li>
-                </ul>
-            </div>
-
-            <div class="footer-section">
-                <h4>About</h4>
-                <ul>
-                    <li><a href="/about#why">Why HAP exists</a></li>
-                    <li><a href="/about#team">Team</a></li>
-                    <li><a href="/about#adopters">Adopters</a></li>
-                    <li><a href="/about#contact">Contact</a></li>
+                    <li><a href="https://github.com/schadauer/human-agency-protocol">GitHub</a></li>
                 </ul>
             </div>
         </div>
 
         <div class="footer-bottom">
-            <p>The Human Agency Protocol is open infrastructure. Licensed under MIT. Maintained by stewards, not owners.</p>
+            <p><a href="/impress">Impress</a> | The Human Agency Protocol is open infrastructure. Licensed under MIT. Maintained by stewards, not owners.</p>
         </div>
     </footer>
 </body>
@@ -137,3 +129,30 @@ const { title, description = "A global protocol for strengthening human agency i
         }
     }
 </style>
+
+<script>
+    // Burger menu toggle
+    const burger = document.getElementById('burger-menu');
+    const navMenu = document.getElementById('nav-menu');
+
+    burger?.addEventListener('click', () => {
+        burger.classList.toggle('active');
+        navMenu?.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!burger?.contains(e.target as Node) && !navMenu?.contains(e.target as Node)) {
+            burger?.classList.remove('active');
+            navMenu?.classList.remove('active');
+        }
+    });
+
+    // Close menu when clicking a link
+    navMenu?.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            burger?.classList.remove('active');
+            navMenu?.classList.remove('active');
+        });
+    });
+</script>

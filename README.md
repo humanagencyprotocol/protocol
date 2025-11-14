@@ -2,9 +2,9 @@
 
 **Version 0.1 — November 2025**
 
-> When AI can do everything, the scarce thing becomes knowing what's worth doing.
+> When AI does everything, build for human agency.
 
-A global protocol that helps systems strengthen human agency—without ever sharing your content. Infrastructure for choice in the age of automation.
+A global protocol that helps AI systems create human value where automation can't — without ever sharing your content.
 
 ## What is HAP?
 

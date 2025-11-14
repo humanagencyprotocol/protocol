@@ -1,11 +1,8 @@
 ---
-title: "The Human Agency Protocol"
+title: "The Human Agency Protocol (HAP)"
 version: "v0.1"
 date: "November 2025"
 ---
-
-# The Human Agency Protocol (HAP) — v0.1
-### *A Global Protocol for Human Agency in the Age of Automation*
 
 ## 1 · Overview
 

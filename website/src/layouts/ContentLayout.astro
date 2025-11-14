@@ -5,20 +5,41 @@ interface Props {
   title: string;
   version?: string;
   date?: string;
+  nextPage?: { url: string; label: string };
 }
 
-const { title, version, date } = Astro.props;
+const { title, version, date, nextPage } = Astro.props;
 ---
 
 <BaseLayout title={`${title} | Human Agency Protocol`}>
     <article class="content">
-        <h1>{title}</h1>
         {(version || date) && (
-            <div class="meta">
-                {version && <span class="version-badge">{version}</span>}
-                {date && <span>{date}</span>}
+            <div class="version-badge-top">
+                {version && <span>{version}</span>}
+                {date && <span> — {date}</span>}
             </div>
         )}
+        <h1>{title}</h1>
         <slot />
+        {nextPage && (
+            <div class="next-page">
+                <a href={nextPage.url} class="btn btn-primary">
+                    Next: {nextPage.label} →
+                </a>
+            </div>
+        )}
     </article>
 </BaseLayout>
+
+<style>
+    .version-badge-top {
+        display: inline-block;
+        font-size: 0.85rem;
+        color: var(--text-tertiary);
+        background: var(--accent-subtle);
+        padding: 0.35rem 0.85rem;
+        border-radius: 2rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+    }
+</style>

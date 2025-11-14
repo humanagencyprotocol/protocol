@@ -3,6 +3,7 @@ doc/
 
 # Claude AI folder (excluded)
 .claude/
+CLAUDE.md
 
 # macOS
 .DS_Store

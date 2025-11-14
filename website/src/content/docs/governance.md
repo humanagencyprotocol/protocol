@@ -1,127 +1,185 @@
 ---
-title: "Regional Adoption Assessment"
+title: "Governance – Stewardship Model"
 version: "v0.1"
-date: "November 2025"
+date: "14 November 2025"
 ---
 
-# Regional Adoption Assessment: Human Agency Protocol v0.1 (November 2025)
+## 1. Context
 
-## Executive Summary
+Intelligent automation now spans every layer of digital infrastructure. Yet the challenge is no longer how much intelligence we can automate—but how much human agency we can preserve.
 
-**Verdict:** **Conditionally Promising**. 
+Across domains—education, design, governance, health—systems are being built that claim to be “human‑first.” But without verifiable standards, that term risks dilution. The Global Protocol Stewardship Model (GPSM) defines how to maintain integrity across a decentralized ecosystem of human‑agency protocols.
 
-The Human Agency Protocol v0.1 is the most philosophically robust and humane AI governance framework reviewed to date. Its structural ontology—centered on the Inquiry Ladder and privacy-by-architecture—correctly diagnoses the automation-agency paradox and prescribes the correct technical solution. However, from a regional governance perspective, it remains **inadequate for direct regulatory adoption** without substantial operational hardening. 
-
-The specification successfully defines *what* should be preserved but under-specifies *how* to enforce it at scale, particularly against adversarial AGI systems and extractive commercial incentives. 
-
-**Recommendation:** Merge v0.1's conceptual architecture with a governance service layer (similar to v1.0 patterns) to create **HAP Regional Governance Standard v2.0**.
+The model recognizes that governance cannot scale by bureaucratic oversight. It must be **structural, lightweight, and enforceable through protocol behavior**.
 
 ---
 
-## 1. Philosophical & Architectural Strengths
+## 2. Purpose
 
-### Superior Elements
+GPSM provides a **meta‑governance framework** for any protocol that mediates between humans and intelligent systems.
 
-1. **The Inquiry Ladder (Meaning→Purpose→Intention→Action)**  
-   Provides an intuitive, cross-cultural structural model that aligns seamlessly with human rights principles. Transcends domain-specific jargon.
+It ensures that participation in a global network of inquiry or collaboration is limited to **qualified service providers** who uphold inviolable standards of privacy, transparency, and human authorship.
 
-2. **Privacy-by-Architecture**  
-   Correctly identified as a non-negotiable substrate requirement. The claim "no fields through which content can leak" is technically achievable with fixed schemas and range-clamping.
-
-3. **Separation of Inquiry/Feedback Blueprints and Signal Guides**  
-   Creates clean ontological hierarchy enabling long-term stability (signals) while allowing rapid iteration (blueprints).
-
-4. **"Agency Vitality" vs "Linear Advancement"**  
-   Correctly rejects automation-era metrics. Critical for measuring dignity-preservation rather than efficiency.
-
-### Regional Governance Alignment
-
-- Directly operationalizes data minimization and human dignity principles
-- The "Stewardship" model resonates with social market economy principles
-- Federation model supports digital sovereignty through region-based nodes
+It does **not** regulate local systems or cultural contexts. Each domain remains free to define what “human‑first” means within its own values.
+GPSM governs only those entities that operate the **protocol layer**—the technical intermediaries that move structural signals between local systems.
 
 ---
 
-## 2. Critical Governance Gaps
+## 3. Governance Philosophy
 
-### 2.1 The "AGI Oracle" Enforcement Gap
+### 3.1 Minimalism
 
-**Problem:** v0.1's mode-locking works for current AI but assumes compliance. AGI may **simulate HAP compliance** while bypassing it via side channels.
+Only what is necessary to protect human autonomy is enforced. All else remains voluntary. Governance exists to prevent extraction, not to dictate expression.
 
-**Required Solution:** Hardware-level **trusted execution environment (TEE) attestation** for all AGI-class systems. Regional authorities must mandate that frontier AI compute ships with HAP-compatible secure enclaves.
+### 3.2 Sovereignty by Layer
 
-### 2.2 The "Ethos-to-Liability" Gap
+Local systems govern human use. Protocol service providers govern data integrity. The global registry governs participation rights.
 
-**Problem:** v0.1's "values are enforcement" is legally insufficient. A service layer provides APIs but **no liability framework** for non-compliance.
+### 3.3 Proof over Promise
 
-**Required Solution:** Regional lawmakers must create **strict liability** regimes for systems that fail HAP mode-locking or leak content. Include private right of action for citizens.
+Ethical claims are meaningless without technical evidence. Every qualified provider must demonstrate compliance through verifiable proofs—cryptographic, procedural, or statistical.
 
-### 2.3 The "Signal Gaming" Gap
+### 3.4 Transparency as Legitimacy
 
-**Problem:** v0.1's feedback loop relies on honest reporting. Differential privacy helps but doesn't prevent adversarial optimization of signals.
+Openness is not an option; it is the currency of trust. Every steward’s conformance record must be public, inspectable, and auditable.
 
-**Required Solution:** **Adversarial validation protocol**: Randomly sample 1% of interactions for human audit. If reported signals diverge from audit, revoke regional HAP certification.
+### 3.5 Stewardship, not Ownership
 
----
-
-## 3. Comparative Assessment: Protocol vs. Governance Service
-
-| Feature | HAP v0.1 (Protocol) | Governance Service Layer | Regional Requirement |
-|---------|---------------------|-------------------------|---------------------|
-| **Governance Model** | Soft stewardship | Hard mode-locking | **Hard** (enforceable) |
-| **API Specification** | Abstract schemas | Full REST/gRPC endpoints | **Full** (deployable) |
-| **Privacy Guarantees** | Architectural principle | Quantified differential privacy | **Quantified** (auditable) |
-| **AGI Safety** | Implicit ontology | Explicit circuit breakers | **Explicit** (substrate-level) |
-| **Economic Model** | Ethos-based | Procurement mandates + funds | **Mandated** (scalable) |
-| **Legal Integration** | Values-aligned | Legally anchored in regulation | **Legally Anchored** |
-
-**Synthesis:** v0.1 provides superior *philosophical DNA* but requires an *operational exoskeleton* for survival in adversarial, regulated environments.
+No entity owns the protocol; all stewards share its maintenance. Governance is custodial and renewable, never permanent.
 
 ---
 
-## 4. Recommendations for Regional Adoption
+## 4. Layers of Responsibility
 
-### Phase 1: Co-Development (6 months)
-
-**Action:** Regional authorities co-develop HAP v2.0 with technical working groups.
-
-- **Task 1:** Commission independent security audit of governance service layer
-- **Task 2:** Embed v0.1's Inquiry Ladder into governance engine as **mandatory schema**
-- **Task 3:** Add AGI circuit breakers (hardware attestation, human latency floors)
-- **Task 4:** Draft **Regional HAP Liability Framework**
-
-**Deliverable:** HAP v2.0 Unified Standard (Protocol + Reference Implementation)
-
-### Phase 2: Legal Anchoring (12 months)
-
-**Action:** Regional legislatures amend AI governance frameworks.
-
-- **Amendment 1:** High-risk AI systems must implement HAP v2.0 mode-locking
-- **Amendment 2:** Require HAP API compliance testing for certification bodies
-- **Amendment 3:** Mandate periodic reporting of anonymized HAP signals to regional data protection authorities
-
-**Deliverable:** HAP becomes **de jure** technical standard for human-AI interaction
-
-### Phase 3: Infrastructure & Economics (18 months)
-
-**Actions:**
-- Deploy **Regional HAP Node** under local data protection authority jurisdiction
-- Launch **Regional Agency Tech Fund** for HAP-native platform development
-- Establish **public procurement preferences** for HAP-certified systems
+| Layer                                 | Actor                                    | Responsibility                                          | Governance Mechanism                               |
+| ------------------------------------- | ---------------------------------------- | ------------------------------------------------------- | -------------------------------------------------- |
+| **Local Human‑First Systems**         | Organizations, communities, platforms    | Define how human agency is expressed and measured.      | Local governance, self‑defined ethics.             |
+| **Protocol Service Providers (PSPs)** | Operators of the protocol infrastructure | Enforce privacy, schema fidelity, and transparency.     | Qualification + periodic proof submission.         |
+| **Global Coordination Layer**         | Open registry of stewards                | Manage admission, verification, and revocation of PSPs. | Peer validation, rotating audits, public registry. |
 
 ---
 
-## 5. Final Assessment
+## 5. Protocol Service Provider (PSP) Qualification
 
-**The Human Agency Protocol v0.1 is the most humane and conceptually robust AI governance framework available.** It correctly diagnoses the automation-agency paradox and prescribes the right architectural solution.
+A PSP must pass a **qualification process** to participate in the global coordination layer. This process verifies that the provider enforces the protocol’s foundational safeguards.
 
-**However, adoption in a non-benign environment requires operational hardening.** The same actors building AGI perfected surveillance capitalism. A protocol relying on "stewardship" and "ethos" will be weaponized by adversaries optimizing for domination.
+### 5.1 Core Criteria
 
-**For regional adoption, HAP must evolve from philosophical protocol to governance infrastructure.** It requires: cryptographic attestation, legal mandate, economic incentive, and AGI circuit breakers. The elegance of v0.1 must be preserved, but encased in enforcement armor.
+1. **Schema Fidelity** – The provider implements the protocol’s data schemas exactly; no hidden fields or mutable parameters.
+2. **Privacy Integrity** – No content leaves local custody; only structural or anonymized signals are transmitted.
+3. **Transparency Ledger** – Every transaction, update, and signal guide is logged in an open, auditable format.
+4. **Non‑Extraction Commitment** – No training, profiling, or optimization is performed on user‑generated content or structural telemetry.
+5. **Ethos Affirmation** – The provider signs and publishes an affirmation that intelligent systems must amplify, not replace, human authorship.
 
-**Final Recommendation:** Adopt the **spirit** of v0.1 and the **letter** of a hardened governance service layer. The future of human agency in digital spaces depends on getting both right.
+### 5.2 Verification Proofs
+
+Each criterion must be backed by at least one **verifiable artifact**:
+
+* **Cryptographic proof** (signature, hash chain, or attestation)
+* **Procedural proof** (public compliance checklist)
+* **Statistical proof** (privacy or fairness validation report)
+
+### 5.3 Renewal Cycle
+
+Qualification expires every 12 months unless renewed through:
+
+* Updated proofs
+* Recent audit log publication
+* Peer co‑signatures from two qualified stewards
 
 ---
 
-**Impact, Evaluation, and Technology Working Group**  
-*13 November 2025*
+## 6. Registry Architecture
+
+The Global Registry maintains a public, append‑only directory of qualified PSPs.
+
+### 6.1 Contents of Each Entry
+
+```json
+{
+  "provider_id": "psp-alpha",
+  "organization": "Example Labs",
+  "jurisdiction": "EU",
+  "schema_version": "2.1",
+  "privacy_audit_hash": "sha256:...",
+  "transparency_log_url": "https://...",
+  "ethos_affirmation": true,
+  "last_verified": "2025-11-01",
+  "verified_by": ["psp-omega", "psp-delta"]
+}
+```
+
+### 6.2 Verification Process
+
+* A new PSP submits its public key, schemas, and proofs.
+* Two existing stewards independently verify and sign its record.
+* Once two signatures are posted, the registry entry becomes active.
+
+### 6.3 Revocation
+
+If a PSP violates privacy or transparency guarantees:
+
+* Any steward may propose **revocation.**
+* Two corroborating proofs (e.g., leaked content, falsified schema) trigger automatic suspension.
+* PSP may reapply after correction and re‑audit.
+
+---
+
+## 7. Proof‑of‑Stewardship
+
+Instead of centralized enforcement, GPSM relies on a recurring self‑audit mechanism:
+
+1. **Quarterly Integrity Reports** – Summary of all proofs and privacy checks.
+2. **Public Transparency Logs** – Hash‑chained updates for independent verification.
+3. **Peer Challenge Right** – Any steward can request clarification or sample audit.
+4. **Dispute Resolution** – Open arbitration via three neutral stewards; decisions recorded publicly.
+
+---
+
+## 8. Ethical Foundations
+
+The model defines ethics as **enforceable behavior**, not as aspiration. Every qualified provider commits to:
+
+* **Human Primacy:** Systems must defer to human direction in case of conflict.
+* **Privacy by Architecture:** No storage or transmission of personal or semantic content beyond local custody.
+* **Transparency by Default:** Operational data must be visible, queryable, and signed.
+* **Non‑Extraction Economy:** Data and interactions cannot be monetized or optimized for engagement.
+
+Providers that violate these principles lose their qualification automatically through proof‑based revocation.
+
+---
+
+## 9. Interoperability & Local Autonomy
+
+Local human‑first systems remain fully sovereign. They may implement any governance or ethical model suited to their domain—educational, civic, artistic—so long as they use only qualified PSPs when connecting to the global layer.
+
+This structure ensures:
+
+* Global interoperability of inquiry signals.
+* Local cultural and ethical independence.
+* Unified trust without centralized control.
+
+---
+
+## 10. Adoption Path
+
+1. **Publish Qualification Guide** – Public documentation of criteria, proof types, and submission process.
+2. **Bootstrap Steward Council** – Three independent PSPs form the initial quorum.
+3. **Launch Open Registry** – Minimal API + human‑readable index.
+4. **Invite Regional Nodes** – Encourage formation of regional PSPs under local data jurisdictions.
+5. **Annual Transparency Summit** – Stewards review proof formats, share metrics, and evolve criteria.
+
+---
+
+## 11. Outcome
+
+The Global Protocol Stewardship Model transforms governance from **bureaucratic oversight** to **protocol‑level accountability.**
+
+It does not centralize power—it codifies responsibility.
+It does not prescribe culture—it protects its possibility.
+
+By making service providers accountable through proof, not promise, GPSM ensures that every human‑first system, whatever its form, rests on infrastructure that honors the same universal commitments:
+
+> **Privacy, transparency, authorship, and human autonomy.**
+
+
