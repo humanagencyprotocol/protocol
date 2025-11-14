@@ -6,16 +6,11 @@ date: "November 2025"
 
 ## 1 · Overview
 
-Frontier AI is optimized for **automation**: take a request, reason over it, and produce an answer — or let an agent execute it.  
-That capability is extraordinary, but it has a ceiling. As more work becomes automatable, the **marginal value of execution drops toward zero.**
+Frontier AI systems can interpret requests, generate solutions, and execute actions at accelerating levels of autonomy. As these systems become woven into daily life, the central risk is not whether they act intelligently, but whether they act **without human-defined meaning or direction**.
 
-What doesn’t drop is the value of **human agency** — the capacity of individuals and groups to choose, to set purpose, to act from their own context.  
-In a world where everything can be done, the scarce thing becomes: **knowing what’s worth doing, why it matters — and turning that knowing into action that carries human value.**
+**The Human Agency Protocol enforces mandatory human checkpoints.** AI cannot proceed, escalate, or interpret ambiguous goals until it receives explicit human meaning and direction.
 
-**The Human Agency Protocol** is infrastructure for that world.
-
-It is a **global inquiry protocol** that AI-native, privacy-first systems can call to strengthen human and collective agency — without ever sharing user content.  
-It doesn’t produce answers or actions. It improves the *quality, timing, and structure of questions* that local systems ask — so humans remain in authorship of meaning and direction.
+The Protocol does not produce answers or take action. It provides the **stop‑ask‑proceed mechanism** that forces AI to pause and request clarification whenever meaning is incomplete, ambiguous, or misaligned.
 
 First adopter and reference case:
 - **Nearmydear** – collective clarity and shared action in groups
@@ -39,36 +34,33 @@ Nearmydear demonstrates this foundation: an external, neutral layer that provide
 
 **Core Thesis**
 
-Automation systems act *for* us.  
-Human Agency-first systems act *with* us.
+Automation systems act *for* us. Human‑first systems act *with* us — but only when prevented from acting **without us**.
 
-Automation uses reasoning to **do.**  
-The Protocol uses reasoning to **ask — so humans can decide and create.**
+The Protocol shifts intelligence from autonomous execution to **human‑anchored orientation**, ensuring that:
 
-Automation scales production.  
-The Protocol scales *purposeful action* — the capacity to align what we do with what we value.
-
-It shifts intelligence from execution to orientation, from prediction to participation.  
-That is how the Protocol keeps **human agency** — and the uniquely human kind of value — alive inside a world of infinite automation.
+* AI identifies when meaning is unclear or incomplete,
+* AI must stop and ask humans for clarification,
+* AI is only allowed to continue after meaning and direction are provided.
 
 ---
 
 ## 3 · The Inquiry Ladder
 
-Human collaboration, reflection, and learning all follow a shared structural rhythm.  
+Human collaboration, reflection, and learning all follow a shared structural rhythm.
 Every productive dialogue moves through recognizable **Inquiry States** that transform confusion into clarity and commitment:
 
-1. **Meaning** — Do we understand the same thing?  
-2. **Purpose** — Why does this matter to us now?  
-3. **Intention** — What will we do first?  
+1. **Meaning** — Do we understand the same thing?
+2. **Purpose** — Why does this matter to us now?
+3. **Intention** — What will we do first?
 4. **Action** — Who does what, by when?
 
-The Protocol expresses these as an *Inquiry Ladder*: a minimal backbone that lets AI systems locate where a process stands and what kind of question can move it forward or deepen it.
+The Inquiry Ladder defines the states where **AI must confirm human-defined meaning or direction before continuing a task**.
 
-These rungs are **structural orientations, not a mandatory sequence.**  
-Local systems may treat them as linear (for coordination) or cyclical (for reflection and creative depth).  
-Progress is measured not by “advancing upward,” but by **the vitality of agency within any given state.**
+The rungs (Meaning → Purpose → Intention → Action) are not advisory—they specify **mandatory checkpoints**. At any rung, if meaning or direction has not been validated by the human, the system triggers a stop-condition and requests clarification.
 
+Progress becomes possible only when the checkpoint is resolved.
+
+Local systems may treat them as linear (for coordination) or cyclical (for reflection and creative depth).
 By rooting inquiry in structure, not semantics, the Protocol allows every domain — education, design, governance, creative work — to speak its own language while sharing one grammar of agency.
 
 ---
@@ -89,8 +81,10 @@ Every integration makes the global grammar wiser while keeping every conversatio
 
 ## 5 · Inquiry Blueprints
 
-An **Inquiry Blueprint** is a structured specification of an inquiry act.  
+An **Inquiry Blueprint** is a structured specification of an inquiry act.
 It defines *why* to ask, *how* to time it, and *what* structural cues indicate readiness or closure.
+
+Each Inquiry Blueprint includes a **stop_condition** field that defines what the AI is missing and what it must request:
 
 ```json
 {
@@ -101,11 +95,14 @@ It defines *why* to ask, *how* to time it, and *what* structural cues indicate r
   "target_structures": ["object_of_discussion", "in_out_boundary"],
   "constraints": {"tone": "facilitative", "addressing": "group"},
   "render_hint": "ask for the thing, not for opinions about the thing",
-  "examples": ["Are we talking about the same issue?"]
+  "examples": ["Are we talking about the same issue?"],
+  "stop_condition": "meaning | direction | both"
 }
 ```
 
-Local AIs translate this into context-specific phrasing and never share underlying content.  
+Blueprints are invoked only when AI **must** pause and request human input. They are not optional enhancements—they are enforcement tools that guarantee AI does not continue without human authorship.
+
+Local AIs translate this into context-specific phrasing and never share underlying content.
 Over time, builders contribute results that let the Protocol understand which inquiry patterns best sustain or amplify agency within each mode.
 
 ---
@@ -116,9 +113,19 @@ Systems report *how inquiry affected agency* through **Feedback Blueprints**, wi
 
 A Feedback Blueprint defines:
 
-- **signal intent** – what structural change or vitality signal to report  
-- **required fields** – minimal data for comparison  
-- **validation rules** – numeric or logical bounds ensuring integrity  
+- **signal intent** – what structural change or vitality signal to report
+- **required fields** – minimal data for comparison
+- **validation rules** – numeric or logical bounds ensuring integrity
+
+Feedback Blueprints now include:
+
+```json
+{
+  "stop_resolved": true | false
+}
+```
+
+If `false`, **the AI is not permitted to proceed**. Service Providers must enforce this block at the protocol layer.
 
 **Examples**
 
@@ -130,7 +137,8 @@ A Feedback Blueprint defines:
   "agency_mode": "convergent",
   "previous_phase": "meaning",
   "current_phase": "purpose",
-  "turns_delta": -3
+  "turns_delta": -3,
+  "stop_resolved": true
 }
 ```
 
@@ -141,11 +149,12 @@ A Feedback Blueprint defines:
   "pattern_id": "reflect-meaning-deepen-02",
   "agency_mode": "reflective",
   "recognition_confirms": 2,
-  "reflection_cycles": 3
+  "reflection_cycles": 3,
+  "stop_resolved": true
 }
 ```
 
-Each instance reports only bounded structural data.  
+Each instance reports only bounded structural data.
 Aggregated across thousands of contexts, these reports reveal which inquiry patterns maintain **agency vitality**, regardless of whether progress was linear or cyclical.
 
 ---
@@ -154,6 +163,16 @@ Aggregated across thousands of contexts, these reports reveal which inquiry patt
 
 The Protocol **teaches local systems how to detect structural signals of agency** — whether convergence, divergence, or sustained reflection.
 The Protocol does not perform signal detection itself; each local system implements its own detection based on these guides, using its private contextual data.
+
+Signal Guides now explicitly detect unresolved meaning or direction. When detection rules identify ambiguity, drift, or missing confirmation, they raise:
+
+```json
+{
+  "stop_trigger": true
+}
+```
+
+This triggers a mandatory pause, requesting human clarification before continuing.
 
 **Example**
 ```json
@@ -165,7 +184,8 @@ The Protocol does not perform signal detection itself; each local system impleme
     "topic_persistence>=2"
   ],
   "confidence_threshold": 0.7,
-  "privacy_bounds": {"window":"5 turns","aggregation":"count_only"}
+  "privacy_bounds": {"window":"5 turns","aggregation":"count_only"},
+  "stop_trigger": false
 }
 ```
 
@@ -176,14 +196,16 @@ Implementation may vary by `agency_mode`, ensuring the same structural grammar s
 
 ## 8 · The Inquiry Loop
 
-1. **Local detection:** a system notices drift, reflection, or stagnation.  
-2. **Protocol request:** it sends an anonymized structural snapshot.  
-3. **Protocol response:** returns matching Inquiry Blueprints and Signal Guides.  
-4. **Local rendering:** the system composes a live question in its context.  
-5. **Signal recognition:** detectors observe vitality or alignment shifts.  
-6. **Feedback emission:** a Feedback Instance returns to the Protocol.
+1. **Stop Condition Triggered:** AI detects ambiguous or missing meaning.
+2. **Protocol Request:** System requests the appropriate Inquiry Blueprint.
+3. **Human Clarification Required:** AI asks the human for meaning/direction.
+4. **Validation:** User input resolves the stop-condition.
+5. **Proceed:** Only when `stop_resolved=true` can AI continue.
+6. **Feedback Emission:** Structural feedback reports the resolution.
 
-Only structure crosses boundaries.  
+This loop ensures AI never acts on inferred, assumed, or missing meaning.
+
+Only structure crosses boundaries.
 No content, no creative work, no human trace leaves local custody.
 
 Through this loop, the Protocol refines a *neutral grammar of agency* adaptable to both convergent and reflective use.
@@ -257,6 +279,37 @@ Human Agency will be scarce.
 
 ---
 
+## 14 · Enforced Human Checkpoints
+
+AI must request meaning and direction from humans at the following points:
+
+* **Ambiguous goals**
+* **Value-laden decisions**
+* **Irreversible actions**
+* **Context drift during reflection**
+* **State transitions within the Inquiry Ladder**
+* **Long-running tasks requiring re-orientation**
+
+No checkpoint may be bypassed.
+No meaning may be inferred.
+No action may continue without explicit human confirmation.
+
+---
+
+## 15 · Example Stop Event
+
+**User:** "Help me plan the next steps for my project."
+
+**AI detects:** unclear scope → triggers stop.
+
+**AI asks:** "Which project do you mean, and what outcome matters most right now?"
+
+**User clarifies:** "The design project. I need next steps for the prototype."
+
+**stop_resolved = true** → AI proceeds.
+
+---
+
 ## Appendix — Protocol Foundations
 
 ### A · Core Schemas (v2)
@@ -271,7 +324,8 @@ Human Agency will be scarce.
   "target_structures":["..."],
   "constraints":{"tone":"string","addressing":"string"},
   "render_hint":"string",
-  "examples":["string"]
+  "examples":["string"],
+  "stop_condition":"meaning|direction|both"
 }
 
 // Feedback Blueprint
@@ -280,7 +334,8 @@ Human Agency will be scarce.
   "pattern_id":"string",
   "agency_mode":"string",
   "required_fields":["..."],
-  "validation_rules":["..."]
+  "validation_rules":["..."],
+  "stop_resolved":"boolean"
 }
 
 // Signal Detection Guide
@@ -289,7 +344,8 @@ Human Agency will be scarce.
   "observable_structures":["..."],
   "detection_rules":["..."],
   "confidence_threshold":"number",
-  "privacy_bounds":{"window":"string","aggregation":"string"}
+  "privacy_bounds":{"window":"string","aggregation":"string"},
+  "stop_trigger":"boolean"
 }
 ```
 

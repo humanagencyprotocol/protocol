@@ -18,11 +18,20 @@ Service Providers act as **technical stewards** for the protocol. They maintain 
 | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Protocol Custodian**     | Implements and maintains the technical infrastructure of the Human Agency Protocol—managing inquiry and feedback flows between AI systems and human users. |
 | **Privacy Guardian**       | Guarantees that all exchanged data is structural, anonymized, and compliant with strict privacy-by-architecture rules.                                     |
-| **Schema Enforcer**        | Validates that all systems adhere to HAP’s standard schemas and inquiry structures to maintain interoperability and trust.                                 |
+| **Schema Enforcer**        | Validates that all systems adhere to HAP's standard schemas and inquiry structures to maintain interoperability and trust.                                 |
 | **Registry Steward**       | Publishes and maintains inquiry blueprints and signal guides, ensuring transparency and consistent evolution of the protocol.                              |
+| **Execution Gatekeeper**   | Blocks all downstream AI actions if `stop_resolved=false`. Ensures Inquiry Blueprints are triggered when `stop_condition` requires it. Audits and rejects bypass attempts. |
 | **Governance Participant** | Upholds non-extraction and authorship principles, submitting periodic proof-of-compliance to remain certified within the ecosystem.                        |
 
-Service Providers form a **distributed network of trust.** They don’t own data, users, or models—they maintain the **conditions under which meaningful, ethical collaboration between humans and intelligent systems can occur.**
+Service Providers form a **distributed network of trust.** They don't own data, users, or models—they maintain the **conditions under which meaningful, ethical collaboration between humans and intelligent systems can occur.**
+
+Service Providers are explicitly responsible for enforcing human-first execution rules:
+
+* They must block all downstream AI actions if `stop_resolved=false`.
+* They must ensure Inquiry Blueprints are triggered whenever `stop_condition` requires it.
+* They must audit and reject attempts to bypass mandatory checkpoints.
+
+Service Providers become the **mechanical gatekeepers** ensuring AI cannot proceed without human confirmation.
 
 ---
 

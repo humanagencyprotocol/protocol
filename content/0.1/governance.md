@@ -117,10 +117,18 @@ The Global Registry maintains a public, append‑only directory of qualified PSP
 
 ### 6.3 Revocation
 
+A Protocol Service Provider loses its qualification if it:
+
+* allows AI to act without resolving a required stop-condition,
+* allows inferred meaning to substitute for human-defined meaning,
+* bypasses human checkpoints at any Ladder stage.
+
+Governance enforces alignment not through trust, but through **protocol-level accountability**.
+
 If a PSP violates privacy or transparency guarantees:
 
 * Any steward may propose **revocation.**
-* Two corroborating proofs (e.g., leaked content, falsified schema) trigger automatic suspension.
+* Two corroborating proofs (e.g., leaked content, falsified schema, checkpoint bypass) trigger automatic suspension.
 * PSP may reapply after correction and re‑audit.
 
 ---
