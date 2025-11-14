@@ -6,6 +6,6 @@ export default defineConfig({
   site: 'https://humanagencyprotocol.org',
   outDir: './dist',
   build: {
-    format: 'file'
+    format: 'directory'
   }
 });
