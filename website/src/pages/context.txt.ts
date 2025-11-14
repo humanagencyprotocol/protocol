@@ -21,9 +21,9 @@ export async function GET() {
 
 ## Homepage
 
-When AI does everything, build for human agency.
+The More AI Shapes Our Lives, the More It Must Ask Humans First.
 
-A global protocol that helps AI systems create human value where automation can't — without ever sharing your content.
+A protocol that forces AI to ask humans for meaning and direction before acting.
 
 ### Core Principles
 
