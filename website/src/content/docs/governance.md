@@ -4,8 +4,6 @@ version: "Version 0.1"
 date: "14 November 2025"
 ---
 
-## 1. Context
-
 Intelligent automation now spans every layer of digital infrastructure. Yet the challenge is no longer how much intelligence we can automate—but how much human agency we can preserve.
 
 Across domains—education, design, governance, health—systems are being built that claim to be “human‑first.” But without verifiable standards, that term risks dilution. The Global Protocol Stewardship Model (GPSM) defines how to maintain integrity across a decentralized ecosystem of human‑agency protocols.
@@ -14,7 +12,7 @@ The model recognizes that governance cannot scale by bureaucratic oversight. It 
 
 ---
 
-## 2. Purpose
+## Purpose
 
 GPSM provides a meta‑governance framework for any protocol that mediates between humans and intelligent systems.
 
@@ -25,31 +23,31 @@ GPSM governs only those entities that operate the protocol layer—the technical
 
 ---
 
-## 3. Governance Philosophy
+## Governance Philosophy
 
-### 3.1 Minimalism
+### Minimalism
 
 Only what is necessary to protect human autonomy is enforced. All else remains voluntary. Governance exists to prevent extraction, not to dictate expression.
 
-### 3.2 Sovereignty by Layer
+### Sovereignty by Layer
 
 Local systems govern human use. Protocol service providers govern data integrity. The global registry governs participation rights.
 
-### 3.3 Proof over Promise
+### Proof over Promise
 
 Ethical claims are meaningless without technical evidence. Every qualified provider must demonstrate compliance through verifiable proofs—cryptographic, procedural, or statistical.
 
-### 3.4 Transparency as Legitimacy
+### Transparency as Legitimacy
 
-Openness is not an option; it is the currency of trust. Every steward’s conformance record must be public, inspectable, and auditable.
+Openness is not an option; it is the currency of trust. Every steward's conformance record must be public, inspectable, and auditable.
 
-### 3.5 Stewardship, not Ownership
+### Stewardship, not Ownership
 
 No entity owns the protocol; all stewards share its maintenance. Governance is custodial and renewable, never permanent.
 
 ---
 
-## 4. Layers of Responsibility
+## Layers of Responsibility
 
 | Layer                                 | Actor                                    | Responsibility                                          | Governance Mechanism                               |
 | ------------------------------------- | ---------------------------------------- | ------------------------------------------------------- | -------------------------------------------------- |
@@ -59,11 +57,11 @@ No entity owns the protocol; all stewards share its maintenance. Governance is c
 
 ---
 
-## 5. Protocol Service Provider (PSP) Qualification
+## Protocol Service Provider (PSP) Qualification
 
 A PSP must pass a qualification process to participate in the global coordination layer. This process verifies that the provider enforces the protocol's foundational safeguards.
 
-### 5.1 Core Criteria
+### Core Criteria
 
 1. Schema Fidelity – The provider implements the protocol's data schemas exactly; no hidden fields or mutable parameters.
 2. Privacy Integrity – No content leaves local custody; only structural or anonymized signals are transmitted.
@@ -71,7 +69,7 @@ A PSP must pass a qualification process to participate in the global coordinatio
 4. Non‑Extraction Commitment – No training, profiling, or optimization is performed on user‑generated content or structural telemetry.
 5. Ethos Affirmation – The provider signs and publishes an affirmation that intelligent systems must amplify, not replace, human authorship.
 
-### 5.2 Verification Proofs
+### Verification Proofs
 
 Each criterion must be backed by at least one verifiable artifact:
 
@@ -79,7 +77,7 @@ Each criterion must be backed by at least one verifiable artifact:
 * Procedural proof (public compliance checklist)
 * Statistical proof (privacy or fairness validation report)
 
-### 5.3 Renewal Cycle
+### Renewal Cycle
 
 Qualification expires every 12 months unless renewed through:
 
@@ -89,11 +87,11 @@ Qualification expires every 12 months unless renewed through:
 
 ---
 
-## 6. Registry Architecture
+## Registry Architecture
 
 The Global Registry maintains a public, append‑only directory of qualified PSPs.
 
-### 6.1 Contents of Each Entry
+### Contents of Each Entry
 
 ```json
 {
@@ -109,13 +107,13 @@ The Global Registry maintains a public, append‑only directory of qualified PSP
 }
 ```
 
-### 6.2 Verification Process
+### Verification Process
 
 * A new PSP submits its public key, schemas, and proofs.
 * Two existing stewards independently verify and sign its record.
 * Once two signatures are posted, the registry entry becomes active.
 
-### 6.3 Revocation
+### Revocation
 
 A Protocol Service Provider loses its qualification if it:
 
@@ -133,7 +131,7 @@ If a PSP violates privacy or transparency guarantees:
 
 ---
 
-## 7. Proof‑of‑Stewardship
+## Proof‑of‑Stewardship
 
 Instead of centralized enforcement, GPSM relies on a recurring self‑audit mechanism:
 
@@ -144,7 +142,7 @@ Instead of centralized enforcement, GPSM relies on a recurring self‑audit mech
 
 ---
 
-## 8. Ethical Foundations
+## Ethical Foundations
 
 The model defines ethics as enforceable behavior, not as aspiration. Every qualified provider commits to:
 
@@ -157,7 +155,7 @@ Providers that violate these principles lose their qualification automatically t
 
 ---
 
-## 9. Interoperability & Local Autonomy
+## Interoperability & Local Autonomy
 
 Local human‑first systems remain fully sovereign. They may implement any governance or ethical model suited to their domain—educational, civic, artistic—so long as they use only qualified PSPs when connecting to the global layer.
 
@@ -169,7 +167,7 @@ This structure ensures:
 
 ---
 
-## 10. Adoption Path
+## Adoption Path
 
 1. Publish Qualification Guide – Public documentation of criteria, proof types, and submission process.
 2. Bootstrap Steward Council – Three independent PSPs form the initial quorum.
@@ -179,7 +177,7 @@ This structure ensures:
 
 ---
 
-## 11. Outcome
+## Outcome
 
 The Global Protocol Stewardship Model transforms governance from bureaucratic oversight to protocol‑level accountability.
 

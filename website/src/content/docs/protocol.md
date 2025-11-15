@@ -4,8 +4,6 @@ version: "Version 0.1"
 date: "November 2025"
 ---
 
-## 1 · Overview
-
 Frontier AI systems can interpret requests, generate solutions, and execute actions at accelerating levels of autonomy. As these systems become woven into daily life, the central risk is not whether they act intelligently, but whether they act without human-defined meaning or direction.
 
 The Human Agency Protocol enforces mandatory human checkpoints. AI cannot proceed, escalate, or interpret ambiguous goals until it receives explicit human meaning and direction.
@@ -22,7 +20,7 @@ Nearmydear demonstrates this foundation: an external, neutral layer that provide
 
 ---
 
-## 2 · From Automation to Human Agency
+## From Automation to Human Agency
 
 | Dimension | Automation Era | Human Agency Era |
 |:--|:--|:--|
@@ -44,7 +42,7 @@ The Protocol shifts intelligence from autonomous execution to human‑anchored o
 
 ---
 
-## 3 · The Inquiry Ladder
+## The Inquiry Ladder
 
 Human collaboration, reflection, and learning all follow a shared structural rhythm.
 Every productive dialogue moves through recognizable Inquiry States that transform confusion into clarity and commitment:
@@ -65,7 +63,7 @@ By rooting inquiry in structure, not semantics, the Protocol allows every domain
 
 ---
 
-## 4 · An Open-Source Grammar for Meaning
+## An Open-Source Grammar for Meaning
 
 The Human Agency Protocol functions like an open-source grammar for meaningful questions.
 
@@ -79,7 +77,7 @@ Every integration makes the global grammar wiser while keeping every conversatio
 
 ---
 
-## 5 · Inquiry Blueprints
+## Inquiry Blueprints
 
 An Inquiry Blueprint is a structured specification of an inquiry act.
 It defines *why* to ask, *how* to time it, and *what* structural cues indicate readiness or closure.
@@ -107,7 +105,7 @@ Over time, builders contribute results that let the Protocol understand which in
 
 ---
 
-## 6 · Feedback Blueprints
+## Feedback Blueprints
 
 Systems report *how inquiry affected agency* through Feedback Blueprints, without revealing content.
 
@@ -159,7 +157,7 @@ Aggregated across thousands of contexts, these reports reveal which inquiry patt
 
 ---
 
-## 7 · Signal Detection Guides
+## Signal Detection Guides
 
 The Protocol teaches local systems how to detect structural signals of agency — whether convergence, divergence, or sustained reflection.
 The Protocol does not perform signal detection itself; each local system implements its own detection based on these guides, using its private contextual data.
@@ -194,7 +192,7 @@ Implementation may vary by `agency_mode`, ensuring the same structural grammar s
 
 ---
 
-## 8 · The Inquiry Loop
+## The Inquiry Loop
 
 1. Stop Condition Triggered: AI detects ambiguous or missing meaning.
 2. Protocol Request: System requests the appropriate Inquiry Blueprint.
@@ -212,7 +210,7 @@ Through this loop, the Protocol refines a *neutral grammar of agency* adaptable 
 
 ---
 
-## 9 · Stewardship and Evolution
+## Stewardship and Evolution
 
 The Protocol grows through stewardship, not extraction.
 
@@ -225,7 +223,7 @@ Governance curates both Inquiry Blueprints and a shared Human Agency Mode & Metr
 
 ---
 
-## 10 · Privacy by Design
+## Privacy by Design
 
 The Protocol is private by architecture — it has no fields through which content can leak.
 
@@ -239,7 +237,7 @@ Only form, never substance, is shared: *intelligence without exposure.*
 
 ---
 
-## 11 · Sustainability and Governance
+## Sustainability and Governance
 
 The Protocol operates on reciprocity, not extraction.
 
@@ -253,7 +251,7 @@ Stewards vote on new modes, metrics, and schema updates during quarterly rounds.
 
 ---
 
-## 12 · Ethos as Protocol
+## Ethos as Protocol
 
 Access is gated by alignment, not by payment.
 
@@ -265,7 +263,7 @@ Values are not decoration — they are enforcement.
 
 ---
 
-## 13 · Why This Matters
+## Why This Matters
 
 If AI advances only along automation's path, humans become supervised executors of optimized systems.
 If AI gains a shared inquiry layer built by those who defend authorship, humans remain co-authors — of direction, of meaning, of action.
@@ -279,7 +277,7 @@ The Human Agency Protocol keeps that scarcity valuable — ensuring every automa
 
 ---
 
-## 14 · Enforced Human Checkpoints
+## Enforced Human Checkpoints
 
 AI must request meaning and direction from humans at the following points:
 
@@ -296,7 +294,7 @@ No action may continue without explicit human confirmation.
 
 ---
 
-## 15 · Example Stop Event
+## Example Stop Event
 
 User: "Help me plan the next steps for my project."
 

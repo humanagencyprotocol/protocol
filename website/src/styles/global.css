@@ -5,13 +5,13 @@
 }
 
 :root {
-    --text-primary: #1a1a1a;
+    --text-primary: #1E1E1E;
     --text-secondary: #525252;
     --text-tertiary: #737373;
     --bg-main: #fafafa;
     --bg-elevated: #ffffff;
-    --accent: #6366f1;
-    --accent-subtle: #eef2ff;
+    --accent: #DFA346;
+    --accent-subtle: #FFF8E7;
     --border: #e5e5e5;
     --spacing-unit: 1rem;
 }
@@ -171,9 +171,9 @@ nav a:hover {
 }
 
 .btn-primary:hover {
-    background: #4f46e5;
+    background: #C88A2E;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+    box-shadow: 0 8px 20px rgba(223, 163, 70, 0.25);
     text-decoration: none;
 }
 

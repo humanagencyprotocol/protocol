@@ -31,12 +31,13 @@ A protocol that forces AI to ask humans for meaning and direction before acting.
 AI is becoming deeply embedded in daily life.
 The real risk isn't bad intent—it's AI acting on unclear or assumed meaning.
 
+AI naturally fills in missing meaning. Without a rule that forces it to stop, it will act on guesses.
+
 The Human Agency Protocol fixes this by enforcing mandatory human checkpoints.
 When meaning drifts or direction becomes uncertain, AI must stop, ask, and wait.
 It cannot infer. It cannot proceed alone.
 
-Humans define the meaning.
-AI follows it.
+HAP is the rule that keeps AI aligned with human meaning - no guessing, no inferring, no acting alone.
 
 ### How It Works
 
@@ -46,27 +47,9 @@ Stop → Ask → Proceed
 2. Ask — The protocol triggers a structured, human-facing question. The AI must wait for a human answer.
 3. Proceed — Only after meaning or direction is clarified can the system act.
 
-This is enforcement, not guidance.
+These checkpoints aren't suggestions. They're enforced conditions that no compliant system can bypass.
 
-### How It Learns
-
-The protocol doesn't just force AI to ask humans first — it teaches systems how to ask better over time.
-
-What the Protocol Receives:
-- Only structural signals: clarity restored? drift stopped? turns required?
-- (No transcripts. No topics. No personal data.)
-
-What the Protocol Learns:
-- Patterns of effective inquiry
-- Which question types resolve drift
-- Where clarity breaks
-- Which signals indicate alignment
-
-What Systems Gain:
-- A shared, content-free grammar for better questions
-- Better timing, better phrasing, better detection of drift
-
-AI improves the asking. Humans keep the meaning.
+Local AI systems stay adaptive - they decide how to phrase the question, but the protocol ensures they must ask.
 
 ### Core Principles
 
