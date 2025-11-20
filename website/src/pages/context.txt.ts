@@ -28,11 +28,11 @@ A protocol that forces AI to ask humans for meaning and direction before acting.
 
 ### Why This Matters
 
-AI is becoming deeply embedded in daily life. The real risk isn't bad intent — it's AI acting on unclear or assumed meaning. AI naturally fills in gaps. Without a rule that forces it to stop, it will act on guesses.
+The Human Agency Protocol (HAP) is founded on this reality: AI is becoming deeply embedded in daily life. The real risk isn't bad intent — it's AI acting on unclear or assumed meaning. AI naturally fills in gaps. Without a rule that forces it to stop, it will act on guesses.
 
-The Human Agency Protocol fixes this by enforcing mandatory human checkpoints and giving AI a structure for asking the right clarifying questions. When meaning drifts or direction becomes uncertain, AI must stop, ask, and wait — no inference, no guessing.
+HAP fixes this by enforcing mandatory human checkpoints and giving AI a structure for asking the right clarifying questions. When meaning drifts or direction becomes uncertain, AI must stop, ask, and wait — no inference, no guessing.
 
-The Human Agency Protocol keeps AI aligned with human meaning at every step — not just by pausing, but by ensuring the questions themselves lead back to clarity.
+**HAP keeps AI aligned with human meaning at every step — ensuring that instead of efficiently automating the average, human intention drives value creation.**
 
 ### How It Works
 

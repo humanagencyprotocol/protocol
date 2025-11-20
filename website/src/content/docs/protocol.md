@@ -24,11 +24,12 @@ Nearmydear demonstrates this foundation: an external, neutral layer that provide
 
 | Dimension | Automation Era | Human Agency Era |
 |:--|:--|:--|
-| Goal | Replace human execution | Amplify human choice, direction, and follow-through |
-| AI Output | Answers, actions, predictions | Questions, timing, and orientation |
-| Value | Efficiency and scale | Meaning, clarity, and commitment |
-| Data Model | Centralized and semantic | Local and structural |
-| Risk | Overreach, surveillance | Privacy-by-architecture |
+| Goal | Optimize output by reducing human involvement | Prevent efficiently automating the average |
+| AI Behavior | Proceeds on assumptions or inferred intent | Pauses when meaning is unclear and asks before continuing |
+| Human Role | Over time: supervise what machines produce | Define goals, purpose, boundaries; AI executes once clarified |
+| Value | Speed, scale, cost reduction | Strategic clarity, non-replicable value, and trustworthy execution |
+| Data Model | Centralized, content-heavy | Local, minimal, structural-only |
+| Risk | AI runs ahead in the wrong direction | AI can't proceed until ambiguity is resolved |
 
 ### Core Thesis
 
@@ -39,6 +40,8 @@ The Protocol shifts intelligence from autonomous execution to human‑anchored o
 * AI identifies when meaning is unclear or incomplete,
 * AI must stop and ask humans for clarification,
 * AI is only allowed to continue after meaning and direction are provided.
+
+This shift ensures that instead of efficiently automating the average, human intention drives value creation.
 
 ---
 
@@ -89,7 +92,7 @@ Each Inquiry Blueprint includes a stop_condition field that defines what the AI 
   "id": "collab-meaning-clarify-01",
   "intent": "reduce semantic drift",
   "ladder_stage": "meaning",
-  "agency_mode": "convergent|reflective|hybrid",
+  "agency_mode": "convergent|reflective",
   "target_structures": ["object_of_discussion", "in_out_boundary"],
   "constraints": {"tone": "facilitative", "addressing": "group"},
   "render_hint": "ask for the thing, not for opinions about the thing",
@@ -188,7 +191,7 @@ Example
 ```
 
 Each guide provides a template for local systems to implement their own signal detection. Local systems interpret these structures and rules internally using their private data, then report only the structural outcomes defined in Feedback Blueprints.
-Implementation may vary by `agency_mode`, ensuring the same structural grammar supports multiple philosophies of agency while maintaining privacy.
+Implementation may vary by `agency_mode`, ensuring the same structural grammar supports both convergent and reflective philosophies of agency while maintaining privacy.
 
 ---
 
@@ -318,7 +321,7 @@ stop_resolved = true → AI proceeds.
   "id":"string",
   "intent":"string",
   "ladder_stage":"meaning|purpose|intention|action",
-  "agency_mode":"convergent|reflective|hybrid",
+  "agency_mode":"convergent|reflective",
   "target_structures":["..."],
   "constraints":{"tone":"string","addressing":"string"},
   "render_hint":"string",
@@ -358,9 +361,8 @@ Current examples
 - `recognition_confirms` — validated understanding (*reflective*)  
 - `reflection_cycles` — sustained exploration (*reflective*)  
 - `shared_reference_detected` — mutual comprehension (*universal*)  
-- `alignment_stability` — coherence over time (*hybrid*)
 
-Success is measured not by linear advancement but by agency vitality — the sustained presence of choice, clarity, and authorship within any inquiry state.
+Success is measured not by linear advancement but by agency vitality — the sustained presence of choice, clarity, and authorship within any inquiry state. For convergent modes, this means achieving meaningful closure; for reflective modes, this means sustained engagement with the process.
 
 ### C · Federation and Versioning
 

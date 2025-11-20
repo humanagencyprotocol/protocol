@@ -24,11 +24,12 @@ Nearmydear demonstrates this foundation: an external, neutral layer that provide
 
 | Dimension | Automation Era | Human Agency Era |
 |:--|:--|:--|
-| Goal | Replace human execution | Amplify human choice, direction, and follow-through |
-| AI Output | Answers, actions, predictions | Questions, timing, and orientation |
-| Value | Efficiency and scale | Meaning, clarity, and commitment |
-| Data Model | Centralized and semantic | Local and structural |
-| Risk | Overreach, surveillance | Privacy-by-architecture |
+| Goal | Optimize output by reducing human involvement | Prevent efficiently automating the average |
+| AI Behavior | Proceeds on assumptions or inferred intent | Pauses when meaning is unclear and asks before continuing |
+| Human Role | Over time: supervise what machines produce | Define goals, purpose, boundaries; AI executes once clarified |
+| Value | Speed, scale, cost reduction | Strategic clarity, non-replicable value, and trustworthy execution |
+| Data Model | Centralized, content-heavy | Local, minimal, structural-only |
+| Risk | AI runs ahead in the wrong direction | AI can't proceed until ambiguity is resolved |
 
 ### Core Thesis
 
@@ -39,6 +40,8 @@ The Protocol shifts intelligence from autonomous execution to human‑anchored o
 * AI identifies when meaning is unclear or incomplete,
 * AI must stop and ask humans for clarification,
 * AI is only allowed to continue after meaning and direction are provided.
+
+This shift ensures that instead of efficiently automating the average, human intention drives value creation.
 
 ---
 
