@@ -30,7 +30,7 @@ Nearmydear demonstrates this foundation: an external, neutral layer that provide
 | Data Model | Centralized and semantic | Local and structural |
 | Risk | Overreach, surveillance | Privacy-by-architecture |
 
-Core Thesis
+### Core Thesis
 
 Automation systems act *for* us. Human‑first systems act *with* us — but only when prevented from acting without us.
 
