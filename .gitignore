@@ -7,6 +7,7 @@ CLAUDE.md
 
 # SDK (separate repository)
 sdk/
+nmd/
 
 # macOS
 .DS_Store
