@@ -230,7 +230,7 @@ app / platform
 ### Protocol Specification
 
 - **[Protocol Specification](/protocol)** - HAP v0.1 Protocol
-- **[Integration Guide](/integration)** - SDK architecture and integration patterns
+- **[Integration Overview](/integration)** - SDK architecture and integration patterns
 
 ---
 

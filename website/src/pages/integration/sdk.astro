@@ -1,6 +1,6 @@
 ---
 import { getEntry } from 'astro:content';
-import ContentLayout from '../layouts/ContentLayout.astro';
+import ContentLayout from '../../layouts/ContentLayout.astro';
 
 const entry = await getEntry('docs', 'sdk');
 const { Content } = await entry.render();

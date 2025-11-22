@@ -24,7 +24,7 @@ Using only structural outcomes — such as whether a stop-condition was resolved
 
 ### SDK Availability
 
-- **[TypeScript SDK (v0.2.0)](/sdk)** — Reference implementation for builders exploring HAP today
+- **[TypeScript SDK (v0.2.0)](/integration/sdk)** — Reference implementation for builders exploring HAP today
   Full documentation for the HAP SDK including installation, quick start guides, metadata helpers, and blueprint selection strategies. The SDK is under active development; other language SDKs (Python, Go, more) will follow the same contract once the spec stabilises.
   **GitHub:** [humanagencyprotocol/hap-sdk-typescript](https://github.com/humanagencyprotocol/hap-sdk-typescript)
 
