@@ -22,3 +22,8 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# synced content (auto-generated from source, but committed for Vercel)
+# Note: These are synced on every build via npm run sync
+# src/content/docs/*.md
+# src/sdk-docs/*.md
