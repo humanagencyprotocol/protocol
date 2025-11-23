@@ -2,10 +2,10 @@ import fs from 'fs';
 import path from 'path';
 
 export async function GET() {
-  // Read the SDK documentation files from the sdk directory
-  const readmePath = path.join(process.cwd(), '../sdk/README.md');
-  const apiPath = path.join(process.cwd(), '../sdk/docs/API.md');
-  const localDevPath = path.join(process.cwd(), '../sdk/docs/LOCAL_DEVELOPMENT.md');
+  // Read the SDK documentation files from the local sdk-docs directory
+  const readmePath = path.join(process.cwd(), 'src/sdk-docs/README.md');
+  const apiPath = path.join(process.cwd(), 'src/sdk-docs/API.md');
+  const localDevPath = path.join(process.cwd(), 'src/sdk-docs/LOCAL_DEVELOPMENT.md');
 
   const readmeContent = fs.readFileSync(readmePath, 'utf-8');
   const apiContent = fs.readFileSync(apiPath, 'utf-8');
