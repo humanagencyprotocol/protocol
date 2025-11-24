@@ -895,46 +895,67 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const response = await fetch('/context.txt');
             const text = await response.text();
 
-            // Try modern clipboard API first
+            let copySucceeded = false;
+
+            // Try modern clipboard API first (works on HTTPS and modern browsers)
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 try {
                     await navigator.clipboard.writeText(text);
+                    copySucceeded = true;
                 } catch (clipboardErr) {
-                    // Fallback for iOS and other browsers
-                    const textarea = document.createElement('textarea');
-                    textarea.value = text;
-                    textarea.style.position = 'fixed';
-                    textarea.style.opacity = '0';
-                    document.body.appendChild(textarea);
-                    textarea.focus();
-                    textarea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textarea);
+                    console.log('Clipboard API failed, trying fallback:', clipboardErr);
                 }
-            } else {
-                // Fallback for older browsers
+            }
+
+            // Fallback for iOS Safari and older browsers
+            if (!copySucceeded) {
                 const textarea = document.createElement('textarea');
                 textarea.value = text;
-                textarea.style.position = 'fixed';
-                textarea.style.opacity = '0';
+
+                // Make textarea visible for iOS
+                textarea.style.position = 'absolute';
+                textarea.style.left = '-9999px';
+                textarea.style.top = '0';
+                textarea.setAttribute('readonly', '');
+
                 document.body.appendChild(textarea);
-                textarea.focus();
-                textarea.select();
-                document.execCommand('copy');
+
+                // iOS-specific selection
+                if (navigator.userAgent.match(/ipad|iphone/i)) {
+                    const range = document.createRange();
+                    range.selectNodeContents(textarea);
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                    textarea.setSelectionRange(0, textarea.value.length);
+                } else {
+                    textarea.select();
+                }
+
+                try {
+                    copySucceeded = document.execCommand('copy');
+                } catch (e) {
+                    console.error('execCommand failed:', e);
+                }
+
                 document.body.removeChild(textarea);
             }
 
-            // Success feedback
-            button.textContent = 'Copied! Paste it in your AI Chat';
+            if (copySucceeded) {
+                // Success feedback
+                button.textContent = 'Copied! Paste it in your AI Chat';
+                setTimeout(() => {
+                    if (button) button.textContent = originalText;
+                }, 3000);
+            } else {
+                throw new Error('All copy methods failed');
+            }
+        } catch (err) {
+            console.error('Failed to copy:', err);
+            button.textContent = 'Copy failed - try manually';
             setTimeout(() => {
                 if (button) button.textContent = originalText;
             }, 3000);
-        } catch (err) {
-            console.error('Failed to copy:', err);
-            button.textContent = 'Failed to copy';
-            setTimeout(() => {
-                if (button) button.textContent = originalText;
-            }, 2000);
         }
     });
 </script>
