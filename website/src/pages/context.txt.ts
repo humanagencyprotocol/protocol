@@ -36,19 +36,12 @@ AI is increasingly taking actions on our behalf — drafting communication, maki
 - It picks an approach you didn't choose.
 - It leaps from vague input straight to concrete action.
 
-By default, AI fills the gaps. That's how you lose authorship.
+By default, AI fills the gaps. That's how authorship slips away.
 
-**The Human Agency Protocol (HAP) prevents this.**
-It enforces mandatory human checkpoints at every stage of orientation:
-- **Meaning** — What exactly are we talking about?
-- **Purpose** — Why does this matter now?
-- **Intention** — What are we choosing to do first?
-- **Action** — Who does what, by when?
+**The Human Agency Protocol stops this.**
+It forces AI to pause whenever meaning, purpose, or intention is unclear — and ask humans before continuing.
 
-**HAP v0.3 adds strict stage-progression enforcement.**
-AI can no longer jump from "help with my project" to "I'll deploy a fix" without confirming what the project is, why the user cares, and what action is actually intended.
-
-**Human intention, not machine inference, drives value creation.**
+**Human direction stays primary. Machine inference stays secondary.**
 
 ### How It Works
 
