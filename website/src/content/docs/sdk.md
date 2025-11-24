@@ -255,6 +255,42 @@ app / platform
 |-------------|------------------|--------|--------------|
 | 0.1.x       | 0.1              | Stable | Core protocol, HapClient, StopGuard |
 | 0.2.x       | 0.1              | Development | + LocalHapProvider, metadata helpers, selection strategies |
+| 0.3.x       | 0.1              | Planned | + Stage Progression Enforcement (Q1 2026) |
+
+---
+
+## What's Next: Version 0.3
+
+The next major release will introduce **Stage Progression Enforcement** to prevent AI from skipping inquiry ladder stages.
+
+### The Problem
+
+HAP v0.2 validates user input clarity, but doesn't prevent AI from jumping stages in responses:
+
+```
+User: "Help with my project"
+AI: "Which project?" ✓ (checks input clarity)
+User: "The website"
+AI: "I'll redesign the homepage and deploy" ✗ (skipped purpose & intention!)
+```
+
+### The Solution
+
+**Stage Progression Guard:**
+- Detects which ladder stage AI's response targets
+- Blocks responses that skip required stages
+- Forces AI to ask about missing stages first (meaning → purpose → intention → action)
+- Supports both Convergent (linear) and Reflective (cyclical) inquiry modes
+
+**Key Features:**
+- **Structured output** + LLM classification fallback
+- **Privacy-preserving** (all semantic analysis stays local)
+- **Opt-in enforcement** (backward compatible with v0.2)
+- **Learning integration** for improved detection over time
+
+**Target Release:** Q1 2026
+
+See the complete [v0.3 Implementation Plan](https://github.com/humanagencyprotocol/hap-sdk-typescript/blob/main/docs/ROADMAP.md) for technical details.
 
 ---
 

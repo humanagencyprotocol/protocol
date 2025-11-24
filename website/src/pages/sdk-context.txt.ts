@@ -6,10 +6,12 @@ export async function GET() {
   const readmePath = path.join(process.cwd(), 'src/sdk-docs/README.md');
   const apiPath = path.join(process.cwd(), 'src/sdk-docs/API.md');
   const localDevPath = path.join(process.cwd(), 'src/sdk-docs/LOCAL_DEVELOPMENT.md');
+  const roadmapPath = path.join(process.cwd(), 'src/sdk-docs/ROADMAP.md');
 
   const readmeContent = fs.readFileSync(readmePath, 'utf-8');
   const apiContent = fs.readFileSync(apiPath, 'utf-8');
   const localDevContent = fs.readFileSync(localDevPath, 'utf-8');
+  const roadmapContent = fs.readFileSync(roadmapPath, 'utf-8');
 
   // Combine all SDK documentation
   const combinedContent = `
@@ -17,7 +19,7 @@ export async function GET() {
 
 **Version 0.2.0 — November 2025**
 
-This context includes the complete SDK documentation: README, API Reference, and Local Development Guide.
+This context includes the complete SDK documentation: README, API Reference, Local Development Guide, and Roadmap.
 
 ---
 
@@ -34,6 +36,12 @@ ${apiContent}
 # Local Development Guide
 
 ${localDevContent}
+
+---
+
+# Roadmap: v0.3 and Beyond
+
+${roadmapContent}
 
 ---
 
