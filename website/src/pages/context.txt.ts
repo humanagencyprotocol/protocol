@@ -28,99 +28,100 @@ A protocol that forces AI to ask humans for meaning, purpose, and intention befo
 
 ### Why This Matters
 
-AI is increasingly taking actions on our behalf — drafting communication, making plans, coordinating work, triggering workflows, and soon, executing full tasks end-to-end.
+AI now drafts messages, plans steps, triggers workflows, and increasingly executes full tasks.
 
-**The danger isn't malice. It's momentum without understanding:**
-- AI assumes goals you didn't name.
-- It invents purpose you never stated.
-- It picks an approach you didn't choose.
-- It leaps from vague input straight to concrete action.
+**The risk isn't malice — it's momentum without clarity:**
+goals assumed, purpose invented, actions taken before humans decide what they actually want.
 
-By default, AI fills the gaps. That's how authorship slips away.
+That's how authorship disappears.
 
-**The Human Agency Protocol stops this.**
-It forces AI to pause whenever meaning, purpose, or intention is unclear — and ask humans before continuing.
+**The Human Agency Protocol prevents this.**
+When meaning, purpose, or intention is unclear, AI must stop, ask, and wait.
 
-**Human direction stays primary. Machine inference stays secondary.**
+**Human intention becomes non-optional.**
 
-### How It Works
+### How HAP Works
 
-Stop → Ask → Proceed — Now Across All Stages
+Stop → Ask → Proceed
 
-1. **Stop** — The system detects ambiguity, drift, or an attempt to skip a ladder stage.
-2. **Ask** — HAP triggers a context-appropriate question (an Inquiry Blueprint). The AI must wait for human input.
-3. **Proceed** — Only after the checkpoint is resolved can the AI advance and perform any downstream actions.
+1. **Stop** — The system detects ambiguity, drift, or missing stages.
+2. **Ask** — HAP triggers a clarifying question. The AI must wait.
+3. **Proceed** — Only after the human answers can the AI continue.
 
-These are not guidelines. They are enforced requirements a HAP-compliant system cannot bypass.
+These checkpoints are enforced. They cannot be bypassed.
 
 ### Two Inquiry Modes
 
-Human thinking has two fundamental rhythms:
+Human thinking has two rhythms. HAP protects both.
 
-**Convergent Mode** — For alignment, decisions, planning, and execution.
-- Progress must move meaning → purpose → intention → action
-- No skipping or fast-forwarding
-- Guarantees trustworthy, human-led closure
+**Convergent Mode** — For decisions, planning, and execution.
+Progress moves meaning → purpose → intention → action. No skipping. No inference.
 
-**Reflective Mode** — For exploration, learning, insight, and creativity.
-- Movement can be cyclical, recursive, or non-linear
-- The AI serves depth, not premature decisions
-- Guarantees sustained, human-anchored reflection
+**Reflective Mode** — For exploration, learning, and creativity.
+Movement is cyclical or non-linear. The AI serves depth, not premature closure.
 
-Both modes follow the same core rule: AI cannot advance when meaning, purpose, or intention are unclear — in any direction.
+In both modes: AI cannot advance when orientation is unclear.
 
 ### The Inquiry Ladder
 
-All productive human inquiry follows the same structure:
+All productive work follows the same path:
 1. **Meaning** — Are we talking about the same thing?
 2. **Purpose** — Why does this matter?
 3. **Intention** — What will we do first?
 4. **Action** — How do we execute?
 
-HAP embeds this ladder into every AI-mediated interaction. If the system detects missing meaning, unresolved purpose, or unclear intention, it must pause and ask before continuing.
+HAP makes this path mandatory. If meaning, purpose, or intention is unclear, the system must stop and ask.
 
-**The result:** AI doesn't just answer. It orients.
+AI doesn't just answer. It orients.
 
 ### Core Principles (v0.3)
 
-1. **Stage Progression Enforcement** — AI must move through Meaning → Purpose → Intention → Action in the correct order (Convergent) or within a controlled cycle (Reflective). No jumps. No shortcuts. No silent inference.
+**Stage Progression Enforcement**
+AI must follow the ladder in the correct order (Convergent) or controlled cycles (Reflective).
+No jumps. No shortcuts. No inference.
 
-2. **Mandatory Human Checkpoints** — Whenever meaning, purpose, or intention is unclear, the system must stop and ask the user. AI cannot proceed without explicit human confirmation.
+**Mandatory Human Checkpoints**
+When meaning, purpose, or intention is unclear, the system stops and asks. AI cannot proceed without explicit human confirmation.
 
-3. **Human-Gated Actions** — Downstream actions (publishing, sending, deploying, triggering systems) are locked behind confirmed stages. Risk determines the required ladder stage.
+**Human-Gated Actions**
+Downstream actions (publishing, sending, deploying) are locked behind confirmed stages.
+Risk determines the required stage.
 
-4. **Two Inquiry Modes** — Convergent (linear progress toward decisions and execution) and Reflective (cyclical exploration without forced closure). Both modes obey stop → ask → proceed.
+**Two Inquiry Modes**
+Convergent (linear toward decisions) and Reflective (cyclical exploration). Both modes obey stop → ask → proceed.
 
-5. **Privacy by Architecture** — Only structural signals leave the device or application. No transcripts. No semantic content. No user data exposure.
+**Privacy by Architecture**
+Only structural signals leave the device. No transcripts. No semantic content. No user data exposure.
 
-6. **Blueprinted Questions** — All clarifying questions follow shared, open Inquiry Blueprints. Local systems phrase them; the protocol decides when they must be asked.
+**Blueprinted Questions**
+All questions follow shared, open Inquiry Blueprints.
+Local systems phrase them; the protocol decides when they're asked.
 
-7. **Verified Compliance** — Every checkpoint resolution and gated action is validated by local enforcement and optionally cryptographically signed (HAP Envelope). Proof, not trust.
+**Verified Compliance**
+Every checkpoint and action is validated locally and optionally signed (HAP Envelope).
+Proof, not trust.
 
-8. **Stewardship Over Ownership** — A federated network of qualified Service Providers enforces protocol behavior. No centralized control. No data extraction.
+**Stewardship Over Ownership**
+A federated network of Service Providers enforces protocol behavior.
+No centralized control. No data extraction.
 
-### Why This Matters Right Now
+### Why This Matters Now
 
-As automation accelerates, human intention is becoming the scarcest resource.
+As automation accelerates, human intention becomes the scarcest resource.
 
-Systems that act "based on patterns" will always default to the average. Systems that pause and ask humans at the right moments preserve authorship, clarity, and agency.
+Systems that act "based on patterns" default to the average. Systems that pause and ask preserve authorship.
 
-**The Human Agency Protocol ensures:**
-- AI cannot assume your goals
-- AI cannot skip clarification
-- AI cannot act without your direction
-- AI cannot run ahead of your understanding
-- AI cannot replace your authorship in meaningful work
+HAP ensures AI cannot assume goals, skip clarification, or act without direction.
 
 The right question, asked at the right time, is what keeps us human.
 
 ### Complete Specification
 
 The protocol documentation includes:
-- The Protocol: Core specification defining how agency is described, measured, and exchanged
-- Integration: SDK for human-aligned AI with protocol compliance built in
-- Service Providers: Technical infrastructure for HAP-compliant systems at scale
-- Governance: Integration into regulatory frameworks with enforcement mechanisms
+- The Protocol: Core specification for measuring and preserving agency
+- Integration: SDK for building HAP-compliant systems
+- Service Providers: Infrastructure for enforcement at scale
+- Governance: Regulatory integration with verification mechanisms
 
 ---
 
