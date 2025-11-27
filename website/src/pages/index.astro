@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="The Human Agency Protocol - AI Governance. Human Control.">
+<BaseLayout title="The Human Agency Protocol - The Future Runs on Human Intention">
     <!-- Hero Section -->
     <section class="hero">
         <div class="version-wrapper">
@@ -13,8 +13,44 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <p class="hero-power">The Human Agency Protocol (HAP) installs human-defined purpose at the root of every intelligent action. Meaning is not inferred. Direction is not automated. Reality remains authored.</p>
         <p class="hero-embed">HAP embeds into AI systems and workflows, turning human intention into the governing layer machines must follow.</p>
         <div class="cta-group">
-            <a href="/protocol" class="btn btn-primary">Explore the Protocol</a>
-            <button id="copy-context" class="btn btn-secondary">Ask your AI about this protocol</button>
+            <button id="ask-ai-btn" class="btn btn-primary">Ask your AI about this protocol</button>
+            <a href="/protocol" class="btn btn-secondary">Explore the Protocol</a>
+        </div>
+
+        <!-- Persona Selection -->
+        <div id="persona-section" class="persona-section" style="display: none;">
+            <p class="persona-intro">Choose a perspective:</p>
+            <div class="persona-grid">
+                <button class="persona-btn" data-persona="beginner">
+                    <span class="persona-title">Explain Like I'm Five</span>
+                    <span class="persona-desc">Simple explanation for beginners</span>
+                </button>
+                <button class="persona-btn" data-persona="entrepreneur">
+                    <span class="persona-title">Entrepreneur</span>
+                    <span class="persona-desc">Building with HAP</span>
+                </button>
+                <button class="persona-btn" data-persona="architect">
+                    <span class="persona-title">Protocol Integrator</span>
+                    <span class="persona-desc">Integration into your existing system</span>
+                </button>
+                <button class="persona-btn" data-persona="strategist">
+                    <span class="persona-title">Business Strategist</span>
+                    <span class="persona-desc">Impact on your business</span>
+                </button>
+                <button class="persona-btn" data-persona="investor">
+                    <span class="persona-title">Investor</span>
+                    <span class="persona-desc">Commercial opportunities & ROI</span>
+                </button>
+            </div>
+
+            <!-- Expanded Prompt Display -->
+            <div id="prompt-display" class="prompt-display" style="display: none;">
+                <div class="prompt-content">
+                    <h4 id="prompt-title" class="prompt-title"></h4>
+                    <p id="prompt-text" class="prompt-text"></p>
+                    <button id="copy-prompt-btn" class="btn btn-primary">Copy the prompt</button>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -360,6 +396,151 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
+    }
+
+    .btn.clicked {
+        opacity: 0.7;
+    }
+
+    /* Persona Section */
+    .persona-section {
+        max-width: 800px;
+        margin-top: 2rem;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .persona-intro {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin-bottom: 1rem;
+        font-weight: 500;
+    }
+
+    .persona-grid {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: thin;
+    }
+
+    .persona-grid::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .persona-grid::-webkit-scrollbar-track {
+        background: var(--bg-elevated);
+        border-radius: 3px;
+    }
+
+    .persona-grid::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+    }
+
+    .persona-grid::-webkit-scrollbar-thumb:hover {
+        background: var(--text-tertiary);
+    }
+
+    @media (min-width: 900px) {
+        .persona-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            overflow-x: visible;
+        }
+    }
+
+    .persona-btn {
+        background: var(--bg-elevated);
+        border: 2px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 1.25rem 1rem;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: left;
+        min-width: 220px;
+        flex-shrink: 0;
+        scroll-snap-align: start;
+    }
+
+    @media (min-width: 900px) {
+        .persona-btn {
+            min-width: auto;
+        }
+    }
+
+    .persona-btn:hover {
+        border-color: var(--accent);
+        background: var(--accent-subtle);
+        transform: translateY(-2px);
+    }
+
+    .persona-btn.active {
+        border-color: var(--accent);
+        background: var(--accent-subtle);
+    }
+
+    .persona-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        display: block;
+    }
+
+    .persona-desc {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        display: block;
+        line-height: 1.4;
+    }
+
+    .prompt-display {
+        background: var(--bg-elevated);
+        border: 2px solid var(--accent);
+        border-radius: 0.75rem;
+        padding: 1.5rem;
+        margin-top: 1rem;
+        animation: slideDown 0.3s ease-out;
+    }
+
+    .prompt-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .prompt-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin: 0;
+    }
+
+    .prompt-text {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--text-primary);
+        margin: 0;
+        padding: 1rem;
+        background: var(--bg);
+        border-radius: 0.5rem;
+        border-left: 3px solid var(--accent);
     }
 
     /* Why This Matters */
@@ -876,72 +1057,178 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </style>
 
 <script>
-    document.getElementById('copy-context')?.addEventListener('click', async () => {
-        const button = document.getElementById('copy-context');
-        const originalText = button?.textContent;
+    // Persona prompts
+    const personas = {
+        beginner: {
+            title: 'Explain Like I\'m Five',
+            prompt: 'You are explaining this protocol to someone who only knows ChatGPT and has no technical background. Use simple language, everyday analogies, and concrete examples. Explain what problem this solves, why it matters, and how it would affect their daily AI interactions. Avoid jargon and technical terms.'
+        },
+        entrepreneur: {
+            title: 'Entrepreneur',
+            prompt: 'You are an entrepreneur exploring new market opportunities with HAP. I\'m looking for business ideas and applications that can be built using this protocol. Analyze potential products, services, and business models that leverage HAP. Focus on market gaps, customer needs, competitive advantages, and practical implementation paths for new ventures. Help me understand how HAP can be a foundation for building innovative solutions.'
+        },
+        architect: {
+            title: 'Protocol Integrator',
+            prompt: 'You are a protocol integrator evaluating how to implement this protocol into our existing system. Assess integration feasibility, technical requirements, implementation complexity, and compatibility with our current infrastructure. Provide a detailed technical assessment covering APIs, data flows, security considerations, and deployment strategies for our specific context.'
+        },
+        strategist: {
+            title: 'Business Strategist',
+            prompt: 'You are a business strategist analyzing how this protocol would impact my business. Evaluate adoption benefits, competitive advantages, operational changes, and strategic implications for my specific business. Focus on how it affects my operations, customer relationships, and value delivery. Provide actionable insights tailored to my business context.'
+        },
+        investor: {
+            title: 'Investor',
+            prompt: 'You are an investor evaluating this protocol as a commercial opportunity. Focus on monetization potential, particularly around HAP Service Providers and consulting services. Analyze market size, revenue models, competitive advantages, implementation costs, and ROI projections. Identify the most promising business opportunities and potential risks.'
+        }
+    };
+
+    let currentPersona = null;
+    let contextText = null;
+
+    // Copy function (reusable)
+    async function copyToClipboard(text, button, successMsg, originalText) {
+        let copySucceeded = false;
+
+        // Try modern clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            try {
+                await navigator.clipboard.writeText(text);
+                copySucceeded = true;
+            } catch (clipboardErr) {
+                console.log('Clipboard API failed, trying fallback:', clipboardErr);
+            }
+        }
+
+        // Fallback for iOS Safari and older browsers
+        if (!copySucceeded) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            textarea.style.top = '0';
+            textarea.setAttribute('readonly', '');
+            document.body.appendChild(textarea);
+
+            if (navigator.userAgent.match(/ipad|iphone/i)) {
+                const range = document.createRange();
+                range.selectNodeContents(textarea);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                textarea.setSelectionRange(0, textarea.value.length);
+            } else {
+                textarea.select();
+            }
+
+            try {
+                copySucceeded = document.execCommand('copy');
+            } catch (e) {
+                console.error('execCommand failed:', e);
+            }
+
+            document.body.removeChild(textarea);
+        }
+
+        if (copySucceeded) {
+            button.textContent = successMsg;
+            setTimeout(() => {
+                if (button) button.textContent = originalText;
+            }, 3000);
+        } else {
+            throw new Error('All copy methods failed');
+        }
+    }
+
+    // Fetch context text
+    async function fetchContext() {
+        if (!contextText) {
+            const response = await fetch('/context.txt');
+            contextText = await response.text();
+        }
+        return contextText;
+    }
+
+    // Toggle persona section
+    document.getElementById('ask-ai-btn')?.addEventListener('click', async () => {
+        const button = document.getElementById('ask-ai-btn');
+        const personaSection = document.getElementById('persona-section');
+        const promptDisplay = document.getElementById('prompt-display');
+
+        if (personaSection.style.display === 'none' || !personaSection.style.display) {
+            // Open persona section
+            button.classList.add('clicked');
+            personaSection.style.display = 'block';
+
+            // Scroll button to top of viewport with offset for header
+            // Use setTimeout to wait for DOM update
+            setTimeout(() => {
+                const buttonTop = button.getBoundingClientRect().top + window.scrollY;
+                const headerOffset = 120; // Account for fixed header height (taller on desktop)
+                window.scrollTo({
+                    top: buttonTop - headerOffset,
+                    behavior: 'smooth'
+                });
+            }, 100);
+
+            // Prefetch context
+            try {
+                await fetchContext();
+            } catch (err) {
+                console.error('Failed to fetch context:', err);
+            }
+        } else {
+            // Close persona section
+            button.classList.remove('clicked');
+            personaSection.style.display = 'none';
+            promptDisplay.style.display = 'none';
+
+            // Reset active states
+            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+            currentPersona = null;
+        }
+    });
+
+    // Handle persona selection
+    document.querySelectorAll('.persona-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const persona = btn.dataset.persona;
+            currentPersona = persona;
+
+            // Update active state
+            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Show prompt display
+            const promptDisplay = document.getElementById('prompt-display');
+            const promptTitle = document.getElementById('prompt-title');
+            const promptText = document.getElementById('prompt-text');
+
+            promptTitle.textContent = personas[persona].title;
+            promptText.textContent = personas[persona].prompt;
+            promptDisplay.style.display = 'block';
+
+            // Scroll to prompt display
+            promptDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+    });
+
+    // Copy prompt with context
+    document.getElementById('copy-prompt-btn')?.addEventListener('click', async () => {
+        const button = document.getElementById('copy-prompt-btn');
+        const originalText = button.textContent;
 
         try {
             button.textContent = 'Copying...';
 
-            // Fetch the context page
-            const response = await fetch('/context.txt');
-            const text = await response.text();
+            const context = await fetchContext();
+            const personaPrompt = personas[currentPersona].prompt;
+            const combinedText = `${personaPrompt}\n\n---\n\n${context}`;
 
-            let copySucceeded = false;
-
-            // Try modern clipboard API first (works on HTTPS and modern browsers)
-            if (navigator.clipboard && navigator.clipboard.writeText) {
-                try {
-                    await navigator.clipboard.writeText(text);
-                    copySucceeded = true;
-                } catch (clipboardErr) {
-                    console.log('Clipboard API failed, trying fallback:', clipboardErr);
-                }
-            }
-
-            // Fallback for iOS Safari and older browsers
-            if (!copySucceeded) {
-                const textarea = document.createElement('textarea');
-                textarea.value = text;
-
-                // Make textarea visible for iOS
-                textarea.style.position = 'absolute';
-                textarea.style.left = '-9999px';
-                textarea.style.top = '0';
-                textarea.setAttribute('readonly', '');
-
-                document.body.appendChild(textarea);
-
-                // iOS-specific selection
-                if (navigator.userAgent.match(/ipad|iphone/i)) {
-                    const range = document.createRange();
-                    range.selectNodeContents(textarea);
-                    const selection = window.getSelection();
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                    textarea.setSelectionRange(0, textarea.value.length);
-                } else {
-                    textarea.select();
-                }
-
-                try {
-                    copySucceeded = document.execCommand('copy');
-                } catch (e) {
-                    console.error('execCommand failed:', e);
-                }
-
-                document.body.removeChild(textarea);
-            }
-
-            if (copySucceeded) {
-                // Success feedback
-                button.textContent = 'Copied! Paste it in your AI Chat';
-                setTimeout(() => {
-                    if (button) button.textContent = originalText;
-                }, 3000);
-            } else {
-                throw new Error('All copy methods failed');
-            }
+            await copyToClipboard(
+                combinedText,
+                button,
+                'Copied! Paste it in your AI Chat',
+                originalText
+            );
         } catch (err) {
             console.error('Failed to copy:', err);
             button.textContent = 'Copy failed - try manually';
