@@ -5,41 +5,36 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="The Human Agency Protocol - The Future Runs on Human Intention">
     <!-- Hero Section -->
     <section class="hero">
-        <div class="version-wrapper">
-            <span class="version">Version 0.2</span>
-            <span class="version-date">November 2025</span>
-        </div>
+        <div class="hero-content">
         <h1>The Future Runs on<br class="desktop-break"> <span class="highlight">Human Intention</span></h1>
         <p class="hero-power">The Human Agency Protocol (HAP) installs human-defined purpose at the root of every intelligent action. Meaning is not inferred. Direction is not automated. Reality remains authored.</p>
         <p class="hero-embed">HAP embeds into AI systems and workflows, turning human intention into the governing layer machines must follow.</p>
         <div class="cta-group">
             <button id="ask-ai-btn" class="btn btn-primary">Ask your AI about this protocol</button>
-            <a href="/protocol" class="btn btn-secondary">Explore the Protocol</a>
+            <button id="why-matters-btn" class="btn btn-secondary">Why This Matters</button>
         </div>
 
         <!-- Persona Selection -->
         <div id="persona-section" class="persona-section" style="display: none;">
-            <p class="persona-intro">Choose a perspective:</p>
+            <p class="persona-intro">Create a prompt to describe HAP for</p>
             <div class="persona-grid">
                 <button class="persona-btn" data-persona="beginner">
-                    <span class="persona-title">Explain Like I'm Five</span>
-                    <span class="persona-desc">Simple explanation for beginners</span>
+                    <span class="persona-title">A Five Year Old</span>
                 </button>
                 <button class="persona-btn" data-persona="entrepreneur">
-                    <span class="persona-title">Entrepreneur</span>
-                    <span class="persona-desc">Building with HAP</span>
+                    <span class="persona-title">An Entrepreneur</span>
                 </button>
                 <button class="persona-btn" data-persona="architect">
-                    <span class="persona-title">Protocol Integrator</span>
-                    <span class="persona-desc">Integration into your existing system</span>
+                    <span class="persona-title">A Protocol Integrator</span>
                 </button>
                 <button class="persona-btn" data-persona="strategist">
-                    <span class="persona-title">Business Strategist</span>
-                    <span class="persona-desc">Impact on your business</span>
+                    <span class="persona-title">A Business Strategist</span>
                 </button>
                 <button class="persona-btn" data-persona="investor">
-                    <span class="persona-title">Investor</span>
-                    <span class="persona-desc">Commercial opportunities & ROI</span>
+                    <span class="persona-title">An Investor</span>
+                </button>
+                <button class="persona-btn" data-persona="custom">
+                    <span class="persona-title">You</span>
                 </button>
             </div>
 
@@ -48,14 +43,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="prompt-content">
                     <h4 id="prompt-title" class="prompt-title"></h4>
                     <p id="prompt-text" class="prompt-text"></p>
+                    <textarea id="custom-prompt-input" class="custom-prompt-input" style="display: none;" placeholder="Describe who you are and what you want to learn about HAP..."></textarea>
                     <button id="copy-prompt-btn" class="btn btn-primary">Copy the prompt</button>
                 </div>
             </div>
         </div>
+        </div>
     </section>
 
     <!-- Why This Matters -->
-    <section class="why-matters">
+    <section id="why-matters" class="why-matters">
         <h2 class="section-title">Why This Matters</h2>
         <div class="why-content">
             <p>
@@ -321,10 +318,17 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <style>
     /* Hero Section */
     .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+    }
+
+    .hero-content {
         max-width: 1200px;
-        margin: 0 auto;
-        padding: 12rem 1.5rem 6rem;
-        min-height: 80vh;
+        width: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -366,29 +370,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         max-width: 800px;
         margin-bottom: 3rem;
         line-height: 1.7;
-        font-weight: 400;
-    }
-
-    .hero .version-wrapper {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.85rem;
-        margin-bottom: 1rem;
-    }
-
-    .hero .version {
-        display: inline-block;
-        color: var(--text-tertiary);
-        background: var(--bg-elevated);
-        border: 1px solid var(--border);
-        padding: 0.35rem 0.85rem;
-        border-radius: 2rem;
-        font-weight: 500;
-    }
-
-    .hero .version-date {
-        color: var(--text-tertiary);
         font-weight: 400;
     }
 
@@ -434,72 +415,63 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         overflow-x: auto;
         scroll-snap-type: x mandatory;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: thin;
+        scrollbar-width: none;
     }
 
     .persona-grid::-webkit-scrollbar {
-        height: 6px;
-    }
-
-    .persona-grid::-webkit-scrollbar-track {
-        background: var(--bg-elevated);
-        border-radius: 3px;
-    }
-
-    .persona-grid::-webkit-scrollbar-thumb {
-        background: var(--border);
-        border-radius: 3px;
-    }
-
-    .persona-grid::-webkit-scrollbar-thumb:hover {
-        background: var(--text-tertiary);
+        display: none;
     }
 
     @media (min-width: 900px) {
         .persona-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             overflow-x: visible;
         }
     }
 
     .persona-btn {
-        background: var(--bg-elevated);
-        border: 2px solid var(--border);
+        background: var(--accent);
+        border: 2px solid var(--accent);
         border-radius: 0.75rem;
-        padding: 1.25rem 1rem;
+        padding: 1rem 0.85rem;
         cursor: pointer;
         transition: all 0.3s;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
-        text-align: left;
-        min-width: 220px;
+        text-align: center;
+        min-width: 180px;
         flex-shrink: 0;
         scroll-snap-align: start;
+        justify-content: center;
+        align-items: center;
     }
 
     @media (min-width: 900px) {
         .persona-btn {
             min-width: auto;
+            padding: 1.5rem 1.25rem;
         }
     }
 
     .persona-btn:hover {
-        border-color: var(--accent);
-        background: var(--accent-subtle);
+        background: #C88A2E;
+        border-color: #C88A2E;
         transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(223, 163, 70, 0.25);
     }
 
     .persona-btn.active {
-        border-color: var(--accent);
-        background: var(--accent-subtle);
+        background: #C88A2E;
+        border-color: #C88A2E;
+        box-shadow: 0 8px 20px rgba(223, 163, 70, 0.25);
     }
 
     .persona-title {
         font-size: 1rem;
         font-weight: 600;
-        color: var(--text-primary);
+        color: white;
         display: block;
     }
 
@@ -541,6 +513,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         background: var(--bg);
         border-radius: 0.5rem;
         border-left: 3px solid var(--accent);
+    }
+
+    .custom-prompt-input {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--text-primary);
+        margin: 0;
+        padding: 1rem;
+        background: var(--bg);
+        border-radius: 0.5rem;
+        border: 2px solid var(--border);
+        border-left: 3px solid var(--accent);
+        font-family: inherit;
+        resize: vertical;
+        min-height: 120px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .custom-prompt-input:focus {
+        outline: none;
+        border-color: var(--accent);
     }
 
     /* Why This Matters */
@@ -1078,6 +1072,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         investor: {
             title: 'Investor',
             prompt: 'You are an investor evaluating this protocol as a commercial opportunity. Focus on monetization potential, particularly around HAP Service Providers and consulting services. Analyze market size, revenue models, competitive advantages, implementation costs, and ROI projections. Identify the most promising business opportunities and potential risks.'
+        },
+        custom: {
+            title: 'You - Create your own prompt',
+            prompt: '' // User will input their own prompt
         }
     };
 
@@ -1201,9 +1199,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const promptDisplay = document.getElementById('prompt-display');
             const promptTitle = document.getElementById('prompt-title');
             const promptText = document.getElementById('prompt-text');
+            const customInput = document.getElementById('custom-prompt-input');
 
             promptTitle.textContent = personas[persona].title;
-            promptText.textContent = personas[persona].prompt;
+
+            // Handle custom persona differently
+            if (persona === 'custom') {
+                promptText.style.display = 'none';
+                customInput.style.display = 'block';
+                customInput.value = ''; // Clear previous input
+            } else {
+                promptText.style.display = 'block';
+                customInput.style.display = 'none';
+                promptText.textContent = personas[persona].prompt;
+            }
+
             promptDisplay.style.display = 'block';
 
             // Scroll to prompt display
@@ -1220,7 +1230,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             button.textContent = 'Copying...';
 
             const context = await fetchContext();
-            const personaPrompt = personas[currentPersona].prompt;
+
+            // Get prompt based on persona type
+            let personaPrompt;
+            if (currentPersona === 'custom') {
+                const customInput = document.getElementById('custom-prompt-input');
+                personaPrompt = customInput.value.trim();
+
+                // Validate that user entered something
+                if (!personaPrompt) {
+                    button.textContent = 'Please enter a prompt first';
+                    setTimeout(() => {
+                        if (button) button.textContent = originalText;
+                    }, 2000);
+                    return;
+                }
+            } else {
+                personaPrompt = personas[currentPersona].prompt;
+            }
+
             const combinedText = `${personaPrompt}\n\n---\n\n${context}`;
 
             await copyToClipboard(
@@ -1235,6 +1263,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             setTimeout(() => {
                 if (button) button.textContent = originalText;
             }, 3000);
+        }
+    });
+
+    // Scroll to Why This Matters section
+    document.getElementById('why-matters-btn')?.addEventListener('click', () => {
+        const whyMattersSection = document.getElementById('why-matters');
+        if (whyMattersSection) {
+            const sectionTop = whyMattersSection.getBoundingClientRect().top + window.scrollY;
+            const headerOffset = 120; // Account for fixed header height
+            window.scrollTo({
+                top: sectionTop - headerOffset,
+                behavior: 'smooth'
+            });
         }
     });
 </script>
