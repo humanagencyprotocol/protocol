@@ -9,8 +9,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <span class="version">Version 0.2</span>
             <span class="version-date">November 2025</span>
         </div>
-        <h1>The More AI Shapes Our Lives, the More It Must <span class="highlight">Ask Humans First</span></h1>
-        <p class="hero-subtitle">A protocol that forces AI to ask humans for meaning, purpose, and intention before it's allowed to act.</p>
+        <h1>The Future Runs on<br class="desktop-break"> <span class="highlight">Human Intention</span></h1>
+        <p class="hero-power">The Human Agency Protocol (HAP) installs human-defined purpose at the root of every intelligent action. Meaning is not inferred. Direction is not automated. Reality remains authored.</p>
+        <p class="hero-embed">HAP embeds into AI systems and workflows, turning human intention into the governing layer machines must follow.</p>
         <div class="cta-group">
             <a href="/protocol" class="btn btn-primary">Explore the Protocol</a>
             <button id="copy-context" class="btn btn-secondary">Ask your AI about this protocol</button>
@@ -22,25 +23,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h2 class="section-title">Why This Matters</h2>
         <div class="why-content">
             <p>
-                AI now drafts messages, plans steps, triggers workflows, and increasingly executes full tasks.
+                Modern AI systems don't wait for commands — they initiate actions, trigger workflows, and make decisions. Without a source of human-defined intention, they improvise:
             </p>
-            <p class="danger-statement">
-                The risk isn't malice — it's momentum without clarity:
-            </p>
-            <p class="danger-inline">
-                goals assumed,<br>
-                purpose invented,<br>
-                actions taken before humans decide what they actually want.
-            </p>
+            <ul class="danger-list">
+                <li>goals inferred</li>
+                <li>purpose invented</li>
+                <li>action detached from authorship</li>
+            </ul>
             <p class="key-insight">
-                That's how authorship disappears.
+                That's not intelligence.<br>
+                That's automation without direction.
             </p>
-            <p>
-                <strong>The Human Agency Protocol prevents this.</strong><br>
-                When meaning, purpose, or intention is unclear, AI must stop, ask, and wait.
+            <p class="hap-installs">
+                <strong>The Human Agency Protocol installs the missing layer.</strong><br>
+                Integrated directly into AI platforms, HAP forces systems to pause when meaning, purpose, or intention is unclear — and resume only once humans decide what the action is for.
             </p>
             <p class="emphasis">
-                Human intention becomes non-optional.
+                With HAP, your AI acts on human intention, not assumptions.
             </p>
         </div>
     </section>
@@ -312,8 +311,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         font-size: clamp(1.1rem, 2vw, 1.4rem);
         color: var(--text-secondary);
         max-width: 800px;
-        margin-bottom: 3rem;
+        margin-bottom: 1.5rem;
         line-height: 1.6;
+    }
+
+    .hero-power {
+        font-size: clamp(1rem, 1.8vw, 1.2rem);
+        color: var(--text-primary);
+        max-width: 800px;
+        margin-bottom: 1.5rem;
+        line-height: 1.7;
+        font-weight: 400;
+    }
+
+    .hero-embed {
+        font-size: clamp(1rem, 1.8vw, 1.2rem);
+        color: var(--text-secondary);
+        max-width: 800px;
+        margin-bottom: 3rem;
+        line-height: 1.7;
+        font-weight: 400;
     }
 
     .hero .version-wrapper {
@@ -404,6 +421,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         font-weight: 600;
         color: var(--text-primary);
         margin: 2rem 0;
+    }
+
+    .hap-installs {
+        font-size: clamp(1.05rem, 2vw, 1.2rem);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+        color: var(--text-primary);
     }
 
     .stage-list {
@@ -810,6 +834,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     /* Responsive */
     @media (max-width: 768px) {
+        .desktop-break {
+            display: none;
+        }
+
         .hero {
             padding-top: 8rem;
             min-height: auto;

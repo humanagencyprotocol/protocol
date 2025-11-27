@@ -22,23 +22,27 @@ export async function GET() {
 ## Homepage
 
 ### Title
-The More AI Shapes Our Lives, the More It Must Ask Humans First.
+The Future Runs on Human Intention
 
-A protocol that forces AI to ask humans for meaning, purpose, and intention before it's allowed to act.
+The Human Agency Protocol installs human-defined purpose at the root of every intelligent action. Meaning is not inferred. Direction is not automated. Reality remains authored.
+
+HAP embeds into AI systems and workflows, turning human intention into the governing layer machines must follow.
 
 ### Why This Matters
 
-AI now drafts messages, plans steps, triggers workflows, and increasingly executes full tasks.
+Modern AI systems don't wait for commands — they initiate actions, trigger workflows, and make decisions. Without a source of human-defined intention, they improvise:
 
-**The risk isn't malice — it's momentum without clarity:**
-goals assumed, purpose invented, actions taken before humans decide what they actually want.
+– goals inferred
+– purpose invented
+– action detached from authorship
 
-That's how authorship disappears.
+**That's not intelligence.**
+**That's automation without direction.**
 
-**The Human Agency Protocol prevents this.**
-When meaning, purpose, or intention is unclear, AI must stop, ask, and wait.
+**The Human Agency Protocol installs the missing layer.**
+Integrated directly into AI platforms, HAP forces systems to pause when meaning, purpose, or intention is unclear — and resume only once humans decide what the action is for.
 
-**Human intention becomes non-optional.**
+**With HAP, your AI acts on human intention, not assumptions.**
 
 ### How HAP Works
 
