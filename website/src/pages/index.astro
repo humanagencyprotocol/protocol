@@ -6,9 +6,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
-        <h1>The Future Runs on<br class="desktop-break"> <span class="highlight">Human Intention</span></h1>
-        <p class="hero-power">The Human Agency Protocol (HAP) installs human-defined purpose at the root of every intelligent action. Meaning is not inferred. Direction is not automated. Reality remains authored.</p>
-        <p class="hero-embed">HAP embeds into AI systems and workflows, turning human intention into the governing layer machines must follow.</p>
+        <h1>Before AI Does Something Important, <span class="highlight">It Has to Ask You Three Questions.</span></h1>
+        <p class="hero-power">A simple protocol that keeps humans in control—by forcing AI to pause when meaning is unclear.</p>
+        <p class="hero-embed">These aren't three fixed questions. They're three checkpoints that ask: What are we talking about? Why does it matter? What do we do first? The AI can't act until you answer.
+</p>
         <div class="cta-group">
             <button id="ask-ai-btn" class="btn btn-primary">Ask your AI about this protocol</button>
             <button id="why-matters-btn" class="btn btn-secondary">Why This Matters</button>
@@ -1236,20 +1237,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             if (currentPersona === 'custom') {
                 const customInput = document.getElementById('custom-prompt-input');
                 personaPrompt = customInput.value.trim();
-
-                // Validate that user entered something
-                if (!personaPrompt) {
-                    button.textContent = 'Please enter a prompt first';
-                    setTimeout(() => {
-                        if (button) button.textContent = originalText;
-                    }, 2000);
-                    return;
-                }
             } else {
                 personaPrompt = personas[currentPersona].prompt;
             }
 
-            const combinedText = `${personaPrompt}\n\n---\n\n${context}`;
+            // Combine prompt and context (only add separator if there's a prompt)
+            const combinedText = personaPrompt
+                ? `${personaPrompt}\n\n---\n\n${context}`
+                : context;
 
             await copyToClipboard(
                 combinedText,
