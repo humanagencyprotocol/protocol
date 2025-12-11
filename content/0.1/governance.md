@@ -1,6 +1,6 @@
 ---
 title: "Governance"
-version: "Version 0.1"
+version: "Version 0.3"
 date: "November 2025"
 ---
 

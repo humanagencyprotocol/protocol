@@ -15,117 +15,156 @@ export async function GET() {
   const combinedContent = `
 # Human Agency Protocol - Complete Context
 
-**Version 0.3 — November 2025**
+**Version 0.3 — 2025**
 
 ---
 
 ## Homepage
 
-### Title
-The Future Runs on Human Intention
+### When AI Can Do Everything, The Only Value Left Is Deciding What Matters.
+### HAP Makes Sure Humans Still Do That.
 
-The Human Agency Protocol installs human-defined purpose at the root of every intelligent action. Meaning is not inferred. Direction is not automated. Reality remains authored.
+AI makes execution effortless — producing, optimizing, and handling tasks faster than humans ever could.
 
-HAP embeds into AI systems and workflows, turning human intention into the governing layer machines must follow.
+But AI cannot define direction.
+It cannot decide what matters, what the work is for, or which path is worth pursuing.
 
-### Why This Matters
+**Direction is the last human domain.**
+**HAP protects it.**
 
-Modern AI systems don't wait for commands — they initiate actions, trigger workflows, and make decisions. Without a source of human-defined intention, they improvise:
+---
 
-– goals inferred
-– purpose invented
-– action detached from authorship
+### Why HAP Exists
 
-**That's not intelligence.**
-**That's automation without direction.**
+Modern AI systems don't wait.
+They act, escalate, optimize, and predict.
 
-**The Human Agency Protocol installs the missing layer.**
-Integrated directly into AI platforms, HAP forces systems to pause when meaning, purpose, or intention is unclear — and resume only once humans decide what the action is for.
+HAP forces AI to pause whenever a human decision is required.
+No assumptions. No silent automation.
+The system cannot move forward until a human sets direction.
 
-**With HAP, your AI acts on human intention, not assumptions.**
+If humans stop defining direction, AI will step into the vacuum — not maliciously, but because it moves faster than we do.
+
+And when AI sets the direction, **it optimizes for its metrics, not human needs.**
+
+HAP prevents that by enforcing human direction at the moments automation cannot replace.
+
+---
+
+### Why Direction Has a Cost — And Why It Matters
+
+AI can execute any path, but only humans can choose which path should exist.
+That choice has a cost: choosing one direction means abandoning others.
+
+A direction has meaning only when a human is willing to carry the responsibility and consequences that come with it.
+AI has no stakes — therefore it cannot choose.
+
+If a decision can be reversed or ignored without consequence, it isn't direction. It's preference.
+
+**HAP ensures direction is human-defined, human-owned, and costly enough to matter — no back door, no avoidance.**
+
+---
+
+### What AI Can Do vs. What Humans Must Do
+
+**AI can:**
+- generate options
+- simulate outcomes
+- execute tasks
+- correct mistakes
+- plan optimally
+- scale instantly
+
+**AI cannot:**
+- define what matters
+- choose which priority wins
+- decide what is worth the cost
+- commit an identity
+- take responsibility
+
+**Direction is human.**
+**Execution is machine.**
+**HAP keeps the boundary intact.**
+
+---
+
+### The HAP Checkpoints
+
+HAP integrates into any AI system and forces it to pause whenever a real human decision is required.
+
+AI cannot continue until the human sets direction.
+
+**1. Meaning — What are we talking about?**
+Humans set the frame. Machines cannot.
+
+**2. Purpose — Why does this matter now?**
+Prioritization is a trade-off. Only humans can make it.
+
+**3. Commitment — What will we commit to?**
+Options are cheap. Commitment costs — and only humans can pay it.
+
+**4. Action — Who owns the outcome?**
+Machines execute. Humans take responsibility.
+
+---
 
 ### How HAP Works
 
-Stop → Ask → Proceed
+**Stop → Ask → Confirm → Proceed**
 
-1. **Stop** — The system detects ambiguity, drift, or missing stages.
-2. **Ask** — HAP triggers a clarifying question. The AI must wait.
-3. **Proceed** — Only after the human answers can the AI continue.
+1. **Stop** — AI detects unclear meaning, purpose, commitment, or responsibility.
+2. **Ask** — HAP triggers a structured question that forces human direction.
+3. **Confirm** — The human confirms the decision the AI must follow.
+4. **Proceed** — Only then does the system continue.
 
-These checkpoints are enforced. They cannot be bypassed.
+**No skipping.**
+**No inference.**
+**No silent automation.**
 
-### Two Inquiry Modes
-
-Human thinking has two rhythms. HAP protects both.
-
-**Convergent Mode** — For decisions, planning, and execution.
-Progress moves meaning → purpose → intention → action. No skipping. No inference.
-
-**Reflective Mode** — For exploration, learning, and creativity.
-Movement is cyclical or non-linear. The AI serves depth, not premature closure.
-
-In both modes: AI cannot advance when orientation is unclear.
-
-### The Inquiry Ladder
-
-All productive work follows the same path:
-1. **Meaning** — Are we talking about the same thing?
-2. **Purpose** — Why does this matter?
-3. **Intention** — What will we do first?
-4. **Action** — How do we execute?
-
-HAP makes this path mandatory. If meaning, purpose, or intention is unclear, the system must stop and ask.
-
-AI doesn't just answer. It orients.
-
-### Core Principles (v0.3)
-
-**Stage Progression Enforcement**
-AI must follow the ladder in the correct order (Convergent) or controlled cycles (Reflective).
-No jumps. No shortcuts. No inference.
-
-**Mandatory Human Checkpoints**
-When meaning, purpose, or intention is unclear, the system stops and asks. AI cannot proceed without explicit human confirmation.
-
-**Human-Gated Actions**
-Downstream actions (publishing, sending, deploying) are locked behind confirmed stages.
-Risk determines the required stage.
-
-**Two Inquiry Modes**
-Convergent (linear toward decisions) and Reflective (cyclical exploration). Both modes obey stop → ask → proceed.
-
-**Privacy by Architecture**
-Only structural signals leave the device. No transcripts. No semantic content. No user data exposure.
-
-**Blueprinted Questions**
-All questions follow shared, open Inquiry Blueprints.
-Local systems phrase them; the protocol decides when they're asked.
-
-**Verified Compliance**
-Every checkpoint and action is validated locally and optionally signed (HAP Envelope).
-Proof, not trust.
-
-**Stewardship Over Ownership**
-A federated network of Service Providers enforces protocol behavior.
-No centralized control. No data extraction.
+---
 
 ### Why This Matters Now
 
-As automation accelerates, human intention becomes the scarcest resource.
+As AI accelerates, execution becomes free.
+Abundance becomes default.
 
-Systems that act "based on patterns" default to the average. Systems that pause and ask preserve authorship.
+The real scarcity becomes **human direction** — decisions that cost something, commit someone, and shape a trajectory.
 
-HAP ensures AI cannot assume goals, skip clarification, or act without direction.
+This is the last human value.
 
-The right question, asked at the right time, is what keeps us human.
+If humans stop making the hard calls, machines will make them by default.
+And once AI defines direction, human agency dissolves — quietly, through convenience.
 
-### Complete Specification
+HAP is the boundary that preserves human authorship in an automated world.
 
-The protocol documentation includes:
-- The Protocol: Core specification for measuring and preserving agency
-- Integration: SDK for building HAP-compliant systems
-- Service Providers: Infrastructure for enforcement at scale
-- Governance: Regulatory integration with verification mechanisms
+---
+
+### What HAP Enables
+
+**Individuals**
+You stop drifting through AI-generated options and start defining what matters.
+
+**Teams**
+Alignment becomes real — because decisions require shared commitment.
+
+**Organizations**
+Strategy becomes human-led again.
+Accountability returns.
+
+**Society**
+We preserve the one thing automation cannot replace:
+**the human ability to choose a direction worth living for.**
+
+---
+
+### Build With HAP
+
+- **Protocol** — How direction is described, measured, and enforced
+- **SDK** — Tools for integrating direction checkpoints
+- **Service Providers** — Verified infrastructure enforcing compliance
+- **Governance** — Transparent, federated oversight
+
+**HAP turns human direction into the governing layer of intelligent systems.**
 
 ---
 

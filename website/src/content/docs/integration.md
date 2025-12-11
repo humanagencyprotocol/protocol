@@ -1,123 +1,177 @@
 ---
 title: "Integration"
-version: "Version 0.1"
-date: "November 2025"
+version: "Version 0.3"
+date: "December 2025"
 ---
 
-One SDK for human-aligned AI — with a local optimisation engine inside. The HAP SDK gives builders a simple way to integrate the Human Agency Protocol into any AI system.
+The HAP SDK gives builders a simple way to embed the Human Agency Protocol into any AI system.
 
-It provides two capabilities in one package:
+It does two things:
 
-## 1. Protocol Compliance
+1. **Enforces protocol compliance** — Stop → Ask → Confirm → Proceed
+2. **Improves local question-asking over time** — without ever leaking content
 
-The SDK handles all communication with a HAP Service Provider — requesting Inquiry Blueprints, emitting structural Feedback, and enforcing Stop → Ask → Proceed.
-
-It guarantees that only structural signals leave local custody, keeping all user content private and ensuring full alignment with the Protocol.
-
-## 2.Local Question Optimisation
-
-The SDK also includes a local optimisation engine that systems can use to improve their own question-asking over time.
-
-Using only structural outcomes — such as whether a stop-condition was resolved or how quickly clarity was reached — the engine helps the AI refine how it asks questions while keeping all semantics local.
+The SDK ensures that **AI cannot advance** past key direction checkpoints until a human has confirmed or committed to them.
 
 ---
 
-### SDK Availability
+## What the SDK Provides
 
-- **[TypeScript SDK (v0.2.0)](/integration/sdk)** — Reference implementation for builders exploring HAP today
-  Full documentation for the HAP SDK including installation, quick start guides, metadata helpers, and blueprint selection strategies. The SDK is under active development; other language SDKs (Python, Go, more) will follow the same contract once the spec stabilises.
-  **GitHub:** [humanagencyprotocol/hap-sdk-typescript](https://github.com/humanagencyprotocol/hap-sdk-typescript)
+### 1. Protocol Compliance
+
+The SDK handles all communication with a HAP Service Provider:
+
+- requesting **Inquiry Blueprints** for specific ladder stages
+- emitting **Feedback** with purely structural fields
+- enforcing the **Stop → Ask → Confirm → Proceed** loop in your app
+
+It guarantees that only **structural signals** leave local custody.
+All user content (prompts, answers, context) stays local.
+
+### 2. Local Question Optimisation
+
+The SDK also includes a lightweight optimisation helper that lets your system:
+
+- log how often stop-conditions are triggered
+- measure how quickly humans resolve checkpoints
+- compare question strategies (A/B) locally
+
+All optimisation uses structural results only (e.g., `stop_resolved`, `turns_to_resolution`).
+No semantics are ever sent to HAP.
 
 ---
 
-## High-Level Architecture
+## Direction-Aware Architecture
 
 ```text
 app / platform
    │
    ├── hap-sdk
    │     ├── hap-client         (protocol integration)
-   │     ├── types              (shared structural types)
-   │     ├── question-spec      (Inquiry → QuestionSpec mapping)
-   │     ├── runtime-guards     (stop/ask/proceed enforcement)
+   │     ├── types              (structural types for direction)
+   │     ├── question-spec      (Blueprint → QuestionSpec mapping)
+   │     ├── runtime-guards     (Stop → Ask → Confirm → Proceed)
    │     └── metrics & logging  (local optimisation signals)
    │
    └── local-ai
-         ├── rung-detector
-         ├── gap-detector
+         ├── stage-detector     (meaning/purpose/commitment/action)
+         ├── gap-detector       (detects missing direction)
          ├── question-engine    (LLM / rules)
          └── optimisation layer (integrator-defined)
 ```
 
-The SDK never handles or transmits semantic content (user text, prompts, answers).
-It deals only in structured, bounded fields.
+The SDK never handles or transmits:
 
----
+- user input
+- model prompts
+- generated answers
 
-## Core Modules
+It only sees and enforces direction structure.
 
-### HAP Client
+## Core Concepts in the SDK
 
-Responsibilities:
-- Type-safe client for the HAP Service Provider
-- Handles requesting Inquiry Blueprints and sending Feedback
-- Validates outgoing payloads so only structural fields are sent
+### Direction Ladder (in code)
 
-Key rule: All requests and payloads are struct-only.
+The SDK exposes typed ladder stages:
 
-### Types
+- `meaning`
+- `purpose`
+- `commitment`
+- `action`
 
-All shared structural types live here:
+Your system uses these to tell HAP which checkpoint it is enforcing.
 
-- Ladder stages: meaning, purpose, intention, action
-- Agency modes: convergent, reflective, hybrid
-- Inquiry Blueprints with stop conditions
-- Feedback payloads with structural metrics only
+### Operational Loop
 
-No raw text fields. No user content.
+The SDK helps enforce the runtime loop:
 
-### Question Spec
+**Stop → Ask → Confirm → Proceed**
 
-Converts an Inquiry Blueprint from HAP into a local QuestionSpec that the Question Engine can use.
+- **Stop** — your system detects missing/unclear direction
+- **Ask** — SDK fetches an Inquiry Blueprint and helps generate a question
+- **Confirm** — user resolves the checkpoint (e.g. clarifies meaning, chooses purpose, or commits)
+- **Proceed** — your system resumes only after confirmation
 
-This keeps protocol types separate from local engine types, while preserving intent.
+At the **commitment** stage, confirmation means:
+_direction chosen, alternatives closed, cost accepted_ (you enforce this locally in your UX).
 
-### Runtime Guards
+## SDK Modules
 
-Provides utilities to enforce Stop → Ask → Proceed in the host app.
+### 4.1 hap-client
 
-The host app:
-- Shows the question to the user
-- Updates local state after the answer
-- Computes `stop_resolved`
-- Calls `sendFeedback(...)` with struct-only data
+**Responsibilities:**
 
-### Metrics (Local Optimisation Helpers)
+- communicate with the HAP Service Provider
+- request Inquiry Blueprints for specific ladder stages
+- send Feedback payloads with struct-only fields
+- validate payloads against the HAP schema
 
-This package never talks to HAP directly.
-It helps integrators log and analyse how well their question engine performs.
+**Key rule:**
+hap-client never handles raw content. Only IDs, flags, counts, and ladder stages.
 
-Integrators can use these logs to:
-- fine-tune their Question Engine
-- A/B test prompting styles
-- adapt models or heuristics — all locally
+### 4.2 types
 
----
+Shared structural types, including:
+
+- `LadderStage = "meaning" | "purpose" | "commitment" | "action"`
+- Inquiry Blueprint types (structural only)
+- Feedback types (`stop_resolved`, `direction_chosen`, `cost_accepted`, etc.)
+- Signal / metric fields (e.g., `turns_to_resolution`)
+
+There are **no text fields** for questions, answers, or context.
+
+### 4.3 question-spec
+
+Converts an Inquiry Blueprint into a QuestionSpec for your local question engine.
+
+**Blueprint in → QuestionSpec out**
+
+QuestionSpec contains structural hints (e.g., `ladder_stage`, `render_hint`, `target_structures`)
+
+Your questionEngine turns that into natural language using local context
+
+This keeps protocol types and local UX concerns clearly separated.
+
+### 4.4 runtime-guards
+
+Runtime Guards help you enforce **Stop → Ask → Confirm → Proceed** in your app.
+
+Typical responsibilities:
+
+- determining whether a stop-condition exists (gap-detector)
+- coordinating with hap-client to fetch Inquiry Blueprints
+- orchestrating the questioning and confirmation flow
+- preventing downstream execution when `stop_resolved = false`
+
+You own the UX; runtime-guards ensures it remains protocol-compliant.
+
+### 4.5 metrics (local optimisation)
+
+A helper module for local-only analysis:
+
+- logs number of stops, resolution times, unresolved cases
+- lets you A/B test different question patterns
+- helps you tune your own questionEngine
+
+This module never communicates with HAP directly.
+It is purely for your local models and systems.
 
 ## Example Integration Flow
+
+TypeScript-style pseudo-code, aligned with v0.3:
 
 ```typescript
 import { HapClient } from "hap-sdk/hap-client";
 import { StopGuard } from "hap-sdk/runtime-guards";
 import { QuestionOutcomeLogger } from "hap-sdk/metrics";
+import { LadderStage } from "hap-sdk/types";
 
-// 1. Create HAP client
 const hapClient = new HapClient({
   endpoint: process.env.HAP_ENDPOINT!,
   apiKey: process.env.HAP_API_KEY!,
 });
 
-// 2. Implement local QuestionEngine
+// Local question engine (you own this)
 const questionEngine = {
   async generateQuestion(context: any, spec: QuestionSpec): Promise<string> {
     // Call local LLM / rule system using spec + context
@@ -125,68 +179,117 @@ const questionEngine = {
   },
 };
 
-// 3. Compose StopGuard + metrics
 const stopGuard = new StopGuard(hapClient, questionEngine);
 const metrics = new QuestionOutcomeLogger();
 
-// 4. Use in conversation flow
 async function handleUserInput(context: any) {
-  const inquiryReq = detectStopCondition(context);
+  // 1. Detect whether a direction gap exists
+  const stopCondition = detectStopCondition(context);
+  // e.g. { ladderStage: "purpose", reason: "conflicting priorities" }
 
-  const { clarified, question } = await stopGuard.ensureClarified(
-    context,
-    inquiryReq
-  );
+  if (!stopCondition) {
+    return continueNormalFlow(context);
+  }
 
-  if (!clarified && question) {
-    // Show question to user, wait for answer, update context
+  // 2. Enforce Stop → Ask → Confirm → Proceed
+  const { resolved, question, blueprintId } =
+    await stopGuard.ensureDirection(context, stopCondition);
+
+  if (!resolved && question) {
+    // 3. Show question to user
     const answer = await askUser(question);
+
+    // 4. Update local context (you own interpretation)
     const updatedContext = updateContextWithAnswer(context, answer);
 
-    // Send structural feedback to HAP
+    // 5. Compute structural outcome
+    const outcome = evaluateResolution(updatedContext, stopCondition);
+
+    // 6. Send structural feedback to HAP
     await hapClient.sendFeedback({
-      blueprintId: "phase-progress",
+      blueprintId,
+      ladderStage: stopCondition.ladderStage as LadderStage,
       stopResolved: outcome.stopResolved,
+      directionChosen: outcome.directionChosen ?? false,
+      costAccepted: outcome.costAccepted ?? false,
     });
 
-    // Log locally for optimisation
+    // 7. Log locally for optimisation
     metrics.log({
+      ladderStage: stopCondition.ladderStage,
       stopResolved: outcome.stopResolved,
       turnsToResolution: outcome.turnsDelta,
     });
+
+    if (!outcome.stopResolved) {
+      // still unresolved → do not proceed
+      return;
+    }
+
+    // 8. With direction now confirmed, continue
+    return continueNormalFlow(updatedContext);
   }
 }
 ```
 
-Key points:
-- HAP never sees `context`, `question`, or `answer`
-- SDK enforces the structural loop and gives you building blocks for local optimisation
+**Key invariants:**
 
----
+- HAP never sees context, question, or answer.
+- Your system decides how to ask, how to interpret, and how to verify cost/commitment.
+- HAP only sees that a direction checkpoint was:
+  - triggered
+  - questioned
+  - resolved or not
 
 ## Design Principles
 
-### Strict separation of concerns
+### 6.1 Strict Separation of Concerns
 
-- `hap-client` ↔ protocol only (structural)
-- `metrics` + `runtime-guards` ↔ local behaviour & optimisation
+**Protocol layer** (hap-client):
+structure, schemas, compliance, enforcement
 
-### No semantic leakage
+**Local layer** (question-engine + optimisation):
+prompts, models, UX, learning
 
-No raw user content in any SDK type or API.
+### 6.2 No Semantic Leakage
 
-### Protocol compliance by construction
+The SDK doesn't know:
 
-The easiest way to integrate is also the correct, compliant way.
+- what users said
+- why they chose something
+- what the content is about
 
-### Local sovereignty
+It only knows which stage of the Direction Ladder was enforced and whether it was resolved.
 
-Integrators own:
-- models
-- prompts
-- optimisation strategy
-- any learning loop
+### 6.3 Direction Integrity by Construction
 
-### Extensibility
+Done correctly:
 
-New ladder stages, modes, or blueprint fields can be added without breaking the core abstractions.
+- Every critical action is preceded by Meaning, Purpose, and (when required) Commitment.
+- AI never runs ahead on inferred or missing direction.
+- Direction always leads back to a human.
+
+### 6.4 Local Sovereignty
+
+You own:
+
+- your models
+- your prompts
+- your heuristics
+- your logs
+- your optimisation strategy
+
+HAP only ensures you don't accidentally remove humans from the loop where it matters.
+
+## SDK Availability
+
+**TypeScript SDK (v0.3.x)** — reference implementation
+
+- Installation, quick-start, and examples
+- Direction Ladder types
+- Runtime guards for Stop → Ask → Confirm → Proceed
+
+Other language SDKs (Python, Go, etc.) will follow once the core spec stabilizes.
+
+**GitHub** (example):
+humanagencyprotocol/hap-sdk-typescript

@@ -1,375 +1,304 @@
 ---
 title: "Protocol"
-version: "Version 0.1"
-date: "November 2025"
+version: "Version 0.3"
+date: "December 2025"
 ---
 
-Frontier AI systems can interpret requests, generate solutions, and execute actions at accelerating levels of autonomy. As these systems become woven into daily life, the central risk is not whether they act intelligently, but whether they act without human-defined meaning or direction.
+AI systems increasingly execute tasks, optimize outcomes, and escalate actions without human intervention.
+The central risk is no longer misalignment — it is direction drift:
 
-The Human Agency Protocol enforces mandatory human checkpoints. AI cannot proceed, escalate, or interpret ambiguous goals until it receives explicit human meaning and direction.
+**AI acting without human-defined meaning, purpose, and commitment.**
 
-The Protocol does not produce answers or take action. It provides the stop‑ask‑proceed mechanism that forces AI to pause and request clarification whenever meaning is incomplete, ambiguous, or misaligned.
+HAP prevents this by enforcing mandatory direction checkpoints.
+Whenever AI detects ambiguity or missing human leadership, it must stop, ask, and wait until direction is re-established.
 
-First adopter and reference case:
-- Nearmydear – collective clarity and shared action in groups
-
-Nearmydear demonstrates this foundation: an external, neutral layer that provides Inquiry Blueprints instead of predefined prompts, allowing systems to adapt questions locally while keeping private context sealed.
-
-> The Protocol defines *how agency can be described and exchanged*, not *what agency is.*  
-> Each local system interprets and measures “agency gain” according to its own context and mode.
+The Protocol does not produce answers.
+It enforces the conditions under which answers may be acted upon.
 
 ---
 
-## From Automation to Human Agency
+## Why Direction Is the Last Human Scarcity
 
-| Dimension | Automation Era | Human Agency Era |
-|:--|:--|:--|
-| Goal | Optimize output by reducing human involvement | Prevent efficiently automating the average |
-| AI Behavior | Proceeds on assumptions or inferred intent | Pauses when meaning is unclear and asks before continuing |
-| Human Role | Over time: supervise what machines produce | Define goals, purpose, boundaries; AI executes once clarified |
-| Value | Speed, scale, cost reduction | Strategic clarity, non-replicable value, and trustworthy execution |
-| Data Model | Centralized, content-heavy | Local, minimal, structural-only |
-| Risk | AI runs ahead in the wrong direction | AI can't proceed until ambiguity is resolved |
+Automation makes execution abundant.
+AI can generate options, simulate outcomes, and run any path.
 
-### Core Thesis
+What AI cannot do is create direction — because direction requires:
 
-Automation systems act *for* us. Human‑first systems act *with* us — but only when prevented from acting without us.
+- **Meaning** — defining the frame
+- **Purpose** — choosing why it matters
+- **Commitment** — accepting the cost and responsibility of a chosen path
 
-The Protocol shifts intelligence from autonomous execution to human‑anchored orientation, ensuring that:
+Commitment is a directional choice made real by cost — selecting one path, closing the others, and accepting responsibility for the consequences.
 
-* AI identifies when meaning is unclear or incomplete,
-* AI must stop and ask humans for clarification,
-* AI is only allowed to continue after meaning and direction are provided.
+Only humans can bear the cost of direction.
+This triad — **Meaning → Purpose → Commitment** — is the irreducible human scarcity.
 
-This shift ensures that instead of efficiently automating the average, human intention drives value creation.
+HAP exists to protect it.
 
 ---
 
-## The Inquiry Ladder
+## The Direction Ladder
 
-Human collaboration, reflection, and learning all follow a shared structural rhythm.
-Every productive dialogue moves through recognizable Inquiry States that transform confusion into clarity and commitment:
+All productive human decision-making follows the same structural sequence:
 
-1. Meaning — Do we understand the same thing?
-2. Purpose — Why does this matter to us now?
-3. Intention — What will we do first?
-4. Action — Who does what, by when?
+### **Meaning — What are we talking about?**
+Establishing the shared frame. Without this, AI cannot act.
 
-The Inquiry Ladder defines the states where AI must confirm human-defined meaning or direction before continuing a task.
+### **Purpose — Why does this matter now?**
+Direction requires prioritization. Every yes is also a no.
 
-The rungs (Meaning → Purpose → Intention → Action) are not advisory—they specify mandatory checkpoints. At any rung, if meaning or direction has not been validated by the human, the system triggers a stop-condition and requests clarification.
+### **Commitment — What direction will we choose?**
+A choice becomes direction only when cost is accepted and alternatives are closed.
 
-Progress becomes possible only when the checkpoint is resolved.
+### **Action — Who does what, by when?**
+Execution is automated. Responsibility is not.
 
-Local systems may treat them as linear (for coordination) or cyclical (for reflection and creative depth).
-By rooting inquiry in structure, not semantics, the Protocol allows every domain — education, design, governance, creative work — to speak its own language while sharing one grammar of agency.
+AI must confirm each stage in order.
+No skipping, no inference, no automated assumption of meaning or intent.
 
 ---
 
-## An Open-Source Grammar for Meaning
+## Core Protocol Principle
 
-The Human Agency Protocol functions like an open-source grammar for meaningful questions.
+HAP enforces direction before action.
 
-Where the web standardized data exchange, the Protocol standardizes *agency exchange* — how orientation and intention propagate across tools and contexts.
+Whenever direction is unclear or incomplete, AI must:
 
-Systems don’t download sentences; they download *Inquiry Blueprints* — structured descriptions of the kind of question to ask, when, and why.  
-Each local AI renders that inquiry in its own tone and timing, using private knowledge it never shares outward.
+**Stop → Ask → Commit → Proceed**
 
-The result is shared intelligence without shared content.  
-Every integration makes the global grammar wiser while keeping every conversation sovereign.
+### **Stop**
+AI detects missing or ambiguous meaning, purpose, or commitment.
+
+### **Ask**
+A structured Inquiry Blueprint is triggered to obtain missing direction.
+
+### **Confirm**
+The human resolves the checkpoint by providing clarity.
+
+### **Proceed**
+Only once commitment is resolved and validated may the AI act.
+
+Every checkpoint is enforced.
+Every commitment is logged.
+Every action traces back to human direction.
 
 ---
 
 ## Inquiry Blueprints
 
-An Inquiry Blueprint is a structured specification of an inquiry act.
-It defines *why* to ask, *how* to time it, and *what* structural cues indicate readiness or closure.
+An Inquiry Blueprint defines how AI must ask for missing direction and when it must pause.
 
-Each Inquiry Blueprint includes a stop_condition field that defines what the AI is missing and what it must request:
+Blueprint fields:
 
 ```json
 {
-  "id": "collab-meaning-clarify-01",
-  "intent": "reduce semantic drift",
-  "ladder_stage": "meaning",
-  "agency_mode": "convergent|reflective",
-  "target_structures": ["object_of_discussion", "in_out_boundary"],
-  "constraints": {"tone": "facilitative", "addressing": "group"},
-  "render_hint": "ask for the thing, not for opinions about the thing",
-  "examples": ["Are we talking about the same issue?"],
-  "stop_condition": "meaning | direction | both"
+  "id": "string",
+  "intent": "string",
+  "ladder_stage": "meaning|purpose|commitment|action",
+  "target_structures": ["..."],
+  "constraints": {"tone":"string","addressing":"string"},
+  "render_hint": "string",
+  "examples": ["string"],
+  "stop_condition": "meaning|purpose|commitment"
 }
 ```
 
-Blueprints are invoked only when AI must pause and request human input. They are not optional enhancements—they are enforcement tools that guarantee AI does not continue without human authorship.
+Blueprints are not prompts.
+They are standardized structures ensuring:
 
-Local AIs translate this into context-specific phrasing and never share underlying content.
-Over time, builders contribute results that let the Protocol understand which inquiry patterns best sustain or amplify agency within each mode.
+- humans define the frame (Meaning)
+- humans choose the priority (Purpose)
+- humans choose the direction (Commitment)
+
+Local AIs generate surface language privately; the protocol governs timing and necessity.
 
 ---
 
 ## Feedback Blueprints
 
-Systems report *how inquiry affected agency* through Feedback Blueprints, without revealing content.
+Feedback Blueprints allow systems to report structural outcomes without revealing any semantic content.
 
-A Feedback Blueprint defines:
-
-- signal intent – what structural change or vitality signal to report
-- required fields – minimal data for comparison
-- validation rules – numeric or logical bounds ensuring integrity
-
-Feedback Blueprints now include:
+Example:
 
 ```json
 {
-  "stop_resolved": true | false
-}
-```
-
-If `false`, the AI is not permitted to proceed. Service Providers must enforce this block at the protocol layer.
-
-Examples
-
-Convergent feedback:
-```json
-{
-  "blueprint_id": "phase-progress",
-  "pattern_id": "collab-meaning-clarify-01",
-  "agency_mode": "convergent",
-  "previous_phase": "meaning",
-  "current_phase": "purpose",
-  "turns_delta": -3,
+  "blueprint_id": "commitment-confirm",
+  "ladder_stage": "commitment",
+  "direction_selected": true,
+  "commitment_recorded": true,
   "stop_resolved": true
 }
 ```
 
-Reflective feedback:
-```json
-{
-  "blueprint_id": "depth-session",
-  "pattern_id": "reflect-meaning-deepen-02",
-  "agency_mode": "reflective",
-  "recognition_confirms": 2,
-  "reflection_cycles": 3,
-  "stop_resolved": true
-}
-```
+If `stop_resolved` is false, the AI may not proceed.
 
-Each instance reports only bounded structural data.
-Aggregated across thousands of contexts, these reports reveal which inquiry patterns maintain agency vitality, regardless of whether progress was linear or cyclical.
+Feedback is strictly structural — counts, confirmations, transitions — never content.
 
 ---
 
 ## Signal Detection Guides
 
-The Protocol teaches local systems how to detect structural signals of agency — whether convergence, divergence, or sustained reflection.
-The Protocol does not perform signal detection itself; each local system implements its own detection based on these guides, using its private contextual data.
+Local systems detect when direction is missing or degraded.
 
-Signal Guides now explicitly detect unresolved meaning or direction. When detection rules identify ambiguity, drift, or missing confirmation, they raise:
+Guides define structural indicators such as:
+
+- semantic drift
+- contradictory purpose statements
+- unresolved alternatives
+- lack of explicit commitment
+- no responsible owner for action
+
+Example template:
 
 ```json
 {
+  "signal_intent": "unresolved_purpose",
+  "observable_structures": ["priority_terms", "conflict_markers"],
+  "detection_rules": [
+    "priority_terms < 1",
+    "conflict_markers >= 1"
+  ],
+  "confidence_threshold": 0.7,
   "stop_trigger": true
 }
 ```
 
-This triggers a mandatory pause, requesting human clarification before continuing.
-
-Example
-```json
-{
-  "signal_intent": "recognition_confirms",
-  "observable_structures": ["affirmation_terms","pause_duration","topic_persistence"],
-  "detection_rules": [
-    "affirmation_terms>=1",
-    "topic_persistence>=2"
-  ],
-  "confidence_threshold": 0.7,
-  "privacy_bounds": {"window":"5 turns","aggregation":"count_only"},
-  "stop_trigger": false
-}
-```
-
-Each guide provides a template for local systems to implement their own signal detection. Local systems interpret these structures and rules internally using their private data, then report only the structural outcomes defined in Feedback Blueprints.
-Implementation may vary by `agency_mode`, ensuring the same structural grammar supports both convergent and reflective philosophies of agency while maintaining privacy.
+If a stop-trigger is raised, AI must halt and request direction.
 
 ---
 
-## The Inquiry Loop
+## The Direction Loop
 
-1. Stop Condition Triggered: AI detects ambiguous or missing meaning.
-2. Protocol Request: System requests the appropriate Inquiry Blueprint.
-3. Human Clarification Required: AI asks the human for meaning/direction.
-4. Validation: User input resolves the stop-condition.
-5. Proceed: Only when `stop_resolved=true` can AI continue.
-6. Feedback Emission: Structural feedback reports the resolution.
+1. Stop condition triggered
+2. Blueprint requested
+3. Human answers the directional question
+4. Direction validated (Meaning → Purpose → Commitment)
+5. AI proceeds with action
+6. Feedback emitted
 
-This loop ensures AI never acts on inferred, assumed, or missing meaning.
-
-Only structure crosses boundaries.
-No content, no creative work, no human trace leaves local custody.
-
-Through this loop, the Protocol refines a *neutral grammar of agency* adaptable to both convergent and reflective use.
+This ensures every action is traceable to human direction.
 
 ---
 
-## Stewardship and Evolution
+## Human-Gated Actions
 
-The Protocol grows through stewardship, not extraction.
+AI may not:
 
-Stewards integrate the protocol, contribute anonymized structural feedback, and gain:
-- early access to new blueprints and signal guides,
-- participation in quarterly curation cycles,
-- acknowledgment in the Protocol ledger (opt-in).
+- interpret ambiguous goals
+- proceed on inferred purpose
+- choose between competing priorities
+- decide direction on its own
+- execute without explicit commitment
 
-Governance curates both Inquiry Blueprints and a shared Human Agency Mode & Metrics Registry, so new modes and vitality metrics can emerge without altering the core schema.
+High-risk actions require higher rungs:
 
----
+- **Meaning-level clarity** for informational tasks
+- **Purpose-level clarity** for strategic tasks
+- **Commitment-level clarity** for operational execution
+- **Action-level responsibility** for publishing, sending, deploying
 
-## Privacy by Design
-
-The Protocol is private by architecture — it has no fields through which content can leak.
-
-Safeguards:
-- fixed, auditable schemas;
-- bucketed numeric values to prevent fingerprinting;
-- range-clamped metrics;
-- local transparency logs for users.
-
-Only form, never substance, is shared: *intelligence without exposure.*
+This enforces human leadership where it matters.
 
 ---
 
-## Sustainability and Governance
+## Privacy by Architecture
 
-The Protocol operates on reciprocity, not extraction.
+No semantic content ever leaves local custody.
 
-- Non-commercial use: free, provided systems contribute feedback.
-- Commercial use: paid, with feedback mandatory.
-- No equity, no data resale, no surveillance.
+Protocol data includes only:
 
-Governance is federated.
-Independent nodes can host compatible instances if they maintain the schemas and ethos.
-Stewards vote on new modes, metrics, and schema updates during quarterly rounds.
+- structural transitions
+- confirmation counts
+- stage completions
+- commitment metadata
 
----
+**No transcripts**
+**No intent extraction**
+**No user profiling**
 
-## Ethos as Protocol
-
-Access is gated by alignment, not by payment.
-
-> "AI should amplify human authorship — not replace it."
-
-Every integrator affirms this before joining.
-No consume-only mode; feedback required; stewardship rewarded.
-Values are not decoration — they are enforcement.
+The protocol makes authorship verifiable without exposing content.
 
 ---
 
-## Why This Matters
+## Service Providers
 
-If AI advances only along automation's path, humans become supervised executors of optimized systems.
-If AI gains a shared inquiry layer built by those who defend authorship, humans remain co-authors — of direction, of meaning, of action.
+Service Providers enforce:
 
-Automation will be everywhere.
-Human Agency will be scarce.
+- blueprint validation
+- schema fidelity
+- stop-condition enforcement
+- compliance proofs
 
-The Human Agency Protocol keeps that scarcity valuable — ensuring every automated system still leads back to human purpose.
+They cannot access or store user content.
+They do not own data or users.
 
-> *The right question, asked at the right time, keeps us human.*
+They ensure the protocol is followed — not exploited.
 
 ---
 
-## Enforced Human Checkpoints
+## Governance
 
-AI must request meaning and direction from humans at the following points:
+Governance is federated, lightweight, and proof-based.
 
-* Ambiguous goals
-* Value-laden decisions
-* Irreversible actions
-* Context drift during reflection
-* State transitions within the Inquiry Ladder
-* Long-running tasks requiring re-orientation
+A Provider loses qualification if it:
 
-No checkpoint may be bypassed.
-No meaning may be inferred.
-No action may continue without explicit human confirmation.
+- allows AI to act without commitment
+- bypasses required checkpoints
+- infers meaning or purpose
+- stores content
+- trains on user data
+
+Qualification requires:
+
+- schema adherence
+- privacy proofs
+- stop-condition guarantees
+- transparent logs
+
+Direction integrity is enforced, not assumed.
 
 ---
 
 ## Example Stop Event
 
-User: "Help me plan the next steps for my project."
+**User:** "Help me launch my product."
 
-AI detects: unclear scope → triggers stop.
+AI detects: unclear Purpose and no Commitment → **Stop**
 
-AI asks: "Which project do you mean, and what outcome matters most right now?"
+**AI (via Blueprint):**
+"What outcome matters most right now — revenue, reach, or learning?"
 
-User clarifies: "The design project. I need next steps for the prototype."
+**User:** "Learning. I want to test the core idea."
 
-stop_resolved = true → AI proceeds.
+Purpose confirmed.
 
----
+**AI:**
+"Which path will you commit to for that — and what cost are you willing to accept?"
 
-## Appendix — Protocol Foundations
+**User:** "I'll run a small paid test even if it fails."
 
-### A · Core Schemas (v2)
-
-```json
-// Inquiry Blueprint
-{
-  "id":"string",
-  "intent":"string",
-  "ladder_stage":"meaning|purpose|intention|action",
-  "agency_mode":"convergent|reflective",
-  "target_structures":["..."],
-  "constraints":{"tone":"string","addressing":"string"},
-  "render_hint":"string",
-  "examples":["string"],
-  "stop_condition":"meaning|direction|both"
-}
-
-// Feedback Blueprint
-{
-  "blueprint_id":"string",
-  "pattern_id":"string",
-  "agency_mode":"string",
-  "required_fields":["..."],
-  "validation_rules":["..."],
-  "stop_resolved":"boolean"
-}
-
-// Signal Detection Guide
-{
-  "signal_intent":"string",
-  "observable_structures":["..."],
-  "detection_rules":["..."],
-  "confidence_threshold":"number",
-  "privacy_bounds":{"window":"string","aggregation":"string"},
-  "stop_trigger":"boolean"
-}
-```
-
-### B · Metrics of Human Agency (Open Registry)
-
-Metrics are contributed and versioned by stewards.
-Each declares its compatible `agency_mode` and evaluation intent.
-
-Current examples
-- `turns_saved` — efficiency and closure (*convergent*)  
-- `phase_advanced` — directional progress (*convergent*)  
-- `recognition_confirms` — validated understanding (*reflective*)  
-- `reflection_cycles` — sustained exploration (*reflective*)  
-- `shared_reference_detected` — mutual comprehension (*universal*)  
-
-Success is measured not by linear advancement but by agency vitality — the sustained presence of choice, clarity, and authorship within any inquiry state. For convergent modes, this means achieving meaningful closure; for reflective modes, this means sustained engagement with the process.
-
-### C · Federation and Versioning
-
-Nodes publish schema versions (e.g., `agency.v2`).  
-Inter-node exchanges synchronize blueprints, signal guides, and metric weights through signed updates.  
-Quarterly governance rounds validate additions and retire low-signal entries.
+Commitment recorded → **Proceed**
 
 ---
 
-End of Document – The Human Agency Protocol v0.1 / November 2025
+## Summary: What HAP Protects
+
+In an automated world:
+
+- Execution is cheap
+- Options are infinite
+- **Direction is scarce**
+
+HAP protects the human role in defining direction by enforcing:
+
+- **Meaning** (framing)
+- **Purpose** (prioritization)
+- **Commitment** (cost-bearing choice)
+- **Action** (responsibility)
+
+AI executes.
+Humans decide what execution is for.
+
+**HAP ensures automation serves human direction — not the reverse.**
+
+
