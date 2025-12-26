@@ -7,7 +7,7 @@ date: "December 2025"
 AI systems increasingly execute tasks, optimize outcomes, and escalate actions without human intervention.
 The central risk is no longer misalignment — it is direction drift:
 
-**AI acting without human-defined meaning, purpose, and commitment.**
+**AI acting without human-defined direction: frame, problem, objective, tradeoff, commitment, and ownership.**
 
 HAP prevents this by enforcing mandatory direction checkpoints.
 Whenever AI detects ambiguity or missing human leadership, it must stop, ask, and wait until direction is re-established.
@@ -24,37 +24,47 @@ AI can generate options, simulate outcomes, and run any path.
 
 What AI cannot do is create direction — because direction requires:
 
-- **Meaning** — defining the frame
-- **Purpose** — choosing why it matters
-- **Commitment** — accepting the cost and responsibility of a chosen path
+- **Frame** — setting the decision boundary
+- **Problem** — justifying why to act
+- **Objective** — choosing what to optimize
+- **Tradeoff** — accepting what must be sacrificed
+- **Commitment** — selecting a path and closing alternatives
+- **Owner** — taking responsibility for consequences
 
-Commitment is a directional choice made real by cost — selecting one path, closing the others, and accepting responsibility for the consequences.
+Commitment is the point of no return — where alternatives close and consequences become real.
 
 Only humans can bear the cost of direction.
-This triad — **Meaning → Purpose → Commitment** — is the irreducible human scarcity.
+These six decision closure states are the irreducible human scarcity.
 
 HAP exists to protect it.
 
 ---
 
-## The Direction Ladder
+## Decision Closure States
 
-All productive human decision-making follows the same structural sequence:
+All productive human decision-making requires resolving these states.
+They are not sequential — they are conditions that must be satisfied before execution.
 
-### **Meaning — What are we talking about?**
-Establishing the shared frame. Without this, AI cannot act.
+### **Frame — What's the decision boundary?**
+Establishing what we're deciding about. Without this, AI has no context.
 
-### **Purpose — Why does this matter now?**
-Direction requires prioritization. Every yes is also a no.
+### **Problem — What's the justified reason to act?**
+Every action requires justification. What problem makes this worth addressing?
 
-### **Commitment — What direction will we choose?**
-A choice becomes direction only when cost is accepted and alternatives are closed.
+### **Objective — What outcome are we optimizing for?**
+AI can optimize anything, but only humans can choose what matters.
 
-### **Action — Who does what, by when?**
-Execution is automated. Responsibility is not.
+### **Tradeoff — What cost are we accepting?**
+Every choice has a cost. What are we willing to sacrifice?
 
-AI must confirm each stage in order.
-No skipping, no inference, no automated assumption of meaning or intent.
+### **Commitment — What path have we selected?**
+Commitment closes alternatives. This is the point of no return.
+
+### **Owner — Who takes responsibility?**
+Execution creates consequences. Someone must own them.
+
+AI must confirm all required states before execution.
+No skipping, no inference, no automated assumption.
 
 ---
 
@@ -67,7 +77,7 @@ Whenever direction is unclear or incomplete, AI must:
 **Stop → Ask → Commit → Proceed**
 
 ### **Stop**
-AI detects missing or ambiguous meaning, purpose, or commitment.
+AI detects missing or ambiguous decision states: frame, problem, objective, tradeoff, commitment, or owner.
 
 ### **Ask**
 A structured Inquiry Blueprint is triggered to obtain missing direction.
@@ -94,21 +104,24 @@ Blueprint fields:
 {
   "id": "string",
   "intent": "string",
-  "ladder_stage": "meaning|purpose|commitment|action",
+  "target_state": "frame|problem|objective|tradeoff|commitment|owner",
   "target_structures": ["..."],
   "constraints": {"tone":"string","addressing":"string"},
   "render_hint": "string",
   "examples": ["string"],
-  "stop_condition": "meaning|purpose|commitment"
+  "stop_conditions": ["frame", "commitment"]
 }
 ```
 
 Blueprints are not prompts.
 They are standardized structures ensuring:
 
-- humans define the frame (Meaning)
-- humans choose the priority (Purpose)
-- humans choose the direction (Commitment)
+- humans set the frame
+- humans identify the problem
+- humans choose the objective
+- humans accept the tradeoff
+- humans make the commitment
+- humans assign the owner
 
 Local AIs generate surface language privately; the protocol governs timing and necessity.
 
@@ -123,9 +136,9 @@ Example:
 ```json
 {
   "blueprint_id": "commitment-confirm",
-  "ladder_stage": "commitment",
-  "direction_selected": true,
-  "commitment_recorded": true,
+  "resolved_states": ["frame", "problem", "objective", "tradeoff", "commitment"],
+  "missing_states": [],
+  "execution_allowed": true,
   "stop_resolved": true
 }
 ```
@@ -152,10 +165,10 @@ Example template:
 
 ```json
 {
-  "signal_intent": "unresolved_purpose",
-  "observable_structures": ["priority_terms", "conflict_markers"],
+  "signal_intent": "unresolved_objective",
+  "observable_structures": ["optimization_targets", "conflict_markers"],
   "detection_rules": [
-    "priority_terms < 1",
+    "optimization_targets < 1",
     "conflict_markers >= 1"
   ],
   "confidence_threshold": 0.7,
@@ -167,16 +180,17 @@ If a stop-trigger is raised, AI must halt and request direction.
 
 ---
 
-## The Direction Loop
+## The Decision Closure Loop
 
-1. Stop condition triggered
-2. Blueprint requested
-3. Human answers the directional question
-4. Direction validated (Meaning → Purpose → Commitment)
-5. AI proceeds with action
-6. Feedback emitted
+1. **State gap detected** — AI identifies missing or ambiguous decision state
+2. **Targeted inquiry** — Blueprint requests specific state resolution
+3. **Human resolves** — Human provides missing direction
+4. **Closure evaluated** — System checks if all required states are resolved
+5. **Execute or continue** — If closure achieved, AI proceeds; otherwise, loop continues
+6. **Feedback emitted** — Structural confirmation logged
 
-This ensures every action is traceable to human direction.
+Order doesn't matter. Only closure matters.
+Every action is traceable to complete human direction.
 
 ---
 
@@ -184,20 +198,23 @@ This ensures every action is traceable to human direction.
 
 AI may not:
 
-- interpret ambiguous goals
-- proceed on inferred purpose
-- choose between competing priorities
-- decide direction on its own
-- execute without explicit commitment
+- interpret ambiguous framing
+- infer the problem to solve
+- choose optimization targets
+- decide what tradeoffs to accept
+- make commitments without explicit human choice
+- execute without assigned responsibility
 
-High-risk actions require higher rungs:
+Actions require different state resolution based on risk:
 
-- **Meaning-level clarity** for informational tasks
-- **Purpose-level clarity** for strategic tasks
-- **Commitment-level clarity** for operational execution
-- **Action-level responsibility** for publishing, sending, deploying
+| Action Type | Required States |
+|:---|:---|
+| Informational queries | Frame |
+| Planning & analysis | Frame, Problem, Objective |
+| Execution | All states (Frame, Problem, Objective, Tradeoff, Commitment, Owner) |
+| Public/irreversible actions | All states + explicit reconfirmation |
 
-This enforces human leadership where it matters.
+This enforces human leadership at the point of irreversibility.
 
 ---
 
@@ -263,21 +280,21 @@ Direction integrity is enforced, not assumed.
 
 **User:** "Help me launch my product."
 
-AI detects: unclear Purpose and no Commitment → **Stop**
+AI detects: unclear Problem, missing Objective, no Commitment → **Stop**
 
 **AI (via Blueprint):**
-"What outcome matters most right now — revenue, reach, or learning?"
+"What problem are you trying to solve — and what outcome matters most?"
 
-**User:** "Learning. I want to test the core idea."
+**User:** "Testing whether the core idea resonates. I want to learn, not optimize for revenue yet."
 
-Purpose confirmed.
+Problem and Objective confirmed.
 
 **AI:**
-"Which path will you commit to for that — and what cost are you willing to accept?"
+"What path will you commit to — and what cost are you willing to accept?"
 
-**User:** "I'll run a small paid test even if it fails."
+**User:** "I'll run a small paid test. I accept that it might fail and teach me nothing."
 
-Commitment recorded → **Proceed**
+Tradeoff and Commitment recorded → **Proceed**
 
 ---
 
@@ -291,10 +308,14 @@ In an automated world:
 
 HAP protects the human role in defining direction by enforcing:
 
-- **Meaning** (framing)
-- **Purpose** (prioritization)
-- **Commitment** (cost-bearing choice)
-- **Action** (responsibility)
+- **Frame** (decision boundary)
+- **Problem** (justification)
+- **Objective** (optimization target)
+- **Tradeoff** (accepted cost)
+- **Commitment** (binding choice)
+- **Owner** (responsibility)
+
+These are not steps. They are closure conditions.
 
 AI executes.
 Humans decide what execution is for.

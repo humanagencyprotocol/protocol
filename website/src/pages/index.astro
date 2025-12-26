@@ -100,10 +100,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="comparison-card highlight">
                 <h3>AI cannot:</h3>
                 <ul>
-                    <li>define what matters</li>
-                    <li>choose which priority wins</li>
-                    <li>decide what is worth the cost</li>
-                    <li>commit an identity</li>
+                    <li>set the frame</li>
+                    <li>justify why to act (problem)</li>
+                    <li>choose what to optimize (objective)</li>
+                    <li>accept the tradeoff</li>
+                    <li>make binding commitment</li>
                     <li>take responsibility</li>
                 </ul>
             </div>
@@ -118,40 +119,50 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     <!-- The HAP Checkpoints -->
     <section class="checkpoints-section">
-        <h2 class="section-title">The HAP Checkpoints</h2>
-        <p class="section-intro">HAP integrates into any AI system and forces it to pause whenever a real human decision is required.</p>
-        <p class="section-intro emphasis">AI cannot continue until the human sets direction.</p>
+        <h2 class="section-title">Decision Closure States</h2>
+        <p class="section-intro">HAP integrates into any AI system and forces it to pause until all required decision states are resolved by a human.</p>
+        <p class="section-intro emphasis">AI cannot execute without explicit closure.</p>
 
         <div class="checkpoints">
             <div class="checkpoint">
-                <div class="checkpoint-number">1</div>
                 <div class="checkpoint-content">
-                    <h4>Meaning — What are we talking about?</h4>
-                    <p>Humans set the frame. Machines cannot.</p>
+                    <h4>Frame — What's the decision boundary?</h4>
+                    <p>Humans define what we're deciding about. AI cannot set its own frame.</p>
                 </div>
             </div>
 
             <div class="checkpoint">
-                <div class="checkpoint-number">2</div>
                 <div class="checkpoint-content">
-                    <h4>Purpose — Why does this matter now?</h4>
-                    <p>Prioritization is a trade-off. Only humans can make it.</p>
+                    <h4>Problem — What's the justified reason to act?</h4>
+                    <p>Action requires justification. Only humans can determine what's worth addressing.</p>
                 </div>
             </div>
 
             <div class="checkpoint">
-                <div class="checkpoint-number">3</div>
                 <div class="checkpoint-content">
-                    <h4>Commitment — What will we commit to?</h4>
-                    <p>Options are cheap. Commitment costs — and only humans can pay it.</p>
+                    <h4>Objective — What outcome are we optimizing for?</h4>
+                    <p>AI can optimize, but only humans can choose what to optimize.</p>
                 </div>
             </div>
 
             <div class="checkpoint">
-                <div class="checkpoint-number">4</div>
                 <div class="checkpoint-content">
-                    <h4>Action — Who owns the outcome?</h4>
-                    <p>Machines execute. Humans take responsibility.</p>
+                    <h4>Tradeoff — What cost are we accepting?</h4>
+                    <p>Every choice has a cost. Only humans can accept what must be sacrificed.</p>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-content">
+                    <h4>Commitment — What path have we selected?</h4>
+                    <p>Commitment closes alternatives. Only humans can make this binding choice.</p>
+                </div>
+            </div>
+
+            <div class="checkpoint">
+                <div class="checkpoint-content">
+                    <h4>Owner — Who takes responsibility?</h4>
+                    <p>Execution creates consequences. Only humans can own them.</p>
                 </div>
             </div>
         </div>
@@ -631,9 +642,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     .checkpoints {
         display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 1.5rem;
         margin-top: 3rem;
-        max-width: 900px;
+        max-width: 1200px;
     }
 
     .checkpoint {
@@ -890,6 +902,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
 
     /* Responsive */
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .checkpoints {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
     @media (max-width: 768px) {
         .hero {
             padding-top: 8rem;
@@ -924,6 +942,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         .checkpoint {
             flex-direction: column;
             text-align: center;
+        }
+
+        .checkpoints {
+            grid-template-columns: 1fr;
         }
     }
 </style>

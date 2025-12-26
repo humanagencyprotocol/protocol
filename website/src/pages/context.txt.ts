@@ -9,6 +9,7 @@ export async function GET() {
   // Read the raw markdown files
   const protocolContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/protocol.md'), 'utf-8');
   const serviceContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/service.md'), 'utf-8');
+  const integrationContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/integration.md'), 'utf-8');
   const governanceContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/governance.md'), 'utf-8');
 
   // Combine all content
@@ -76,10 +77,11 @@ If a decision can be reversed or ignored without consequence, it isn't direction
 - scale instantly
 
 **AI cannot:**
-- define what matters
-- choose which priority wins
-- decide what is worth the cost
-- commit an identity
+- set the frame
+- justify why to act (problem)
+- choose what to optimize (objective)
+- accept the tradeoff
+- make binding commitment
 - take responsibility
 
 **Direction is human.**
@@ -88,23 +90,29 @@ If a decision can be reversed or ignored without consequence, it isn't direction
 
 ---
 
-### The HAP Checkpoints
+### Decision Closure States
 
-HAP integrates into any AI system and forces it to pause whenever a real human decision is required.
+HAP integrates into any AI system and forces it to pause until all required decision states are resolved by a human.
 
-AI cannot continue until the human sets direction.
+AI cannot execute without explicit closure.
 
-**1. Meaning — What are we talking about?**
-Humans set the frame. Machines cannot.
+**Frame — What's the decision boundary?**
+Humans define what we're deciding about. AI cannot set its own frame.
 
-**2. Purpose — Why does this matter now?**
-Prioritization is a trade-off. Only humans can make it.
+**Problem — What's the justified reason to act?**
+Action requires justification. Only humans can determine what's worth addressing.
 
-**3. Commitment — What will we commit to?**
-Options are cheap. Commitment costs — and only humans can pay it.
+**Objective — What outcome are we optimizing for?**
+AI can optimize, but only humans can choose what to optimize.
 
-**4. Action — Who owns the outcome?**
-Machines execute. Humans take responsibility.
+**Tradeoff — What cost are we accepting?**
+Every choice has a cost. Only humans can accept what must be sacrificed.
+
+**Commitment — What path have we selected?**
+Commitment closes alternatives. Only humans can make this binding choice.
+
+**Owner — Who takes responsibility?**
+Execution creates consequences. Only humans can own them.
 
 ---
 
@@ -160,6 +168,7 @@ We preserve the one thing automation cannot replace:
 ### Build With HAP
 
 - **Protocol** — How direction is described, measured, and enforced
+- **Integration** — How to integrate HAP into applications
 - **SDK** — Tools for integrating direction checkpoints
 - **Service Providers** — Verified infrastructure enforcing compliance
 - **Governance** — Transparent, federated oversight
@@ -169,6 +178,10 @@ We preserve the one thing automation cannot replace:
 ---
 
 ${protocolContent}
+
+---
+
+${integrationContent}
 
 ---
 
