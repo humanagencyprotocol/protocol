@@ -22,47 +22,25 @@ export async function GET() {
 
 ## Homepage
 
-### When AI Can Do Everything, The Only Value Left Is Deciding What Matters.
-### HAP Makes Sure Humans Still Do That.
+### Execution is cheap. Direction is scarce.
+### HAP is the protocol for human-authored direction. It ensures AI never executes without a Decision Owner.
 
 AI makes execution effortless — producing, optimizing, and handling tasks faster than humans ever could.
+But AI cannot define why the work matters or which path is worth the cost.
 
-But AI cannot define direction.
-It cannot decide what matters, what the work is for, or which path is worth pursuing.
-
-**Direction is the last human domain.**
-**HAP protects it.**
+**HAP ensures humans define the frame, accept the tradeoffs, and own the consequences.**
 
 ---
 
-### Why HAP Exists
+### The Scarcity of Direction
 
-Modern AI systems don't wait.
-They act, escalate, optimize, and predict.
+Modern AI doesn't wait. It predicts, escalates, and acts at machine speed. But without human leadership, AI moves into a **decision vacuum—substituting statistical probability for the unique human innovation that creates real value.**
 
-HAP forces AI to pause whenever a human decision is required.
-No assumptions. No silent automation.
-The system cannot move forward until a human sets direction.
+To remain in control, we must enforce a fundamental boundary:
 
-If humans stop defining direction, AI will step into the vacuum — not maliciously, but because it moves faster than we do.
+> “No consequential action may be taken in a human system without an identifiable human who has explicitly authorized it, understood its tradeoffs, and accepted responsibility for its outcomes.”
 
-And when AI sets the direction, **it optimizes for its metrics, not human needs.**
-
-HAP prevents that by enforcing human direction at the moments automation cannot replace.
-
----
-
-### Why Direction Has a Cost — And Why It Matters
-
-AI can execute any path, but only humans can choose which path should exist.
-That choice has a cost: choosing one direction means abandoning others.
-
-A direction has meaning only when a human is willing to carry the responsibility and consequences that come with it.
-AI has no stakes — therefore it cannot choose.
-
-If a decision can be reversed or ignored without consequence, it isn't direction. It's preference.
-
-**HAP ensures direction is human-defined, human-owned, and costly enough to matter — no back door, no avoidance.**
+HAP turns this axiom into infrastructure. It ensures every action traces back to a human **Decision Owner** who provides the direction machine intelligence cannot duplicate. By forcing AI to pause at the point of irreversibility, HAP keeps authorship human and innovation possible.
 
 ---
 
@@ -82,7 +60,7 @@ If a decision can be reversed or ignored without consequence, it isn't direction
 - choose what to optimize (objective)
 - accept the tradeoff
 - make binding commitment
-- take responsibility
+- be a decision owner
 
 **Direction is human.**
 **Execution is machine.**
@@ -90,29 +68,27 @@ If a decision can be reversed or ignored without consequence, it isn't direction
 
 ---
 
-### Decision Closure States
+### The Six Human Gates
 
-HAP integrates into any AI system and forces it to pause until all required decision states are resolved by a human.
+AI can simulate a thousand paths, but it cannot open the gate to any of them. HAP enforces these mandatory preconditions before any execution begins.
 
-AI cannot execute without explicit closure.
+**Frame — The Boundary**
+Humans define what we are deciding. AI has no context until a human sets the decision boundary.
 
-**Frame — What's the decision boundary?**
-Humans define what we're deciding about. AI cannot set its own frame.
+**Problem — The Justification**
+Every action needs a reason. AI calculates solutions; only humans determine if the problem is worth solving.
 
-**Problem — What's the justified reason to act?**
-Action requires justification. Only humans can determine what's worth addressing.
+**Objective — The Optimization**
+AI optimizes for any metric. Only humans can choose which outcome actually matters.
 
-**Objective — What outcome are we optimizing for?**
-AI can optimize, but only humans can choose what to optimize.
+**Tradeoff — The Cost**
+Every choice abandons alternatives. Only humans can accept the loss of what is sacrificed.
 
-**Tradeoff — What cost are we accepting?**
-Every choice has a cost. Only humans can accept what must be sacrificed.
+**Commitment — The Point of No Return**
+Commitment makes a choice binding. Only a human can make an AI action irreversible.
 
-**Commitment — What path have we selected?**
-Commitment closes alternatives. Only humans can make this binding choice.
-
-**Owner — Who takes responsibility?**
-Execution creates consequences. Only humans can own them.
+**Decision Owner — The Responsibility**
+Authorship and Ownership are unified. No action is taken without an identifiable human who bears the consequences.
 
 ---
 
@@ -120,7 +96,7 @@ Execution creates consequences. Only humans can own them.
 
 **Stop → Ask → Confirm → Proceed**
 
-1. **Stop** — AI detects unclear meaning, purpose, commitment, or responsibility.
+1. **Stop** — AI detects missing or ambiguous decision states: frame, problem, objective, tradeoff, commitment, or decision owner.
 2. **Ask** — HAP triggers a structured question that forces human direction.
 3. **Confirm** — The human confirms the decision the AI must follow.
 4. **Proceed** — Only then does the system continue.
@@ -128,6 +104,18 @@ Execution creates consequences. Only humans can own them.
 **No skipping.**
 **No inference.**
 **No silent automation.**
+
+---
+
+### Compliant by Architecture
+
+Aligning with the EU AI Act—the global benchmark for AI governance.
+
+The **EU AI Act** mandates that high-risk AI systems must be subject to effective human oversight (**Article 14**). HAP transforms this legal requirement from a policy checkbox into enforceable protocol behavior.
+
+- **Verifiable Oversight** — Directly satisfies regulatory mandates by ensuring AI never acts without an explicit "gate" opened by a human.
+- **Liability Protection** — Closes the legal vacuum of "unowned" AI execution by cryptographically linking every action to a human Decision Owner.
+- **Audit-Ready Infrastructure** — Provides a structural, tamper-proof trail of authorship, tradeoffs, and commitments for every consequence domain.
 
 ---
 
@@ -153,11 +141,10 @@ HAP is the boundary that preserves human authorship in an automated world.
 You stop drifting through AI-generated options and start defining what matters.
 
 **Teams**
-Alignment becomes real — because decisions require shared commitment.
+Alignment becomes real — because decisions require explicit, domain-scoped commitment from all affected decision owners.
 
 **Organizations**
-Strategy becomes human-led again.
-Accountability returns.
+Strategy becomes human-led again. Authorship and ownership are unified across every consequence domain.
 
 **Society**
 We preserve the one thing automation cannot replace:
@@ -168,7 +155,6 @@ We preserve the one thing automation cannot replace:
 ### Build With HAP
 
 - **Protocol** — How direction is described, measured, and enforced
-- **Integration** — How to integrate HAP into applications
 - **SDK** — Tools for integrating direction checkpoints
 - **Service Providers** — Verified infrastructure enforcing compliance
 - **Governance** — Transparent, federated oversight
