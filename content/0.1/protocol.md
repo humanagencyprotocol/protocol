@@ -29,7 +29,7 @@ What AI cannot do is create direction — because direction requires:
 - **Objective** — choosing what to optimize
 - **Tradeoff** — accepting what must be sacrificed
 - **Commitment** — selecting a path and closing alternatives
-- **Owner** — taking responsibility for consequences
+- **Decision Owner** — the gate for valid decision-making
 
 Commitment is the point of no return — where alternatives close and consequences become real.
 
@@ -60,11 +60,44 @@ Every choice has a cost. What are we willing to sacrifice?
 ### **Commitment — What path have we selected?**
 Commitment closes alternatives. This is the point of no return.
 
-### **Owner — Who takes responsibility?**
+### **Decision Owner — Who takes responsibility?**
 Execution creates consequences. Someone must own them.
 
 AI must confirm all required states before execution.
 No skipping, no inference, no automated assumption.
+
+---
+
+## Decision Ownership & Consequence Domains
+
+> “No consequential action may be taken in a human system without an identifiable human who has explicitly authorized it, understood its tradeoffs, and accepted responsibility for its outcomes.”
+
+Ownership is not just a state — it is a **gate for valid decision-making**.
+
+### The Decision Owner
+A **Decision Owner** is any actor who:
+1. Is materially affected by a decision frame.
+2. Participates in defining and committing to that decision.
+3. Bears the consequences of execution within their affected domain.
+
+Authorship and ownership are inseparable. You cannot authorize what you do not own.
+
+### Consequence Domains
+Consequences are partitioned by domain. Any actor materially affected in a domain must be a decision owner for that domain.
+
+Common domains include:
+- **Delivery** (Scope, timeline, quality)
+- **Financial** (Budget, ROI, cost)
+- **Legal** (Compliance, liability)
+- **Reputational** (Brand, trust)
+- **Wellbeing** (Burnout, safety)
+
+### Multi-Owner Decisions
+Decisions may have multiple owners.
+However, collective or symbolic ownership ("The Team owns this") is invalid.
+Ownership must be explicit, domain-scoped, and jointly committed.
+
+**Invariant:** No decision frame may be committed unless all materially affected decision owners are identified and participating.
 
 ---
 
@@ -77,7 +110,7 @@ Whenever direction is unclear or incomplete, AI must:
 **Stop → Ask → Commit → Proceed**
 
 ### **Stop**
-AI detects missing or ambiguous decision states: frame, problem, objective, tradeoff, commitment, or owner.
+AI detects missing or ambiguous decision states: frame, problem, objective, tradeoff, commitment, or decision owner.
 
 ### **Ask**
 A structured Inquiry Blueprint is triggered to obtain missing direction.
@@ -104,7 +137,8 @@ Blueprint fields:
 {
   "id": "string",
   "intent": "string",
-  "target_state": "frame|problem|objective|tradeoff|commitment|owner",
+  "target_state": "frame|problem|objective|tradeoff|commitment|decision_owners",
+  "required_domains": ["delivery", "budget", "legal"],
   "target_structures": ["..."],
   "constraints": {"tone":"string","addressing":"string"},
   "render_hint": "string",
@@ -121,7 +155,7 @@ They are standardized structures ensuring:
 - humans choose the objective
 - humans accept the tradeoff
 - humans make the commitment
-- humans assign the owner
+- humans identify the decision owners
 
 Local AIs generate surface language privately; the protocol governs timing and necessity.
 
@@ -159,19 +193,18 @@ Guides define structural indicators such as:
 - contradictory purpose statements
 - unresolved alternatives
 - lack of explicit commitment
-- no responsible owner for action
+- missing decision owner
 
 Example template:
 
 ```json
 {
-  "signal_intent": "unresolved_objective",
-  "observable_structures": ["optimization_targets", "conflict_markers"],
+  "signal_intent": "missing_decision_owner",
+  "observable_structures": ["affected_domains", "declared_owners"],
   "detection_rules": [
-    "optimization_targets < 1",
-    "conflict_markers >= 1"
+    "affected_domains > declared_owners"
   ],
-  "confidence_threshold": 0.7,
+  "confidence_threshold": 0.9,
   "stop_trigger": true
 }
 ```
@@ -211,7 +244,7 @@ Actions require different state resolution based on risk:
 |:---|:---|
 | Informational queries | Frame |
 | Planning & analysis | Frame, Problem, Objective |
-| Execution | All states (Frame, Problem, Objective, Tradeoff, Commitment, Owner) |
+| Execution | All states (Frame, Problem, Objective, Tradeoff, Commitment, Decision Owner) |
 | Public/irreversible actions | All states + explicit reconfirmation |
 
 This enforces human leadership at the point of irreversibility.
@@ -313,7 +346,7 @@ HAP protects the human role in defining direction by enforcing:
 - **Objective** (optimization target)
 - **Tradeoff** (accepted cost)
 - **Commitment** (binding choice)
-- **Owner** (responsibility)
+- **Decision Owner** (responsibility)
 
 These are not steps. They are closure conditions.
 

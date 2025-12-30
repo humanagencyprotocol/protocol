@@ -14,6 +14,16 @@
     --accent-subtle: #FFF8E7;
     --border: #e5e5e5;
     --spacing-unit: 1rem;
+    --nav-height: 80px;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Ensure all elements with an ID (anchor targets) account for the fixed header */
+[id] {
+    scroll-margin-top: var(--nav-height);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -111,6 +121,8 @@ nav ul {
     display: flex;
     gap: 2rem;
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 nav a {

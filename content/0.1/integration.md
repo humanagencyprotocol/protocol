@@ -4,292 +4,292 @@ version: "Version 0.3"
 date: "December 2025"
 ---
 
-The HAP SDK gives builders a simple way to embed the Human Agency Protocol into any AI system.
+The Integration layer describes how any application—local, cloud, mobile, embedded, or enterprise—implements the Human Agency Protocol.
 
-It does two things:
+It does not require using the reference SDK.
+Applications may:
 
-1. **Enforces protocol compliance** — Stop → Ask → Confirm → Proceed
-2. **Improves local question-asking over time** — without ever leaking content
+- implement the protocol manually
+- use the SDK as scaffolding
+- run their own certified models locally
+- build custom enforcement layers
+- integrate HAP into existing assistant architectures
 
-The SDK ensures that **AI cannot advance** past key direction checkpoints until a human has confirmed or committed to them.
+What matters is not how you implement it.
+What matters is what must be enforced.
 
----
+HAP integration means one thing:
 
-## What the SDK Provides
+**Your application cannot execute, escalate, or access AGI until a human has defined Meaning, Purpose, and (when required) Commitment.**
 
-### 1. Protocol Compliance
+Everything else is an implementation detail.
 
-The SDK handles all communication with a HAP Service Provider:
+## The Responsibility of Applications
 
-- requesting **Inquiry Blueprints** for specific ladder stages
-- emitting **Feedback** with purely structural fields
-- enforcing the **Stop → Ask → Confirm → Proceed** loop in your app
+Every HAP-compliant application must implement four structural responsibilities:
 
-It guarantees that only **structural signals** leave local custody.
-All user content (prompts, answers, context) stays local.
+### Detect Direction Gaps
 
-### 2. Local Question Optimisation
+Your system must detect when a human decision is missing at any stage:
 
-The SDK also includes a lightweight optimisation helper that lets your system:
+- unclear Meaning
+- ambiguous or unprioritized Purpose
+- unchosen Commitment
+- missing or unowned Action
 
-- log how often stop-conditions are triggered
-- measure how quickly humans resolve checkpoints
-- compare question strategies (A/B) locally
+These gaps are not semantic.
+They are structural.
 
-All optimisation uses structural results only (e.g., `stop_resolved`, `turns_to_resolution`).
-No semantics are ever sent to HAP.
+You decide how you detect them:
 
----
+- rule-based analysis
+- metadata from your local model
+- heuristics
+- UI state
+- custom logic
 
-## Direction-Aware Architecture
+HAP only requires that when the gap exists, execution must stop.
 
-```text
-app / platform
-   │
-   ├── hap-sdk
-   │     ├── hap-client         (protocol integration)
-   │     ├── types              (structural types for direction)
-   │     ├── question-spec      (Blueprint → QuestionSpec mapping)
-   │     ├── runtime-guards     (Stop → Ask → Confirm → Proceed)
-   │     └── metrics & logging  (local optimisation signals)
-   │
-   └── local-ai
-         ├── stage-detector     (meaning/purpose/commitment/action)
-         ├── gap-detector       (detects missing direction)
-         ├── question-engine    (LLM / rules)
-         └── optimisation layer (integrator-defined)
+### Enforce Stop → Ask → Confirm → Proceed
+
+Once a direction gap is detected:
+
+**Stop**
+- Pause all downstream execution.
+
+**Ask**
+- Request an Inquiry Blueprint from a Service Provider.
+- Render a question locally (LLM or rule-based).
+
+**Confirm**
+- The human clarifies Meaning, chooses Purpose, or commits to a direction.
+
+**Proceed**
+- Only then can the application continue.
+
+Applications control:
+
+- the UX
+- the language
+- how answers modify context
+- how commitment is verified and stored
+
+What they may not do is proceed without confirmation.
+
+### Maintain Direction Integrity
+
+Your app must record, track, and enforce the Direction Ladder:
+
+- **Meaning** — "What are we talking about?"
+- **Purpose** — "Why does this matter now?"
+- **Commitment** — "What direction do we choose, and what cost do we accept?"
+- **Action** — "Who takes responsibility?"
+
+This structure is mandatory.
+Your app may extend it, but may not skip or reorder it.
+
+### Request Direction Tokens Before Accessing AGI
+
+Before calling any remote AGI, the application must request a Direction Token from a Service Provider.
+
+To receive the token, your app must prove (structurally):
+
+- Meaning resolved
+- Purpose resolved
+- Commitment made (if required)
+- No unresolved direction gaps
+
+If the token is denied:
+
+- your app must not call AGI
+- the AGI model will reject calls without a valid token
+
+This guarantees AGI never interacts with users directly and never runs without confirmed human direction.
+
+## Integrating the Direction Ladder Into Your Application
+
+HAP doesn't tell you how to implement this.
+It tells you what must be true.
+
+Applications decide:
+
+- how to represent Meaning
+- how to detect Purpose conflicts
+- how commitment is captured
+- how responsibility is assigned
+- how they maintain direction state
+- how they surface questions
+
+The protocol only requires structural compliance.
+
+**Minimal example of internal state tracking:**
 ```
-
-The SDK never handles or transmits:
-
-- user input
-- model prompts
-- generated answers
-
-It only sees and enforces direction structure.
-
-## Core Concepts in the SDK
-
-### Direction Ladder (in code)
-
-The SDK exposes typed ladder stages:
-
-- `meaning`
-- `purpose`
-- `commitment`
-- `action`
-
-Your system uses these to tell HAP which checkpoint it is enforcing.
-
-### Operational Loop
-
-The SDK helps enforce the runtime loop:
-
-**Stop → Ask → Confirm → Proceed**
-
-- **Stop** — your system detects missing/unclear direction
-- **Ask** — SDK fetches an Inquiry Blueprint and helps generate a question
-- **Confirm** — user resolves the checkpoint (e.g. clarifies meaning, chooses purpose, or commits)
-- **Proceed** — your system resumes only after confirmation
-
-At the **commitment** stage, confirmation means:
-_direction chosen, alternatives closed, cost accepted_ (you enforce this locally in your UX).
-
-## SDK Modules
-
-### 4.1 hap-client
-
-**Responsibilities:**
-
-- communicate with the HAP Service Provider
-- request Inquiry Blueprints for specific ladder stages
-- send Feedback payloads with struct-only fields
-- validate payloads against the HAP schema
-
-**Key rule:**
-hap-client never handles raw content. Only IDs, flags, counts, and ladder stages.
-
-### 4.2 types
-
-Shared structural types, including:
-
-- `LadderStage = "meaning" | "purpose" | "commitment" | "action"`
-- Inquiry Blueprint types (structural only)
-- Feedback types (`stop_resolved`, `direction_chosen`, `cost_accepted`, etc.)
-- Signal / metric fields (e.g., `turns_to_resolution`)
-
-There are **no text fields** for questions, answers, or context.
-
-### 4.3 question-spec
-
-Converts an Inquiry Blueprint into a QuestionSpec for your local question engine.
-
-**Blueprint in → QuestionSpec out**
-
-QuestionSpec contains structural hints (e.g., `ladder_stage`, `render_hint`, `target_structures`)
-
-Your questionEngine turns that into natural language using local context
-
-This keeps protocol types and local UX concerns clearly separated.
-
-### 4.4 runtime-guards
-
-Runtime Guards help you enforce **Stop → Ask → Confirm → Proceed** in your app.
-
-Typical responsibilities:
-
-- determining whether a stop-condition exists (gap-detector)
-- coordinating with hap-client to fetch Inquiry Blueprints
-- orchestrating the questioning and confirmation flow
-- preventing downstream execution when `stop_resolved = false`
-
-You own the UX; runtime-guards ensures it remains protocol-compliant.
-
-### 4.5 metrics (local optimisation)
-
-A helper module for local-only analysis:
-
-- logs number of stops, resolution times, unresolved cases
-- lets you A/B test different question patterns
-- helps you tune your own questionEngine
-
-This module never communicates with HAP directly.
-It is purely for your local models and systems.
-
-## Example Integration Flow
-
-TypeScript-style pseudo-code, aligned with v0.3:
-
-```typescript
-import { HapClient } from "hap-sdk/hap-client";
-import { StopGuard } from "hap-sdk/runtime-guards";
-import { QuestionOutcomeLogger } from "hap-sdk/metrics";
-import { LadderStage } from "hap-sdk/types";
-
-const hapClient = new HapClient({
-  endpoint: process.env.HAP_ENDPOINT!,
-  apiKey: process.env.HAP_API_KEY!,
-});
-
-// Local question engine (you own this)
-const questionEngine = {
-  async generateQuestion(context: any, spec: QuestionSpec): Promise<string> {
-    // Call local LLM / rule system using spec + context
-    return myLocalLLM.generateQuestion(context, spec);
-  },
+directionState = {
+  meaning: { resolved: false, value: null },
+  purpose: { resolved: false, value: null },
+  commitment: { resolved: false, value: null },
+  action: { resolved: false, value: null },
 };
-
-const stopGuard = new StopGuard(hapClient, questionEngine);
-const metrics = new QuestionOutcomeLogger();
-
-async function handleUserInput(context: any) {
-  // 1. Detect whether a direction gap exists
-  const stopCondition = detectStopCondition(context);
-  // e.g. { ladderStage: "purpose", reason: "conflicting priorities" }
-
-  if (!stopCondition) {
-    return continueNormalFlow(context);
-  }
-
-  // 2. Enforce Stop → Ask → Confirm → Proceed
-  const { resolved, question, blueprintId } =
-    await stopGuard.ensureDirection(context, stopCondition);
-
-  if (!resolved && question) {
-    // 3. Show question to user
-    const answer = await askUser(question);
-
-    // 4. Update local context (you own interpretation)
-    const updatedContext = updateContextWithAnswer(context, answer);
-
-    // 5. Compute structural outcome
-    const outcome = evaluateResolution(updatedContext, stopCondition);
-
-    // 6. Send structural feedback to HAP
-    await hapClient.sendFeedback({
-      blueprintId,
-      ladderStage: stopCondition.ladderStage as LadderStage,
-      stopResolved: outcome.stopResolved,
-      directionChosen: outcome.directionChosen ?? false,
-      costAccepted: outcome.costAccepted ?? false,
-    });
-
-    // 7. Log locally for optimisation
-    metrics.log({
-      ladderStage: stopCondition.ladderStage,
-      stopResolved: outcome.stopResolved,
-      turnsToResolution: outcome.turnsDelta,
-    });
-
-    if (!outcome.stopResolved) {
-      // still unresolved → do not proceed
-      return;
-    }
-
-    // 8. With direction now confirmed, continue
-    return continueNormalFlow(updatedContext);
-  }
-}
 ```
 
-**Key invariants:**
+**Example gap detector (application-defined):**
+```
+if (!directionState.meaning.resolved) return { ladderStage: "meaning" };
+if (!directionState.purpose.resolved) return { ladderStage: "purpose" };
+if (high_stakes && !directionState.commitment.resolved)
+    return { ladderStage: "commitment" };
 
-- HAP never sees context, question, or answer.
-- Your system decides how to ask, how to interpret, and how to verify cost/commitment.
-- HAP only sees that a direction checkpoint was:
-  - triggered
-  - questioned
-  - resolved or not
+return null; // all good
+```
 
-## Design Principles
+Applications define these rules.
 
-### 6.1 Strict Separation of Concerns
+HAP only enforces the outcome:
+**No progress without resolution.**
 
-**Protocol layer** (hap-client):
-structure, schemas, compliance, enforcement
+## Applications Can Use Their Own Models
 
-**Local layer** (question-engine + optimisation):
-prompts, models, UX, learning
+Applications may run:
 
-### 6.2 No Semantic Leakage
+- their own local LLMs
+- their own rules engines
+- on-device assistants (phones, laptops, wearables)
+- small language models customised for the domain
 
-The SDK doesn't know:
+These models are:
 
-- what users said
-- why they chose something
-- what the content is about
+- certified by Service Providers
+- verified to respect Direction Tokens
+- approved to operate in the HAP ecosystem
 
-It only knows which stage of the Direction Ladder was enforced and whether it was resolved.
+Local models:
 
-### 6.3 Direction Integrity by Construction
+- interact directly with the user
+- interpret meaning, purpose, commitment
+- generate questions
+- manage context
+- enforce the Ladder
 
-Done correctly:
+AGI is only called after Direction Token issuance, and never directly by the user.
 
-- Every critical action is preceded by Meaning, Purpose, and (when required) Commitment.
-- AI never runs ahead on inferred or missing direction.
-- Direction always leads back to a human.
+## Accessing AGI Safely: The Direction Token Flow
 
-### 6.4 Local Sovereignty
+The Direction Token is the cryptographic enforcement layer.
 
-You own:
+When your app wants AGI:
+1. Check Direction
+2. All required stages resolved
+3. Request Direction Token from Service Provider
+4. Service Provider validates your structure
+5. Token issued
+6. Call AGI with token
+7. AGI executes within the token's scope
 
-- your models
-- your prompts
-- your heuristics
-- your logs
-- your optimisation strategy
+When direction is unresolved:
 
-HAP only ensures you don't accidentally remove humans from the loop where it matters.
+- token is denied
+- AGI will not accept tokenless calls
+- your app must continue clarifying direction
 
-## SDK Availability
+This architecture guarantees:
 
-**TypeScript SDK (v0.3.x)** — reference implementation
+- AGI never touches the user directly
+- No AGI execution without human direction
+- Local systems remain sovereign
+- Applications maintain responsibility
 
-- Installation, quick-start, and examples
-- Direction Ladder types
-- Runtime guards for Stop → Ask → Confirm → Proceed
+## Local vs. Remote Execution
 
-Other language SDKs (Python, Go, etc.) will follow once the core spec stabilizes.
+Applications control what runs locally vs. remotely:
 
-**GitHub** (example):
-humanagencyprotocol/hap-sdk-typescript
+**Local execution:**
+
+- question generation
+- meaning detection
+- purpose evaluation
+- commitment capturing
+- context management
+- small-model execution
+- storing direction state
+
+**Remote execution (AGI):**
+
+- only after Direction Token
+- only within defined scope
+- only after commitment
+
+AGI cannot escalate, expand scope, or reinterpret direction.
+
+## Application Integration Checklist
+
+Every HAP-compliant app must:
+
+### Required
+
+- [x] Detect direction gaps
+- [x] Implement Stop → Ask → Confirm → Proceed
+- [x] Preserve the Direction Ladder
+- [x] Maintain direction state
+- [x] Block execution on unresolved direction
+- [x] Request Direction Tokens before AGI calls
+- [x] Reject AGI responses without valid tokens
+- [x] Keep all user content local
+- [x] Send only structural feedback
+
+### Optional but encouraged
+
+- [ ] Use the reference SDK
+- [ ] Use the metrics helper for question optimisation
+- [ ] Run on-device certified models
+- [ ] Implement direction visualizations for clarity
+
+## Developer Autonomy
+
+HAP is not a framework.
+It is not an API-first product.
+It is a structural contract between:
+
+- applications
+- users
+- AI systems
+- Service Providers
+- AGI models
+
+Applications are free to:
+
+- invent their own UX patterns
+- design their own logic
+- develop their own tools and models
+- manage direction in any way they see fit
+
+As long as the application satisfies:
+
+- No AI execution without human-defined direction.
+- No AGI without a Direction Token.
+- No content leaving local custody.
+
+It is fully compliant.
+
+## Summary
+
+Integrating HAP means your application:
+
+- keeps direction human
+- enforces Meaning → Purpose → Commitment → Action
+- blocks automated drift
+- protects human agency
+- acts as the only interface between user and AGI
+- ensures AI cannot define, assume, or override direction
+- preserves privacy by design
+- uses Service Providers for structural validation
+- uses Direction Tokens to safely call AGI
+
+Your implementation can be:
+
+- lightweight
+- custom
+- model-agnostic
+- device-native
+- built on your own stack
+
+HAP defines only the structure — you invent everything else.

@@ -48,6 +48,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="prompt-content">
                     <h4 id="prompt-title" class="prompt-title"></h4>
                     <p id="prompt-text" class="prompt-text"></p>
+                    <div id="context-input-container" style="display: none;">
+                        <p class="context-label">Add your specific context (optional):</p>
+                        <textarea id="context-input" class="context-input" placeholder="e.g. My company provides AI-driven financial planning for independent contractors..."></textarea>
+                    </div>
                     <textarea id="custom-prompt-input" class="custom-prompt-input" style="display: none;" placeholder="Describe who you are and what you want to learn about HAP..."></textarea>
                     <button id="copy-prompt-btn" class="btn btn-primary">Copy the prompt</button>
                 </div>
@@ -295,7 +299,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             </a>
         </div>
 
-        <p class="section-conclusion" style="margin-top: 3rem; text-align: center;">
+        <p class="section-conclusion" style="margin-top: 3rem; text-align: left;">
             <strong>HAP turns human direction into the governing layer of intelligent systems.</strong>
         </p>
     </section>
@@ -321,6 +325,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         justify-content: center;
         align-items: flex-start; /* Force all children to the left */
     }
+
+    @media (min-width: 1280px) {
+        .hero-content{
+        padding: 0 1.5rem;
+        }
+    }
+
 
     .hero h1 {
         font-size: clamp(2.2rem, 5vw, 4rem);
@@ -548,6 +559,70 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
 
     .custom-prompt-input:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+    .context-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        margin-top: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .context-input {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+        padding: 1rem;
+        background: var(--bg);
+        border-radius: 0.5rem;
+        border: 2px solid var(--border);
+        border-left: 3px solid var(--accent);
+        font-family: inherit;
+        resize: vertical;
+        min-height: 100px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .context-input:focus {
+        outline: none;
+        border-color: var(--accent);
+    }
+
+    .context-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+        margin-top: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .context-input {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--text-primary);
+        margin: 0 0 1rem 0;
+        padding: 1rem;
+        background: var(--bg);
+        border-radius: 0.5rem;
+        border: 2px solid var(--border);
+        border-left: 3px solid var(--accent);
+        font-family: inherit;
+        resize: vertical;
+        min-height: 100px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .context-input:focus {
         outline: none;
         border-color: var(--accent);
     }
@@ -1046,27 +1121,33 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const personas = {
         beginner: {
             title: 'A Newcomer',
-            prompt: 'You are explaining this protocol to someone who only knows ChatGPT and has no technical background. Use simple language, everyday analogies, and concrete examples. Explain what problem this solves, why it matters, and how it would affect their daily AI interactions. Avoid jargon and technical terms.'
+            prompt: 'You are explaining this protocol to someone who only knows ChatGPT and has no technical background. Use simple language, everyday analogies, and concrete examples. Explain what problem this solves, why it matters, and how it would affect their daily AI interactions. Avoid jargon and technical terms.',
+            placeholder: '' // No context field for newcomers
         },
         innovator: {
             title: 'An Innovator',
-            prompt: 'You are a Visionary Founder building a venture for the 2030 market. In a world where AI-generated execution is a commodity, your mission is to build a high-value, defensible business based on **Authored Value** and unique human innovation. Analyze how HAP provides the infrastructure for this mission. Brainstorm how to leverage the \'Six Human Gates\' to create products and services that machines alone cannot replicate. How does the protocol transform human direction into a world-changing business model where intent is the ultimate competitive advantage?'
+            prompt: 'You are a Visionary Founder building a venture for the 2030 market. In a world where AI-generated execution is a commodity, your mission is to build a high-value, defensible business based on **Authored Value** and unique human innovation. Analyze how HAP provides the infrastructure for this mission. Brainstorm how to leverage the \'Six Human Gates\' to create products and services that machines alone cannot replicate. How does the protocol transform human direction into a world-changing business model where intent is the ultimate competitive advantage?',
+            placeholder: 'e.g. My business idea is a human-led creative agency that uses AI only for production, ensuring every creative choice is cryptographically signed by a human...'
         },
         strategist: {
             title: 'A Strategist',
-            prompt: 'You are a business strategist analyzing how this protocol would impact my business. Evaluate adoption benefits, competitive advantages, operational changes, and strategic implications for my specific business. Focus on how it affects my operations, customer relationships, and value delivery. Provide actionable insights tailored to my business context.'
+            prompt: 'You are a business strategist analyzing how this protocol would impact my business. Evaluate adoption benefits, competitive advantages, and strategic implications—specifically how HAP builds a **defensible strategic moat** and secures **innovation value** over the next 5 years. Focus on how it affects operations, customer relationships, and the shift from commodity AI execution to "Authored Value." Provide actionable insights tailored to my business context.',
+            placeholder: 'e.g. My company operates in the logistics sector, and we are moving toward autonomous fleet management...'
         },
         compliance: {
             title: 'A Compliance Officer',
-            prompt: 'You are a Compliance and Governance specialist evaluating HAP for enterprise deployment. Analyze how the protocol technically enforces Article 14 of the EU AI Act regarding human oversight. Focus on its ability to create cryptographically verifiable audit trails, its unification of authorship and ownership, and how it mitigates institutional liability by preventing automated decision vacuums.'
+            prompt: 'You are a Compliance and Governance specialist evaluating HAP for enterprise deployment. Analyze how the protocol technically enforces Article 14 of the EU AI Act regarding human oversight. Focus on its ability to create cryptographically verifiable audit trails, its unification of authorship and ownership, and how it mitigates institutional liability by preventing automated decision vacuums.',
+            placeholder: 'e.g. We are a financial institution preparing for the first wave of EU AI Act enforcement audits...'
         },
         board: {
             title: 'A Board Member',
-            prompt: 'You are a Board Member responsible for institutional risk. Evaluate how the \'Decision Owner\' model and \'Consequence Domains\' provide clear accountability and protect the organization from the legal and operational risks of \'unowned\' AI actions. Focus on how HAP ensures that machine speed never outpaces human responsibility.'
+            prompt: 'You are a Board Member responsible for institutional risk. Evaluate how the \'Decision Owner\' model and \'Consequence Domains\' provide clear accountability and protect the organization from the legal and operational risks of \'unowned\' AI actions. Focus on how HAP ensures that machine speed never outpaces human responsibility.',
+            placeholder: 'e.g. I am on the board of a healthcare provider exploring AI for diagnostic support and patient data management...'
         },
         custom: {
             title: 'You',
-            prompt: '' // User will input their own prompt
+            prompt: '',
+            placeholder: ''
         }
     };
 
@@ -1190,19 +1271,32 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const promptDisplay = document.getElementById('prompt-display');
             const promptTitle = document.getElementById('prompt-title');
             const promptText = document.getElementById('prompt-text');
-            const customInput = document.getElementById('custom-prompt-input');
+            const customInput = document.getElementById('custom-prompt-input') as HTMLTextAreaElement;
+            const contextInputContainer = document.getElementById('context-input-container');
+            const contextInput = document.getElementById('context-input') as HTMLTextAreaElement;
 
             promptTitle.textContent = personas[persona].title;
 
-            // Handle custom persona differently
+            // Handle custom and beginner persona differently
             if (persona === 'custom') {
                 promptText.style.display = 'none';
+                if (contextInputContainer) contextInputContainer.style.display = 'none';
                 customInput.style.display = 'block';
                 customInput.value = ''; // Clear previous input
-            } else {
+            } else if (persona === 'beginner') {
                 promptText.style.display = 'block';
+                if (contextInputContainer) contextInputContainer.style.display = 'none';
                 customInput.style.display = 'none';
                 promptText.textContent = personas[persona].prompt;
+            } else {
+                promptText.style.display = 'block';
+                if (contextInputContainer) {
+                    contextInputContainer.style.display = 'block';
+                    contextInput.placeholder = personas[persona].placeholder;
+                }
+                customInput.style.display = 'none';
+                promptText.textContent = personas[persona].prompt;
+                if (contextInput) contextInput.value = ''; // Clear previous input
             }
 
             promptDisplay.style.display = 'block';
@@ -1225,10 +1319,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             // Get prompt based on persona type
             let personaPrompt;
             if (currentPersona === 'custom') {
-                const customInput = document.getElementById('custom-prompt-input');
+                const customInput = document.getElementById('custom-prompt-input') as HTMLTextAreaElement;
                 personaPrompt = customInput.value.trim();
             } else {
-                personaPrompt = personas[currentPersona].prompt;
+                const basePrompt = personas[currentPersona].prompt;
+                const userContext = (document.getElementById('context-input') as HTMLTextAreaElement).value.trim();
+                
+                personaPrompt = userContext 
+                    ? `${basePrompt}\n\nUSER SPECIFIC CONTEXT:\n${userContext}`
+                    : basePrompt;
             }
 
             // Combine prompt and context (only add separator if there's a prompt)
