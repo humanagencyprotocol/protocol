@@ -1,7 +1,7 @@
 ---
 title: "Protocol"
-version: "Version 0.3"
-date: "December 2025"
+version: "Version 0.1"
+date: "January 2026"
 ---
 
 AI systems increasingly execute tasks, optimize outcomes, and escalate actions without human intervention.
@@ -140,7 +140,11 @@ Blueprint fields:
   "target_state": "frame|problem|objective|tradeoff|commitment|decision_owners",
   "required_domains": ["delivery", "budget", "legal"],
   "target_structures": ["..."],
-  "constraints": {"tone":"string","addressing":"string"},
+  "constraints": {
+    // Optional: semantic or structural rules the app must enforce locally
+    "frame_must_include": ["public_location", "time_window"],
+    "tradeoff_must_address": ["physical_effort", "emotional_availability"]
+  },
   "render_hint": "string",
   "examples": ["string"],
   "stop_conditions": ["frame", "commitment"]
@@ -158,6 +162,17 @@ They are standardized structures ensuring:
 - humans identify the decision owners
 
 Local AIs generate surface language privately; the protocol governs timing and necessity.
+
+Blueprints as Contextual Validation Contracts
+An Inquiry Blueprint is not merely a question template—it is a versioned, context-specific contract that defines the structural and semantic conditions a decision must satisfy to be actionable.
+
+Any HAP-compliant system must ensure that:
+
+- All domains listed in required_domains are assigned to explicit Decision Owners,
+- All gates listed in stop_conditions are resolved before execution,
+- The human-provided Frame and Tradeoff satisfy the intent of the Blueprint's constraints (validated locally by the application).
+
+The blueprint_id serves as the immutable reference to this contract. Altering the context (e.g., changing domain requirements) requires a new Blueprint version.
 
 ---
 

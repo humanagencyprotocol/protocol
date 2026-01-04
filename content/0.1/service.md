@@ -1,260 +1,197 @@
 ---
 title: "Service Providers"
-version: "Version 0.3"
-date: "December 2025"
+version: "Version 0.4"
+date: "January 2026"
 ---
 
-A HAP Service Provider (SP) is not an app, a model, or a user-facing agent.
+A HAP Service Provider (SP) is not a gatekeeper, registry, or authority.
+It is a stateless, context-bound attester that cryptographically verifies whether a proposed action satisfies the structural requirements of human direction under a given context.
 
-A Service Provider is the independent enforcement layer that ensures applications implement the Human Agency Protocol correctly and that AGI execution only happens after humans make real directional commitments.
+SPs do not validate truth. They validate gate closure structure.
+SPs do not trust executors. They enable users to enforce boundaries.
 
-Applications talk to users.
-Service Providers talk to applications.
-AGI never talks to users.
+## Core Principles
 
-This separation is what makes HAP trustworthy.
+### Trustless by Design
 
-## Role of a Service Provider
+✅ Anyone may run an SP—on a phone, server, or Raspberry Pi.
+No central registry. No approval. No committee.
 
-A Service Provider is the protocol guardian for the entire ecosystem.
-Its core responsibilities:
+### Execution-Agnostic
 
-### Enforce Direction Checkpoints
+✅ SPs do not care if the executor is AGI, a human, a city server, or a script.
+All executors are assumed hostile until proven compliant via attestation.
 
-- Receive structural-only checkpoint data from applications.
-- Validate that Meaning → Purpose → Commitment are fully resolved.
-- Block any attempt to skip or fake a checkpoint.
+### Gate-Centric
 
-### Issue Direction Tokens
+✅ SPs enforce closure of the six human gates:
+Frame, Problem, Objective, Tradeoff, Commitment, Decision Owner
+No legacy "Meaning/Purpose" model. Gates are the law.
 
-Before an application can call an AGI model, it must request a Direction Token from the SP.
+### Privacy-Preserving
 
-A Direction Token is a cryptographically signed proof that:
+✅ SPs never receive semantic content.
+Only structural, non-reconstructable signals are processed.
 
-- the user defined meaning,
-- clarified purpose,
-- and made a directional commitment.
+## What Is a Service Provider?
 
-No token → no AGI execution.
+An SP is any system that implements the HAP SP Protocol to:
 
-### Certify HAP-Compatible Models
+- Receive a gate closure request (structural only)
+- Validate it against a context-specific rule set
+- Issue a signed attestation if valid—or reject
 
-The SP maintains a registry of AI models that:
+### SP Types (All Equal, None Universal)
 
-- honor Direction Tokens,
-- refuse execution without them,
-- and stay within the committed scope.
+| Type | Scope | Example |
+| :--- | :--- | :--- |
+| Personal SP | Individual or small group | Your phone's SP for relationship decisions |
+| Community SP | Local/shared resources | Neighborhood SP for noise permits |
+| Institutional SP | Regulated domains | Hospital SP for treatment plans |
+| Reference SP | Open-source compatibility | SP bundled with Llama 3 + Guardrails |
 
-Users can trust that a certified model will not bypass human direction.
+No SP is "global." Trust is contextual and user-declared.
 
-### Guarantee Privacy by Architecture
+## SP Responsibilities
 
-Service Providers must never receive:
+### Validate Gate Closure Structure
 
-- prompts
-- answers
-- chat transcripts
-- semantic content
-- personal data
+Receive only:
 
-They only receive structural signals:
-
-- ladder stage
-- stop-condition flags
-- resolution booleans
-- minimal bounded metrics
-
-This keeps human meaning sovereign and local.
-
-### Maintain Protocol Integrity
-
-- Validate incoming blueprint usage
-- Publish current blueprints and signal guides
-- Record verifiable audit logs
-- Maintain ecosystem-wide protocol consistency
-
-Service Providers do not interpret human meaning.
-They only enforce the structure that protects it.
-
-## What Service Providers Are NOT
-
-To avoid confusion:
-
-- ❌ Service Providers do not build apps
-  - They do not manage user interactions, UIs, workflows, or agents.
-
-- ❌ Service Providers do not run LLMs or AGI
-  - They certify models, but do not host or execute them.
-
-- ❌ Service Providers do not generate questions
-  - Applications generate questions locally using Inquiry Blueprints.
-
-- ❌ Service Providers do not see any user content
-  - They receive only non-semantic structural signals.
-
-- ❌ Service Providers do not enforce ethics on apps
-  - They enforce protocol compliance only.
-
-## How Service Providers Fit into the HAP Ecosystem
-
-The full pipeline demonstrates the separation of roles:
-
-```
-User
-   ↓
-Local Application (with Local Direction Agent)
-   ↓ Meaning / Purpose / Commitment
-   ↓ Structural checkpoint data
-Service Provider
-   ↓ issues Direction Token
-Local Application
-   ↓ calls Certified AGI Model with Token
-AGI Model
-   ↓ returns result to Application
-Local Application
-   ↓ returns result to User
-```
-
-AGI models never interact with users directly.
-They cannot act without a Direction Token issued by a Service Provider.
-
-This design prevents:
-
-- AGI-driven goal inference
-- silent automation
-- manipulation of user meaning
-- direction drift
-- premature action
-
-## Core Responsibilities (Expanded)
-
-### Protocol Custodian
-
-Maintains an implementation of the HAP schema:
-
-- Inquiry Blueprints
-- Signal Detection Guides
-- Structural Feedback validators
-- Direction Token issuance logic
-
-Ensures no ambiguity exists at the protocol layer.
-
-### Privacy Guardian
-
-All incoming and outgoing fields must be:
-
-- structural
-- bounded
-- non-semantic
-
-SPs must prove:
-
-- they do not store raw content
-- they cannot reconstruct user meaning
-- no optimization or training uses user signals
-
-### Execution Gatekeeper
-
-The SP is the chokepoint between the human world and AGI execution.
-
-It enforces:
-
-- No token without resolved Meaning
-- No token without resolved Purpose
-- No token without explicit Commitment
-
-If any checkpoint is unresolved:
-Token denied. Execution blocked.
-
-### Model Certification Authority
-
-The SP maintains a registry of:
-
-- local models (LLMs running on devices)
-- cloud LLMs
-- AGI models
-
-that agree to:
-
-- refuse execution without a valid Direction Token
-- stay within committed constraints
-- reject scope expansion attempts
-- return execution logs for verification
-
-Certified models are safe to use with HAP.
-
-Applications can choose any model from the registry without trusting the model provider.
-
-### Governance Participant
-
-Service Providers join a federated trust network, each providing:
-
-- public proofs
-- compliance attestations
-- transparency logs
-- renewal audits
-
-The network protects decentralization:
-
-- no single point of control
-- no proprietary capture
-- no corporate gatekeeping
-
-## Anatomy of a Direction Token
-
-A Direction Token is a signed declaration that:
-
-```
+```json
 {
-  "meaning_resolved": true,
-  "purpose_resolved": true,
-  "commitment_resolved": true,
-  "scope_hash": "sha256:...",
-  "issued_at": 1733701984,
-  "expires_in": 120,
-  "provider_signature": "ed25519:..."
+  "frame_hash": "sha256:abc123...",
+  "resolved_gates": ["frame", "problem", "objective", "tradeoff", "commitment"],
+  "decision_owners": ["did:key:owner1", "did:key:owner2"],
+  "affected_domains": ["wellbeing", "legal", "time"],
+  "context_id": "string"
 }
 ```
 
-The AGI model validates:
+Reject if:
 
-- the signature
-- the unresolved expiry window
-- the hash of the committed scope
+- frame_hash is missing
+- Any required gate (per context_id) is unresolved
+- decision_owners does not cover all affected_domains
+- The blueprint_id in the request corresponds to an unknown or untrusted Blueprint
+- All required_domains and stop_conditions declared in the referenced Blueprint are not satisfied in the request
 
-If any check fails:
-Execution stops immediately.
+### Validate Blueprint Compliance
 
-## Why SPs Are Essential
+Validate that the blueprint_id in a gate-closure request corresponds to a known, trusted Blueprint,
+Enforce that all required_domains and stop_conditions declared in that Blueprint are satisfied in the request.
 
-Without Service Providers, applications could:
+### Issue Attestations (Never Tokens)
 
-- silently bypass commitments
-- infer purpose from context
-- skip Meaning/Purpose entirely
-- expose users to AGI manipulation
+On valid request, return:
 
-With SPs:
+```json
+{
+  "header": { "typ": "HAP-attestation", "alg": "EdDSA" },
+  "payload": {
+    "frame_hash": "sha256:abc123...",
+    "resolved_gates": [...],
+    "decision_owners": [...],
+    "affected_domains": [...],
+    "context_id": "string",
+    "issued_at": 1735888000,
+    "expires_at": 1735888120
+  }
+}
+```
 
-- Human direction becomes a cryptographically enforced boundary.
-- Models cannot run without human commitment.
-- Users control AGI through architecture, not trust.
+- Attestations are short-lived (≤2 mins)
+- Signed with SP's private key
+- Never store or log requests
+
+### Publish Public Key
+
+SP identity = its public key (e.g., did:key:z6Mk...)
+Apps whitelist keys they trust (e.g., "I trust my partner's SP key")
+
+## What SPs Are NOT
+
+To avoid confusion:
+
+- ❌ Not a model registry
+  - SPs do not certify AI models.
+
+- ❌ Not a data sink
+  - SPs never store, log, or analyze requests.
+
+- ❌ Not an ethics enforcer
+  - SPs validate structure only—not morality, legality, or social good.
+
+- ❌ Not a global authority
+  - No SP can block others. No hierarchy exists.
+
+- ❌ Not Blueprint authors
+  - SPs do not define or modify Blueprints. They only enforce the rules published by context authorities (e.g., teams, cities, institutions).
+
+## SP Workflow in Practice
+
+```
+Human
+  ↓ (resolves 6 gates LOCALLY in app)
+Local App
+  ↓ (sends STRUCTURAL request to SP of choice)
+Service Provider (any type, any location)
+  ↓ (validates against context rules → signs attestation)
+Local App
+  ↓ (sends attestation + execution payload to EXECUTOR)
+Executor (AGI, human, city system, etc.)
+  ↓ (verifies attestation → EXECUTES or FAILS)
+```
+
+The executor never sees the Frame text, tradeoffs, or reasoning.
+It only obeys the attestation.
+
+## Security Guarantees
+
+### Fraud Prevention
+
+Fake attestations fail signature validation.
+Stolen keys are mitigated by short expiry + user-controlled whitelists.
+
+### Privacy by Construction
+
+SPs receive only 5 fields: hash, gate list, owners, domains, context.
+No IPs, no user IDs, no behavioral data.
+
+### Context Isolation
+
+A compromised personal SP cannot issue attestations for hospital contexts.
+Each context defines its own gate requirements.
+
+### No AGI Trust
+
+Executors are not required to "do the right thing."
+If an executor ignores the attestation, it acts outside HAP—and is liable.
+
+## Example: Collaborative Project
+
+Frame: "Launch Feature X by March 1"
+Context: startup_deployment_v1 (requires all 6 gates + 3 domains)
+
+You (Backend) resolve gates locally → send structural request to team SP
+Alex (Frontend) does the same
+Jane (Legal) does the same
+Team SP validates:
+- All 3 owners present
+- All gates resolved
+- Frame hash matches
+Issues attestation
+CI/CD system receives attestation → deploys code
+If Jane's domain was missing → no attestation → no deploy
 
 ## Summary
 
-Service Providers are the mechanical enforcement layer of the Human Agency Protocol.
+Service Providers are minimal, context-aware attesters that:
 
-They:
+- Enable verifiable human direction
+- Prevent silent erasure and drift
+- Work offline, locally, and permissionlessly
+- Assume all executors are adversaries
 
-- Validate structural signals
-- Issue Direction Tokens
-- Certify which AI models can execute under HAP
-- Block unauthorized AGI access
-- Guarantee privacy by design
-- Maintain protocol-wide trust
-
-They never interact with end users.
-They never process semantic content.
-They never generate direction.
-
-They simply ensure that only human-defined direction reaches AGI.
+HAP's power isn't in its providers—it's in its proof.
+Run your own SP. Trust your own keys. Own your direction.

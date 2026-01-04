@@ -1,7 +1,7 @@
 ---
 title: "Governance"
-version: "Version 0.3"
-date: "November 2025"
+version: "Version 0.1"
+date: "January 2026"
 ---
 
 Intelligent automation now spans every layer of digital infrastructure. Yet the challenge is no longer how much intelligence we can automate—but how much human agency we can preserve.

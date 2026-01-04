@@ -16,7 +16,7 @@ export async function GET() {
   const combinedContent = `
 # Human Agency Protocol - Complete Context
 
-**Version 0.3 — 2025**
+**Version 0.1 — January 2026**
 
 ---
 

@@ -19,28 +19,45 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <a href="#why-exists" class="btn btn-secondary">Read more</a>
         </div>
 
-        <!-- Persona Selection -->
+        <!-- Discovery Engine -->
         <div id="persona-section" class="persona-section" style="display: none;">
-            <p class="persona-intro">Create a prompt to describe HAP for</p>
-            <div class="persona-grid">
-                <button class="persona-btn" data-persona="beginner">
-                    <span class="persona-title">A Newcomer</span>
+            <!-- Step 1: Domain -->
+            <p class="persona-intro">Create a prompt to learn more how you can use HAP for:</p>
+            <div class="selection-grid domain-grid">
+                <button class="selection-btn" data-domain="teams">
+                    <span class="selection-title">Teams</span>
                 </button>
-                <button class="persona-btn" data-persona="innovator">
-                    <span class="persona-title">An Innovator</span>
+                <button class="selection-btn" data-domain="partnerships">
+                    <span class="selection-title">Partnerships</span>
                 </button>
-                <button class="persona-btn" data-persona="strategist">
-                    <span class="persona-title">A Strategist</span>
+                <button class="selection-btn" data-domain="institutions">
+                    <span class="selection-title">Public Institutions</span>
                 </button>
-                <button class="persona-btn" data-persona="compliance">
-                    <span class="persona-title">A Compliance Officer</span>
+                <button class="selection-btn" data-domain="individuals">
+                    <span class="selection-title">Individuals</span>
                 </button>
-                <button class="persona-btn" data-persona="board">
-                    <span class="persona-title">A Board Member</span>
-                </button>
-                <button class="persona-btn" data-persona="custom">
-                    <span class="persona-title">You</span>
-                </button>
+            </div>
+
+            <!-- Step 2: Lens (Hidden until domain selected) -->
+            <div id="lens-selection" style="display: none; margin-top: 2rem;">
+                <p class="persona-intro">Analyze this as...</p>
+                <div class="selection-grid lens-grid">
+                    <button class="selection-btn" data-lens="visionary">
+                        <span class="selection-title">The Visionary</span>
+                    </button>
+                    <button class="selection-btn" data-lens="integrator">
+                        <span class="selection-title">The Integrator</span>
+                    </button>
+                    <button class="selection-btn" data-lens="developer">
+                        <span class="selection-title">The Developer</span>
+                    </button>
+                    <button class="selection-btn" data-lens="skeptic">
+                        <span class="selection-title">The Skeptic</span>
+                    </button>
+                    <button class="selection-btn" data-lens="newcomer">
+                        <span class="selection-title">The Newcomer</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Expanded Prompt Display -->
@@ -48,12 +65,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <div class="prompt-content">
                     <h4 id="prompt-title" class="prompt-title"></h4>
                     <p id="prompt-text" class="prompt-text"></p>
-                    <div id="context-input-container" style="display: none;">
+                    <div id="context-input-container">
                         <p class="context-label">Add your specific context (optional):</p>
-                        <textarea id="context-input" class="context-input" placeholder="e.g. My company provides AI-driven financial planning for independent contractors..."></textarea>
+                        <textarea id="context-input" class="context-input" placeholder=""></textarea>
                     </div>
-                    <textarea id="custom-prompt-input" class="custom-prompt-input" style="display: none;" placeholder="Describe who you are and what you want to learn about HAP..."></textarea>
-                    <button id="copy-prompt-btn" class="btn btn-primary">Copy the prompt</button>
+                    <button id="copy-prompt-btn" class="btn btn-primary">Copy Discovery Prompt</button>
                 </div>
             </div>
         </div>
@@ -414,98 +430,53 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         opacity: 0.7;
     }
 
-    /* Persona Section */
+    /* Discovery Engine Styles */
     .persona-section {
         width: 100%;
-        max-width: 1000px; /* Expanded to feel less 'right-aligned' */
+        max-width: 1000px;
         margin-top: 2rem;
         animation: slideDown 0.3s ease-out;
         text-align: left;
     }
 
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .persona-intro {
-        font-size: 1rem;
-        color: var(--text-secondary);
-        margin-bottom: 1rem;
-        font-weight: 500;
-    }
-
-    .persona-grid {
-        display: flex;
+    .selection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
         gap: 1rem;
         margin-bottom: 1.5rem;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
     }
 
-    .persona-grid::-webkit-scrollbar {
-        display: none;
-    }
-
-    @media (min-width: 900px) {
-        .persona-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            overflow-x: visible;
-        }
-    }
-
-    .persona-btn {
-        background: var(--accent);
-        border: 2px solid var(--accent);
+    .selection-btn {
+        background: var(--bg-elevated);
+        border: 2px solid var(--border);
         border-radius: 0.75rem;
-        padding: 1rem 0.85rem;
+        padding: 1.25rem;
         cursor: pointer;
         transition: all 0.3s;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
         text-align: center;
-        min-width: 180px;
-        flex-shrink: 0;
-        scroll-snap-align: start;
+        display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    @media (min-width: 900px) {
-        .persona-btn {
-            min-width: auto;
-            padding: 1.5rem 1.25rem;
-        }
-    }
-
-    .persona-btn:hover {
-        background: #C88A2E;
-        border-color: #C88A2E;
+    .selection-btn:hover {
+        border-color: var(--accent);
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(223, 163, 70, 0.25);
     }
 
-    .persona-btn.active {
-        background: #C88A2E;
-        border-color: #C88A2E;
-        box-shadow: 0 8px 20px rgba(223, 163, 70, 0.25);
+    .selection-btn.active {
+        background: var(--accent);
+        border-color: var(--accent);
     }
 
-    .persona-title {
+    .selection-btn.active .selection-title {
+        color: white;
+    }
+
+    .selection-title {
         font-size: 1rem;
         font-weight: 600;
-        color: white;
-        display: block;
+        color: var(--text-primary);
     }
 
     .prompt-display {
@@ -595,44 +566,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         border-color: var(--accent);
     }
 
-    .context-label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-        margin-bottom: 0.5rem;
-        margin-top: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .context-input {
-        font-size: 0.95rem;
-        line-height: 1.7;
-        color: var(--text-primary);
-        margin: 0 0 1rem 0;
-        padding: 1rem;
-        background: var(--bg);
-        border-radius: 0.5rem;
-        border: 2px solid var(--border);
-        border-left: 3px solid var(--accent);
-        font-family: inherit;
-        resize: vertical;
-        min-height: 100px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .context-input:focus {
-        outline: none;
-        border-color: var(--accent);
-    }
-
     /* Content Sections */
-    .content-section {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
 
     .section-body {
         max-width: 800px;
@@ -655,6 +589,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         margin: 3rem 0;
         background: var(--bg-elevated);
         line-height: 1.5;
+    }
+
+    /* Comparison Section */
+    .content-section {
+        max-width: 1200px;
+        margin: 8rem auto;
+        padding: 0 1.5rem;
     }
 
     /* Comparison Section */
@@ -1117,48 +1058,126 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </style>
 
 <script>
-    // Persona prompts
-    const personas = {
-        beginner: {
-            title: 'A Newcomer',
-            prompt: 'You are explaining this protocol to someone who only knows ChatGPT and has no technical background. Use simple language, everyday analogies, and concrete examples. Explain what problem this solves, why it matters, and how it would affect their daily AI interactions. Avoid jargon and technical terms.',
-            placeholder: '' // No context field for newcomers
+    const domains = {
+        teams: { 
+            title: 'Teams', 
+            context: 'alignment, shared accountability, and preventing "unowned" AI actions in fast-moving groups' 
         },
-        innovator: {
-            title: 'An Innovator',
-            prompt: 'You are a Visionary Founder building a venture for the 2030 market. In a world where AI-generated execution is a commodity, your mission is to build a high-value, defensible business based on **Authored Value** and unique human innovation. Analyze how HAP provides the infrastructure for this mission. Brainstorm how to leverage the \'Six Human Gates\' to create products and services that machines alone cannot replicate. How does the protocol transform human direction into a world-changing business model where intent is the ultimate competitive advantage?',
-            placeholder: 'e.g. My business idea is a human-led creative agency that uses AI only for production, ensuring every creative choice is cryptographically signed by a human...'
+        partnerships: { 
+            title: 'Partnerships', 
+            context: 'cross-entity trust, verifiable multi-owner commitments, and legal clarity in joint ventures' 
         },
-        strategist: {
-            title: 'A Strategist',
-            prompt: 'You are a business strategist analyzing how this protocol would impact my business. Evaluate adoption benefits, competitive advantages, and strategic implications—specifically how HAP builds a **defensible strategic moat** and secures **innovation value** over the next 5 years. Focus on how it affects operations, customer relationships, and the shift from commodity AI execution to "Authored Value." Provide actionable insights tailored to my business context.',
-            placeholder: 'e.g. My company operates in the logistics sector, and we are moving toward autonomous fleet management...'
+        institutions: { 
+            title: 'Public Institutions', 
+            context: 'public-sector risk mitigation, EU AI Act human oversight enforcement, and citizen-level accountability' 
         },
-        compliance: {
-            title: 'A Compliance Officer',
-            prompt: 'You are a Compliance and Governance specialist evaluating HAP for enterprise deployment. Analyze how the protocol technically enforces Article 14 of the EU AI Act regarding human oversight. Focus on its ability to create cryptographically verifiable audit trails, its unification of authorship and ownership, and how it mitigates institutional liability by preventing automated decision vacuums.',
-            placeholder: 'e.g. We are a financial institution preparing for the first wave of EU AI Act enforcement audits...'
-        },
-        board: {
-            title: 'A Board Member',
-            prompt: 'You are a Board Member responsible for institutional risk. Evaluate how the \'Decision Owner\' model and \'Consequence Domains\' provide clear accountability and protect the organization from the legal and operational risks of \'unowned\' AI actions. Focus on how HAP ensures that machine speed never outpaces human responsibility.',
-            placeholder: 'e.g. I am on the board of a healthcare provider exploring AI for diagnostic support and patient data management...'
-        },
-        custom: {
-            title: 'You',
-            prompt: '',
-            placeholder: ''
+        individuals: { 
+            title: 'Individuals', 
+            context: 'personal growth, preserving authorship against algorithmic drift, and maintaining high-agency in automated workflows' 
         }
     };
 
-    let currentPersona = null;
+    const lenses = {
+        visionary: {
+            title: 'The Visionary',
+            prompt: 'You are a Visionary Founder. Analyze how HAP creates a strategic moat for [DOMAIN] over the next 5 years. Focus on how "Authored Value" replaces "AI Efficiency" as the primary source of competitive advantage and world-changing potential.',
+            placeholder: 'e.g. My project is a decentralized research collective...'
+        },
+        integrator: {
+            title: 'The Integrator',
+            prompt: 'You are a Protocol Integrator. Evaluate the technical implementation of HAP within [DOMAIN]. Analyze the "Stop → Ask → Proceed" flow and how cryptographic Decision Ownership provides verifiable human control without breaking automated scalability.',
+            placeholder: 'e.g. We are integrating HAP into a multi-agent orchestration framework...'
+        },
+        developer: {
+            title: 'The Developer',
+            prompt: 'You are a Lead Developer. Analyze the architectural refactor required to implement HAP for [DOMAIN]. How do you move from "implicit machine inference" to "explicit human commitment" at the code level? Focus on gate states and multi-owner authorization logic.',
+            placeholder: 'e.g. We are building on a Node.js/TypeScript stack...'
+        },
+        skeptic: {
+            title: 'The Skeptic',
+            prompt: 'You are a Hard-Nosed Skeptic. Challenge the cost of intentional friction in [DOMAIN]. Is the operational slowdown of "Human Gates" worth the reduction in AI churn and legal risk? Be direct about implementation overhead.',
+            placeholder: 'e.g. Our priority is sub-second execution speed...'
+        },
+        newcomer: {
+            title: 'The Newcomer',
+            prompt: 'Explain HAP\'s impact on [DOMAIN] to someone with no technical background. Use simple analogies to show why direction is the only thing that will be scarce in an AI-commoditized future.',
+            placeholder: 'e.g. I am new to AI and want to understand how this helps me stay in control...'
+        }
+    };
+
+    let currentDomain = null;
+    let currentLens = null;
     let contextText = null;
+
+    // Toggle Discovery Engine
+    document.getElementById('ask-ai-btn')?.addEventListener('click', async () => {
+        const button = document.getElementById('ask-ai-btn');
+        const personaSection = document.getElementById('persona-section');
+        if (personaSection.style.display === 'none' || !personaSection.style.display) {
+            button.classList.add('clicked');
+            personaSection.style.display = 'block';
+            await fetchContext();
+        } else {
+            button.classList.remove('clicked');
+            personaSection.style.display = 'none';
+        }
+    });
+
+    // Handle Domain Selection
+    document.querySelectorAll('[data-domain]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentDomain = btn.dataset.domain;
+            document.querySelectorAll('[data-domain]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Show lens selection row
+            const lensSelection = document.getElementById('lens-selection');
+            if (lensSelection) lensSelection.style.display = 'block';
+            
+            updatePrompt();
+        });
+    });
+
+    // Handle Lens Selection
+    document.querySelectorAll('[data-lens]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentLens = btn.dataset.lens;
+            document.querySelectorAll('[data-lens]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            // Show final prompt and context field
+            const promptDisplay = document.getElementById('prompt-display');
+            if (promptDisplay) promptDisplay.style.display = 'block';
+            
+            updatePrompt();
+        });
+    });
+
+    function updatePrompt() {
+        if (!currentDomain || !currentLens) return;
+
+        const domainData = domains[currentDomain];
+        const lensData = lenses[currentLens];
+        const promptTitle = document.getElementById('prompt-title');
+        const promptText = document.getElementById('prompt-text');
+        const contextInput = document.getElementById('context-input') as HTMLTextAreaElement;
+
+        if (promptTitle) promptTitle.textContent = `${domainData.title} + ${lensData.title}`;
+        if (promptText) promptText.textContent = lensData.prompt.replace('[DOMAIN]', domainData.context);
+        if (contextInput) {
+            contextInput.placeholder = lensData.placeholder;
+            // Hide context for newcomers as requested previously
+            const container = document.getElementById('context-input-container');
+            if (container) container.style.display = currentLens === 'newcomer' ? 'none' : 'block';
+        }
+        
+        const display = document.getElementById('prompt-display');
+        if (display) display.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
 
     // Copy function (reusable)
     async function copyToClipboard(text, button, successMsg, originalText) {
         let copySucceeded = false;
-
-        // Try modern clipboard API first
         if (navigator.clipboard && navigator.clipboard.writeText) {
             try {
                 await navigator.clipboard.writeText(text);
@@ -1167,8 +1186,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 console.log('Clipboard API failed, trying fallback:', clipboardErr);
             }
         }
-
-        // Fallback for iOS Safari and older browsers
         if (!copySucceeded) {
             const textarea = document.createElement('textarea');
             textarea.value = text;
@@ -1177,34 +1194,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             textarea.style.top = '0';
             textarea.setAttribute('readonly', '');
             document.body.appendChild(textarea);
-
-            if (navigator.userAgent.match(/ipad|iphone/i)) {
-                const range = document.createRange();
-                range.selectNodeContents(textarea);
-                const selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
-                textarea.setSelectionRange(0, textarea.value.length);
-            } else {
-                textarea.select();
-            }
-
+            textarea.select();
             try {
                 copySucceeded = document.execCommand('copy');
             } catch (e) {
                 console.error('execCommand failed:', e);
             }
-
             document.body.removeChild(textarea);
         }
-
         if (copySucceeded) {
             button.textContent = successMsg;
             setTimeout(() => {
                 if (button) button.textContent = originalText;
             }, 3000);
-        } else {
-            throw new Error('All copy methods failed');
         }
     }
 
@@ -1217,136 +1219,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return contextText;
     }
 
-    // Toggle persona section
-    document.getElementById('ask-ai-btn')?.addEventListener('click', async () => {
-        const button = document.getElementById('ask-ai-btn');
-        const personaSection = document.getElementById('persona-section');
-        const promptDisplay = document.getElementById('prompt-display');
-
-        if (personaSection.style.display === 'none' || !personaSection.style.display) {
-            // Open persona section
-            button.classList.add('clicked');
-            personaSection.style.display = 'block';
-
-            // Scroll button to top of viewport with offset for header
-            // Use setTimeout to wait for DOM update
-            setTimeout(() => {
-                const buttonTop = button.getBoundingClientRect().top + window.scrollY;
-                const headerOffset = 120; // Account for fixed header height (taller on desktop)
-                window.scrollTo({
-                    top: buttonTop - headerOffset,
-                    behavior: 'smooth'
-                });
-            }, 100);
-
-            // Prefetch context
-            try {
-                await fetchContext();
-            } catch (err) {
-                console.error('Failed to fetch context:', err);
-            }
-        } else {
-            // Close persona section
-            button.classList.remove('clicked');
-            personaSection.style.display = 'none';
-            promptDisplay.style.display = 'none';
-
-            // Reset active states
-            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
-            currentPersona = null;
-        }
-    });
-
-    // Handle persona selection
-    document.querySelectorAll('.persona-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const persona = btn.dataset.persona;
-            currentPersona = persona;
-
-            // Update active state
-            document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // Show prompt display
-            const promptDisplay = document.getElementById('prompt-display');
-            const promptTitle = document.getElementById('prompt-title');
-            const promptText = document.getElementById('prompt-text');
-            const customInput = document.getElementById('custom-prompt-input') as HTMLTextAreaElement;
-            const contextInputContainer = document.getElementById('context-input-container');
-            const contextInput = document.getElementById('context-input') as HTMLTextAreaElement;
-
-            promptTitle.textContent = personas[persona].title;
-
-            // Handle custom and beginner persona differently
-            if (persona === 'custom') {
-                promptText.style.display = 'none';
-                if (contextInputContainer) contextInputContainer.style.display = 'none';
-                customInput.style.display = 'block';
-                customInput.value = ''; // Clear previous input
-            } else if (persona === 'beginner') {
-                promptText.style.display = 'block';
-                if (contextInputContainer) contextInputContainer.style.display = 'none';
-                customInput.style.display = 'none';
-                promptText.textContent = personas[persona].prompt;
-            } else {
-                promptText.style.display = 'block';
-                if (contextInputContainer) {
-                    contextInputContainer.style.display = 'block';
-                    contextInput.placeholder = personas[persona].placeholder;
-                }
-                customInput.style.display = 'none';
-                promptText.textContent = personas[persona].prompt;
-                if (contextInput) contextInput.value = ''; // Clear previous input
-            }
-
-            promptDisplay.style.display = 'block';
-
-            // Scroll to prompt display
-            promptDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        });
-    });
-
-    // Copy prompt with context
+    // Copy logic
     document.getElementById('copy-prompt-btn')?.addEventListener('click', async () => {
         const button = document.getElementById('copy-prompt-btn');
         const originalText = button.textContent;
+        const context = await fetchContext();
+        
+        const domainData = domains[currentDomain];
+        const lensData = lenses[currentLens];
+        const userContext = (document.getElementById('context-input') as HTMLTextAreaElement).value.trim();
+        
+        const basePrompt = lensData.prompt.replace('[DOMAIN]', domainData.context);
+        const personaPrompt = userContext 
+            ? `${basePrompt}\n\nUSER SPECIFIC CONTEXT:\n${userContext}`
+            : basePrompt;
 
-        try {
-            button.textContent = 'Copying...';
+        const combinedText = `${personaPrompt}\n\n---\n\n${context}`;
 
-            const context = await fetchContext();
-
-            // Get prompt based on persona type
-            let personaPrompt;
-            if (currentPersona === 'custom') {
-                const customInput = document.getElementById('custom-prompt-input') as HTMLTextAreaElement;
-                personaPrompt = customInput.value.trim();
-            } else {
-                const basePrompt = personas[currentPersona].prompt;
-                const userContext = (document.getElementById('context-input') as HTMLTextAreaElement).value.trim();
-                
-                personaPrompt = userContext 
-                    ? `${basePrompt}\n\nUSER SPECIFIC CONTEXT:\n${userContext}`
-                    : basePrompt;
-            }
-
-            // Combine prompt and context (only add separator if there's a prompt)
-            const combinedText = personaPrompt
-                ? `${personaPrompt}\n\n---\n\n${context}`
-                : context;
-
-            await copyToClipboard(
-                combinedText,
-                button,
-                'Copied! Paste it in your AI Chat',
-                originalText
-            );
-        } catch (err) {
-            console.error('Failed to copy:', err);
-            button.textContent = 'Copy failed - try manually';
-            setTimeout(() => {
-                if (button) button.textContent = originalText;
-            }, 3000);
-        }
+        await copyToClipboard(combinedText, button, 'Copied! Paste it in your AI Chat', originalText);
     });
 </script>

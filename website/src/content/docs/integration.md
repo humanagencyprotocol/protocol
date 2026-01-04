@@ -1,7 +1,7 @@
 ---
 title: "Integration"
-version: "Version 0.3"
-date: "December 2025"
+version: "Version 0.1"
+date: "January 2026"
 ---
 
 The Integration layer describes how any application—local, cloud, mobile, embedded, or enterprise—implements the Human Agency Protocol.
@@ -20,7 +20,7 @@ What matters is what must be enforced.
 
 HAP integration means one thing:
 
-**Your application cannot execute, escalate, or access AGI until a human has defined Meaning, Purpose, and (when required) Commitment.**
+**Your application cannot execute, escalate, or access AGI until a human has defined Frame, Problem, Objective, Tradeoff, and (when required) Commitment and Decision Owner.**
 
 Everything else is an implementation detail.
 
@@ -32,10 +32,12 @@ Every HAP-compliant application must implement four structural responsibilities:
 
 Your system must detect when a human decision is missing at any stage:
 
-- unclear Meaning
-- ambiguous or unprioritized Purpose
+- unclear Frame
+- ambiguous or unprioritized Problem
+- undefined Objective
+- unaccepted Tradeoff
 - unchosen Commitment
-- missing or unowned Action
+- missing or unowned Decision Owner
 
 These gaps are not semantic.
 They are structural.
@@ -62,7 +64,7 @@ Once a direction gap is detected:
 - Render a question locally (LLM or rule-based).
 
 **Confirm**
-- The human clarifies Meaning, chooses Purpose, or commits to a direction.
+- The human clarifies Frame, defines Problem, chooses Objective, accepts Tradeoff, makes Commitment, or assigns Decision Owner.
 
 **Proceed**
 - Only then can the application continue.
@@ -78,12 +80,14 @@ What they may not do is proceed without confirmation.
 
 ### Maintain Direction Integrity
 
-Your app must record, track, and enforce the Direction Ladder:
+Your app must record, track, and enforce the Six Human Gates:
 
-- **Meaning** — "What are we talking about?"
-- **Purpose** — "Why does this matter now?"
-- **Commitment** — "What direction do we choose, and what cost do we accept?"
-- **Action** — "Who takes responsibility?"
+- **Frame** — "What are we deciding?"
+- **Problem** — "Why does this matter now?"
+- **Objective** — "What outcome do we optimize?"
+- **Tradeoff** — "What do we sacrifice?"
+- **Commitment** — "What path do we choose, and what cost do we accept?"
+- **Decision Owner** — "Who takes responsibility?"
 
 This structure is mandatory.
 Your app may extend it, but may not skip or reorder it.
@@ -94,9 +98,12 @@ Before calling any remote AGI, the application must request a Direction Token fr
 
 To receive the token, your app must prove (structurally):
 
-- Meaning resolved
-- Purpose resolved
+- Frame resolved
+- Problem resolved
+- Objective resolved
+- Tradeoff resolved
 - Commitment made (if required)
+- Decision Owner assigned (if required)
 - No unresolved direction gaps
 
 If the token is denied:
@@ -106,38 +113,46 @@ If the token is denied:
 
 This guarantees AGI never interacts with users directly and never runs without confirmed human direction.
 
-## Integrating the Direction Ladder Into Your Application
+## Integrating the Six Human Gates Into Your Application
 
 HAP doesn't tell you how to implement this.
 It tells you what must be true.
 
 Applications decide:
 
-- how to represent Meaning
-- how to detect Purpose conflicts
+- how to represent Frame
+- how to detect Problem conflicts
+- how Objective is optimized
+- how Tradeoff is accepted
 - how commitment is captured
-- how responsibility is assigned
+- how Decision Owner is assigned
 - how they maintain direction state
 - how they surface questions
+- how to enforce Blueprint constraints during Frame and Tradeoff resolution
+- how to validate that all required_domains have owners before emitting closure signals
 
 The protocol only requires structural compliance.
 
 **Minimal example of internal state tracking:**
 ```
 directionState = {
-  meaning: { resolved: false, value: null },
-  purpose: { resolved: false, value: null },
+  frame: { resolved: false, value: null },
+  problem: { resolved: false, value: null },
+  objective: { resolved: false, value: null },
+  tradeoff: { resolved: false, value: null },
   commitment: { resolved: false, value: null },
-  action: { resolved: false, value: null },
+  decisionOwner: { resolved: false, value: null },
 };
 ```
 
 **Example gap detector (application-defined):**
 ```
-if (!directionState.meaning.resolved) return { ladderStage: "meaning" };
-if (!directionState.purpose.resolved) return { ladderStage: "purpose" };
-if (high_stakes && !directionState.commitment.resolved)
-    return { ladderStage: "commitment" };
+if (!directionState.frame.resolved) return { gateState: "frame" };
+if (!directionState.problem.resolved) return { gateState: "problem" };
+if (!directionState.objective.resolved) return { gateState: "objective" };
+if (!directionState.tradeoff.resolved) return { gateState: "tradeoff" };
+if (!directionState.commitment.resolved) return { gateState: "commitment" };
+if (!directionState.decisionOwner.resolved) return { gateState: "decisionOwner" };
 
 return null; // all good
 ```
@@ -165,10 +180,10 @@ These models are:
 Local models:
 
 - interact directly with the user
-- interpret meaning, purpose, commitment
+- interpret Frame, Problem, Objective, Tradeoff, Commitment, Decision Owner
 - generate questions
 - manage context
-- enforce the Ladder
+- enforce the Six Human Gates
 
 AGI is only called after Direction Token issuance, and never directly by the user.
 
@@ -205,9 +220,12 @@ Applications control what runs locally vs. remotely:
 **Local execution:**
 
 - question generation
-- meaning detection
-- purpose evaluation
+- Frame detection
+- Problem evaluation
+- Objective setting
+- Tradeoff acceptance
 - commitment capturing
+- Decision Owner assignment
 - context management
 - small-model execution
 - storing direction state
@@ -228,13 +246,15 @@ Every HAP-compliant app must:
 
 - [x] Detect direction gaps
 - [x] Implement Stop → Ask → Confirm → Proceed
-- [x] Preserve the Direction Ladder
+- [x] Preserve the Six Human Gates
 - [x] Maintain direction state
 - [x] Block execution on unresolved direction
 - [x] Request Direction Tokens before AGI calls
 - [x] Reject AGI responses without valid tokens
 - [x] Keep all user content local
 - [x] Send only structural feedback
+- [x] Enforce Blueprint-defined required_domains and stop_conditions
+- [x] Validate local compliance with Blueprint constraints before resolving gates
 
 ### Optional but encouraged
 
@@ -275,7 +295,7 @@ It is fully compliant.
 Integrating HAP means your application:
 
 - keeps direction human
-- enforces Meaning → Purpose → Commitment → Action
+- enforces Frame → Problem → Objective → Tradeoff → Commitment → Decision Owner
 - blocks automated drift
 - protects human agency
 - acts as the only interface between user and AGI
@@ -293,3 +313,41 @@ Your implementation can be:
 - built on your own stack
 
 HAP defines only the structure — you invent everything else.
+
+## Multi-Participant Decision Coordination
+
+When an application participates in a shared decision instance (e.g., team planning, joint purchase, couple's agreement), it must:
+
+### 1. Maintain Local Direction State Per Domain
+Each materially affected domain (e.g., user.wellbeing, user.time) is resolved entirely locally. No semantic content leaves the device.
+
+### 2. Publish Only Structural Domain Status
+When participating in a shared decision, the app may emit:
+
+```json
+{
+  "decision_id": "uuid",
+  "frame_hash": "sha256:...",
+  "domain": "wellbeing",
+  "resolved_gates": ["problem", "tradeoff", "commitment"],
+  "resolved": true
+}
+```
+→ Never include Problem text, Tradeoff description, or reasoning.
+
+### 3. Consume Structural Signals from Other Participants
+The app may receive similar structural signals from other certified participants. It must not:
+
+- Reconstruct intent from patterns
+- Infer missing content
+- Display anything beyond: "Domain X: resolved/unresolved"
+
+### 4. Block Shared Execution Until All Required Domains Are Closed
+Before enabling joint action (e.g., sending a calendar invite, transferring funds), the app must verify:
+
+- All domains declared in the Frame's scope
+- Have emitted resolved: true from a certified participant
+- With matching frame_hash
+
+### 5. Treat Frame Drift as a Stop Condition
+If any participant's frame_hash differs from the declared Frame, the app must halt and signal: "Direction conflict: Frames do not align."
