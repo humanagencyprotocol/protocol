@@ -150,6 +150,12 @@ Strategy becomes human-led again. Authorship and ownership are unified across ev
 We preserve the one thing automation cannot replace:
 **the human ability to choose a direction worth living for.**
 
+HAP assumes all execution bodies are untrusted.
+No human direction may be exposed to any executor (AGI, server, or human) until a valid attestation proves all six gates were closed under a recognized Blueprint.
+
+The Executor Proxy—not the executor—validates attestations.
+Executors receive only minimal, non-semantic instructions derived from pre-ratified decisions.
+
 ---
 
 ### Build With HAP

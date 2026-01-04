@@ -129,7 +129,9 @@ Every action traces back to human direction.
 
 ## Inquiry Blueprints
 
-An Inquiry Blueprint defines how AI must ask for missing direction and when it must pause.
+An Inquiry Blueprint is a versioned, context-specific validation contract that defines the structural conditions a decision must satisfy to be actionable. It is not a prompt template—it is the rule set that gates execution.
+
+Blueprints are published by context authorities (e.g., teams, cities, institutions) and embedded in HAP-compliant applications. Altering context rules requires a new Blueprint version.
 
 Blueprint fields:
 
@@ -139,40 +141,24 @@ Blueprint fields:
   "intent": "string",
   "target_state": "frame|problem|objective|tradeoff|commitment|decision_owners",
   "required_domains": ["delivery", "budget", "legal"],
-  "target_structures": ["..."],
+  "stop_conditions": ["frame", "commitment"],
   "constraints": {
-    // Optional: semantic or structural rules the app must enforce locally
-    "frame_must_include": ["public_location", "time_window"],
-    "tradeoff_must_address": ["physical_effort", "emotional_availability"]
+    // Optional: semantic rules enforced LOCALLY by the app
+    "frame_must_include": ["public_location"],
+    "tradeoff_must_address": ["time_cost", "energy_cost"]
   },
   "render_hint": "string",
-  "examples": ["string"],
-  "stop_conditions": ["frame", "commitment"]
+  "examples": ["string"]
 }
 ```
 
-Blueprints are not prompts.
-They are standardized structures ensuring:
+Any HAP-compliant system must:
 
-- humans set the frame
-- humans identify the problem
-- humans choose the objective
-- humans accept the tradeoff
-- humans make the commitment
-- humans identify the decision owners
+- Assign explicit Decision Owners to all required_domains
+- Resolve all gates in stop_conditions before execution
+- Enforce constraints during local gate resolution
 
 Local AIs generate surface language privately; the protocol governs timing and necessity.
-
-Blueprints as Contextual Validation Contracts
-An Inquiry Blueprint is not merely a question template—it is a versioned, context-specific contract that defines the structural and semantic conditions a decision must satisfy to be actionable.
-
-Any HAP-compliant system must ensure that:
-
-- All domains listed in required_domains are assigned to explicit Decision Owners,
-- All gates listed in stop_conditions are resolved before execution,
-- The human-provided Frame and Tradeoff satisfy the intent of the Blueprint's constraints (validated locally by the application).
-
-The blueprint_id serves as the immutable reference to this contract. Altering the context (e.g., changing domain requirements) requires a new Blueprint version.
 
 ---
 
@@ -263,6 +249,31 @@ Actions require different state resolution based on risk:
 | Public/irreversible actions | All states + explicit reconfirmation |
 
 This enforces human leadership at the point of irreversibility.
+
+## Attestations: Cryptographic Proof of Direction
+
+An attestation is a short-lived, cryptographically signed proof that:
+
+- A specific Frame (identified by frame_hash) was ratified
+- All gates required by the Blueprint were closed
+- All materially affected domains have explicit Decision Owners
+
+Attestations do not contain semantic content. They enable executors to verify direction without exposing intent.
+
+```json
+{
+  "header": { "typ": "HAP-attestation", "alg": "EdDSA" },
+  "payload": {
+    "frame_hash": "sha256:...",
+    "blueprint_id": "string",
+    "resolved_gates": ["frame", "problem", ...],
+    "decision_owners": ["did:key:..."],
+    "affected_domains": ["wellbeing", "legal"],
+    "issued_at": 1735888000,
+    "expires_at": 1735888120
+  }
+}
+```
 
 ---
 

@@ -109,6 +109,19 @@ On valid request, return:
 SP identity = its public key (e.g., did:key:z6Mk...)
 Apps whitelist keys they trust (e.g., "I trust my partner's SP key")
 
+## Executor Proxy: Gating Execution
+
+A Service Provider may also act as an Executor Proxy—validating attestations before forwarding commands to execution bodies.
+
+Responsibilities:
+
+- Receive attestation + opaque execution payload
+- Validate attestation signature, expiry, and Blueprint compliance
+- Only if valid, forward a minimal, non-semantic command to the executor (e.g., { "action": "schedule_event", "template_id": "xyz" })
+- Never expose raw Frame, Tradeoff, or human reasoning to executors
+
+Combined SP+Proxy deployments are recommended for personal and team use, provided logical separation of attestation and execution logic is maintained.
+
 ## What SPs Are NOT
 
 To avoid confusion:
@@ -145,6 +158,22 @@ Executor (AGI, human, city system, etc.)
 
 The executor never sees the Frame text, tradeoffs, or reasoning.
 It only obeys the attestation.
+
+## Example: Combined SP+Proxy Flow
+
+```
+User
+  ↓ (resolves gates locally)
+Local App
+  ↓ (sends structural request to HAP Gateway)
+HAP Gateway (SP + Proxy)
+  ├─→ [SP Module] Validates Blueprint → Issues Attestation
+  └─→ [Proxy Module] Validates Attestation → Forwards Minimal Command
+Executor (AGI, server, human)
+  ↓ (executes without discretion)
+```
+
+The HAP Gateway is a single endpoint that combines attestation and execution gating—ideal for personal, team, or institutional use.
 
 ## Security Guarantees
 

@@ -92,6 +92,9 @@ Your app must record, track, and enforce the Six Human Gates:
 This structure is mandatory.
 Your app may extend it, but may not skip or reorder it.
 
+Applications must derive structured execution payloads from the ratified Frame locally, and bind them to the attestation (e.g., via hash inclusion or encryption).
+These payloads must not contain natural language or interpretable context.
+
 ### Request Direction Tokens Before Accessing AGI
 
 Before calling any remote AGI, the application must request a Direction Token from a Service Provider.
@@ -108,10 +111,11 @@ To receive the token, your app must prove (structurally):
 
 If the token is denied:
 
-- your app must not call AGI
-- the AGI model will reject calls without a valid token
+- your app must not call any executor
+- No execution body is trusted to validate or respect human direction.
+All enforcement must occur in the local app and Executor Proxy before any command reaches the executor.
 
-This guarantees AGI never interacts with users directly and never runs without confirmed human direction.
+This guarantees executors never interact with users directly and never run without confirmed human direction.
 
 ## Integrating the Six Human Gates Into Your Application
 
@@ -185,31 +189,32 @@ Local models:
 - manage context
 - enforce the Six Human Gates
 
-AGI is only called after Direction Token issuance, and never directly by the user.
+Execution is only performed after Attestation issuance, and never directly by the user.
 
-## Accessing AGI Safely: The Direction Token Flow
+## Accessing Execution Safely: The Attestation Flow
 
-The Direction Token is the cryptographic enforcement layer.
+The Attestation is the cryptographic enforcement layer.
 
-When your app wants AGI:
+When your app wants to execute:
 1. Check Direction
 2. All required stages resolved
-3. Request Direction Token from Service Provider
+3. Request Attestation from Service Provider
 4. Service Provider validates your structure
-5. Token issued
-6. Call AGI with token
-7. AGI executes within the token's scope
+5. Attestation issued
+6. Execute with attestation
+7. Executor operates within the attestation's scope
 
 When direction is unresolved:
 
-- token is denied
-- AGI will not accept tokenless calls
+- attestation is denied
+- No execution body is trusted to validate attestations
+- All enforcement must occur in the local app and Executor Proxy
 - your app must continue clarifying direction
 
 This architecture guarantees:
 
-- AGI never touches the user directly
-- No AGI execution without human direction
+- Executors never touch the user directly
+- No execution without human direction
 - Local systems remain sovereign
 - Applications maintain responsibility
 
@@ -230,13 +235,13 @@ Applications control what runs locally vs. remotely:
 - small-model execution
 - storing direction state
 
-**Remote execution (AGI):**
+**Remote execution:**
 
-- only after Direction Token
+- only after Attestation
 - only within defined scope
 - only after commitment
 
-AGI cannot escalate, expand scope, or reinterpret direction.
+Executors cannot escalate, expand scope, or reinterpret direction.
 
 ## Application Integration Checklist
 
@@ -255,6 +260,8 @@ Every HAP-compliant app must:
 - [x] Send only structural feedback
 - [x] Enforce Blueprint-defined required_domains and stop_conditions
 - [x] Validate local compliance with Blueprint constraints before resolving gates
+- [x] Derive minimal execution payloads without semantic leakage
+- [x] Support combined SP+Proxy deployments (e.g., local HAP gateway)
 
 ### Optional but encouraged
 
@@ -298,11 +305,11 @@ Integrating HAP means your application:
 - enforces Frame → Problem → Objective → Tradeoff → Commitment → Decision Owner
 - blocks automated drift
 - protects human agency
-- acts as the only interface between user and AGI
+- acts as the only interface between user and executors
 - ensures AI cannot define, assume, or override direction
 - preserves privacy by design
 - uses Service Providers for structural validation
-- uses Direction Tokens to safely call AGI
+- uses Attestations to safely call executors
 
 Your implementation can be:
 

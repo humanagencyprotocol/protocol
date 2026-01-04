@@ -279,6 +279,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 <p>We preserve the one thing automation cannot replace:<br><strong>the human ability to choose a direction worth living for.</strong></p>
             </div>
         </div>
+
+        <div class="enables-principles">
+            <p class="key-statement"><strong>HAP assumes all execution bodies are untrusted.</strong><br>No human direction may be exposed to any executor (AGI, server, or human) until a valid attestation proves all six gates were closed under a recognized Blueprint.</p>
+
+            <p class="key-statement"><strong>The Executor Proxy—not the executor—validates attestations.</strong><br>Executors receive only minimal, non-semantic instructions derived from pre-ratified decisions.</p>
+        </div>
     </section>
 
     <!-- Build With HAP -->
@@ -934,6 +940,18 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         line-height: 1.7;
         font-size: clamp(1rem, 1.8vw, 1.1rem);
         margin: 0;
+    }
+
+    .enables-principles {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--border);
+    }
+
+    .enables-principles .key-statement {
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        margin-bottom: 1.5rem;
+        line-height: 1.6;
     }
 
     /* Shared Styles */
