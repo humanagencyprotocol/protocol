@@ -24,38 +24,68 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- Step 1: Domain -->
             <p class="persona-intro">Create a prompt to learn more how you can use HAP for:</p>
             <div class="selection-grid domain-grid">
-                <button class="selection-btn" data-domain="teams">
-                    <span class="selection-title">Teams</span>
+                <button class="selection-btn" data-domain="organizations">
+                    <span class="selection-title">Organizations</span>
                 </button>
-                <button class="selection-btn" data-domain="partnerships">
-                    <span class="selection-title">Partnerships</span>
+                <button class="selection-btn" data-domain="cities">
+                    <span class="selection-title">Cities</span>
                 </button>
-                <button class="selection-btn" data-domain="institutions">
-                    <span class="selection-title">Public Institutions</span>
-                </button>
-                <button class="selection-btn" data-domain="individuals">
-                    <span class="selection-title">Individuals</span>
+                <button class="selection-btn" data-domain="startups">
+                    <span class="selection-title">Startups</span>
                 </button>
             </div>
 
             <!-- Step 2: Lens (Hidden until domain selected) -->
             <div id="lens-selection" style="display: none; margin-top: 2rem;">
-                <p class="persona-intro">Analyze this as...</p>
-                <div class="selection-grid lens-grid">
-                    <button class="selection-btn" data-lens="visionary">
-                        <span class="selection-title">The Visionary</span>
+                <p class="persona-intro" id="lens-intro">Analyze this as...</p>
+                <div class="selection-grid lens-grid" id="lens-options">
+                    <!-- Default lenses for Organizations -->
+                    <button class="selection-btn" data-lens="ceo" data-domains="organizations">
+                        <span class="selection-title">CEO</span>
                     </button>
-                    <button class="selection-btn" data-lens="integrator">
-                        <span class="selection-title">The Integrator</span>
+                    <button class="selection-btn" data-lens="cto" data-domains="organizations">
+                        <span class="selection-title">CTO</span>
                     </button>
-                    <button class="selection-btn" data-lens="developer">
-                        <span class="selection-title">The Developer</span>
+                    <button class="selection-btn" data-lens="legal" data-domains="organizations">
+                        <span class="selection-title">Legal</span>
                     </button>
-                    <button class="selection-btn" data-lens="skeptic">
-                        <span class="selection-title">The Skeptic</span>
+                    <button class="selection-btn" data-lens="hr" data-domains="organizations">
+                        <span class="selection-title">HR</span>
                     </button>
-                    <button class="selection-btn" data-lens="newcomer">
-                        <span class="selection-title">The Newcomer</span>
+                    <button class="selection-btn" data-lens="consultants" data-domains="organizations">
+                        <span class="selection-title">Consultants</span>
+                    </button>
+                    <!-- Lenses for Cities -->
+                    <button class="selection-btn" data-lens="mayor" data-domains="cities" style="display:none;">
+                        <span class="selection-title">Mayor</span>
+                    </button>
+                    <button class="selection-btn" data-lens="city-planner" data-domains="cities" style="display:none;">
+                        <span class="selection-title">City Planner</span>
+                    </button>
+                    <button class="selection-btn" data-lens="public-safety" data-domains="cities" style="display:none;">
+                        <span class="selection-title">Public Safety</span>
+                    </button>
+                    <button class="selection-btn" data-lens="infrastructure" data-domains="cities" style="display:none;">
+                        <span class="selection-title">Infrastructure</span>
+                    </button>
+                    <button class="selection-btn" data-lens="citizen-services" data-domains="cities" style="display:none;">
+                        <span class="selection-title">Citizen Services</span>
+                    </button>
+                    <!-- Lenses for Startups -->
+                    <button class="selection-btn" data-lens="healthcare" data-domains="startups" style="display:none;">
+                        <span class="selection-title">Healthcare</span>
+                    </button>
+                    <button class="selection-btn" data-lens="finance" data-domains="startups" style="display:none;">
+                        <span class="selection-title">Finance</span>
+                    </button>
+                    <button class="selection-btn" data-lens="education" data-domains="startups" style="display:none;">
+                        <span class="selection-title">Education</span>
+                    </button>
+                    <button class="selection-btn" data-lens="relationships" data-domains="startups" style="display:none;">
+                        <span class="selection-title">Relationships</span>
+                    </button>
+                    <button class="selection-btn" data-lens="personal-development" data-domains="startups" style="display:none;">
+                        <span class="selection-title">Personal Development</span>
                     </button>
                 </div>
             </div>
@@ -1077,49 +1107,95 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
 <script>
     const domains = {
-        teams: { 
-            title: 'Teams', 
-            context: 'alignment, shared accountability, and preventing "unowned" AI actions in fast-moving groups' 
+        organizations: {
+            title: 'Organizations',
+            context: 'enterprise governance, strategic oversight, and maintaining human accountability in AI-driven operations'
         },
-        partnerships: { 
-            title: 'Partnerships', 
-            context: 'cross-entity trust, verifiable multi-owner commitments, and legal clarity in joint ventures' 
+        cities: {
+            title: 'Cities',
+            context: 'municipal governance, public safety, and ensuring AI systems serve citizen needs while maintaining democratic accountability'
         },
-        institutions: { 
-            title: 'Public Institutions', 
-            context: 'public-sector risk mitigation, EU AI Act human oversight enforcement, and citizen-level accountability' 
-        },
-        individuals: { 
-            title: 'Individuals', 
-            context: 'personal growth, preserving authorship against algorithmic drift, and maintaining high-agency in automated workflows' 
+        startups: {
+            title: 'Startups',
+            context: 'product development, market positioning, and building AI-powered services that maintain human direction and user trust'
         }
     };
 
     const lenses = {
-        visionary: {
-            title: 'The Visionary',
-            prompt: 'You are a Visionary Founder. Analyze how HAP creates a strategic moat for [DOMAIN] over the next 5 years. Focus on how "Authored Value" replaces "AI Efficiency" as the primary source of competitive advantage and world-changing potential.',
-            placeholder: 'e.g. My project is a decentralized research collective...'
+        ceo: {
+            title: 'CEO',
+            prompt: 'You are advising a CEO of an enterprise operating with increasing AI-driven automation. Explain clearly and concretely what the Human Agency Protocol (HAP) does for the organization: what it enforces, what it prevents, and how it changes decision-making and execution in practice. Focus on how HAP ensures that no consequential action—especially those involving AI systems—can occur without explicit human ownership and commitment. Explain why implementing this now is critical to maintaining strategic control, limiting liability, and preserving human accountability as AI systems become more autonomous.',
+            placeholder: 'e.g. Our company needs to understand how HAP will affect our operations and strategy...'
         },
-        integrator: {
-            title: 'The Integrator',
-            prompt: 'You are a Protocol Integrator. Evaluate the technical implementation of HAP within [DOMAIN]. Analyze the "Stop → Ask → Proceed" flow and how cryptographic Decision Ownership provides verifiable human control without breaking automated scalability.',
-            placeholder: 'e.g. We are integrating HAP into a multi-agent orchestration framework...'
+        cto: {
+            title: 'CTO',
+            prompt: 'You are advising a CTO of an organization increasingly dependent on AI systems. Explain clearly and concretely what the Human Agency Protocol (HAP) does for the technical architecture: what it enforces, what it prevents, and how it changes system design and implementation in practice. Focus on how HAP ensures that no AI execution can occur without explicit human authorization and cryptographic proof of commitment. Explain why implementing this now is critical to maintaining technical control, preventing system drift, and preserving human oversight as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our system architecture and development processes...'
         },
-        developer: {
-            title: 'The Developer',
-            prompt: 'You are a Lead Developer. Analyze the architectural refactor required to implement HAP for [DOMAIN]. How do you move from "implicit machine inference" to "explicit human commitment" at the code level? Focus on gate states and multi-owner authorization logic.',
-            placeholder: 'e.g. We are building on a Node.js/TypeScript stack...'
+        legal: {
+            title: 'Legal',
+            prompt: 'You are advising a Legal Expert on an organization facing increasing AI integration. Explain clearly and concretely what the Human Agency Protocol (HAP) does for legal compliance: what it enforces, what it prevents, and how it changes liability and accountability in practice. Focus on how HAP ensures that no consequential AI action can occur without explicit human legal ownership and documented commitment. Explain why implementing this now is critical to limiting liability, ensuring regulatory compliance, and preserving legal accountability as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our legal compliance and liability exposure...'
         },
-        skeptic: {
-            title: 'The Skeptic',
-            prompt: 'You are a Hard-Nosed Skeptic. Challenge the cost of intentional friction in [DOMAIN]. Is the operational slowdown of "Human Gates" worth the reduction in AI churn and legal risk? Be direct about implementation overhead.',
-            placeholder: 'e.g. Our priority is sub-second execution speed...'
+        hr: {
+            title: 'HR',
+            prompt: 'You are advising an HR Director of an organization adapting to AI-driven changes. Explain clearly and concretely what the Human Agency Protocol (HAP) does for workforce management: what it enforces, what it prevents, and how it changes employee development and accountability in practice. Focus on how HAP ensures that no consequential AI-driven HR action can occur without explicit human ownership and commitment. Explain why implementing this now is critical to preserving human agency in employment decisions, maintaining ethical standards, and ensuring workforce stability as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our HR processes and employee management...'
         },
-        newcomer: {
-            title: 'The Newcomer',
-            prompt: 'Explain HAP\'s impact on [DOMAIN] to someone with no technical background. Use simple analogies to show why direction is the only thing that will be scarce in an AI-commoditized future.',
-            placeholder: 'e.g. I am new to AI and want to understand how this helps me stay in control...'
+        consultants: {
+            title: 'Consultants',
+            prompt: 'You are advising a Consultant helping organizations prepare for AI transformation. Explain clearly and concretely what the Human Agency Protocol (HAP) does for client organizations: what it enforces, what it prevents, and how it changes strategic decision-making and implementation in practice. Focus on how HAP ensures that no consequential AI action can occur without explicit human ownership and commitment. Explain why implementing this now is critical to maintaining strategic control, ensuring client accountability, and preserving human value creation as AI systems become more autonomous.',
+            placeholder: 'e.g. I need to explain to clients how HAP will transform their approach to AI governance...'
+        },
+        mayor: {
+            title: 'Mayor',
+            prompt: 'You are advising a Mayor of a city increasingly dependent on AI systems. Explain clearly and concretely what the Human Agency Protocol (HAP) does for municipal governance: what it enforces, what it prevents, and how it changes public service delivery and accountability in practice. Focus on how HAP ensures that no consequential AI action in public services can occur without explicit human ownership and democratic commitment. Explain why implementing this now is critical to maintaining democratic accountability, preserving citizen trust, and ensuring public welfare as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our city services and democratic processes...'
+        },
+        'city-planner': {
+            title: 'City Planner',
+            prompt: 'You are advising a City Planner on urban systems increasingly managed by AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for urban planning: what it enforces, what it prevents, and how it changes development decisions and community impact in practice. Focus on how HAP ensures that no consequential urban AI action can occur without explicit human ownership and community commitment. Explain why implementing this now is critical to maintaining human-centered planning, preserving community values, and ensuring sustainable development as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our urban planning and development processes...'
+        },
+        'public-safety': {
+            title: 'Public Safety',
+            prompt: 'You are advising a Public Safety Official on systems increasingly reliant on AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for safety operations: what it enforces, what it prevents, and how it changes emergency response and risk management in practice. Focus on how HAP ensures that no consequential safety AI action can occur without explicit human ownership and life-and-death commitment. Explain why implementing this now is critical to maintaining human accountability, preserving safety standards, and ensuring public protection as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our emergency response and safety protocols...'
+        },
+        infrastructure: {
+            title: 'Infrastructure',
+            prompt: 'You are advising an Infrastructure Director on systems increasingly managed by AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for critical infrastructure: what it enforces, what it prevents, and how it changes system management and public safety in practice. Focus on how HAP ensures that no consequential infrastructure AI action can occur without explicit human ownership and public welfare commitment. Explain why implementing this now is critical to maintaining system reliability, preserving public safety, and ensuring infrastructure resilience as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our infrastructure management and safety systems...'
+        },
+        'citizen-services': {
+            title: 'Citizen Services',
+            prompt: 'You are advising a Citizen Services Director on public services increasingly delivered by AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for public service delivery: what it enforces, what it prevents, and how it changes service quality and citizen interaction in practice. Focus on how HAP ensures that no consequential citizen AI interaction can occur without explicit human ownership and service commitment. Explain why implementing this now is critical to maintaining human-centered services, preserving citizen dignity, and ensuring public trust as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our citizen services and public engagement...'
+        },
+        healthcare: {
+            title: 'Healthcare',
+            prompt: 'You are advising a Healthcare professional on systems increasingly assisted by AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for patient care: what it enforces, what it prevents, and how it changes medical decisions and patient safety in practice. Focus on how HAP ensures that no consequential medical AI action can occur without explicit human ownership and ethical commitment. Explain why implementing this now is critical to maintaining physician accountability, preserving patient safety, and ensuring ethical care as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our medical decisions and patient care processes...'
+        },
+        finance: {
+            title: 'Finance',
+            prompt: 'You are advising a Financial services professional on systems increasingly managed by AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for financial operations: what it enforces, what it prevents, and how it changes investment decisions and risk management in practice. Focus on how HAP ensures that no consequential financial AI action can occur without explicit human ownership and financial commitment. Explain why implementing this now is critical to maintaining regulatory compliance, preserving financial accountability, and ensuring stakeholder protection as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our financial decisions and risk management...'
+        },
+        education: {
+            title: 'Education',
+            prompt: 'You are advising an Educational professional on systems increasingly enhanced by AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for learning processes: what it enforces, what it prevents, and how it changes pedagogical decisions and student development in practice. Focus on how HAP ensures that no consequential educational AI action can occur without explicit human ownership and learning commitment. Explain why implementing this now is critical to maintaining pedagogical integrity, preserving teacher authority, and ensuring student growth as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our educational processes and student development...'
+        },
+        relationships: {
+            title: 'Relationships',
+            prompt: 'You are advising a professional developing Relationship tools on systems increasingly managed by AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for relationship management: what it enforces, what it prevents, and how it changes personal and professional connections in practice. Focus on how HAP ensures that no consequential relationship AI action can occur without explicit human ownership and emotional commitment. Explain why implementing this now is critical to maintaining authentic connections, preserving human agency, and ensuring meaningful relationships as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our relationship management and connection processes...'
+        },
+        'personal-development': {
+            title: 'Personal Development',
+            prompt: 'You are advising a Personal Development professional on systems increasingly guided by AI. Explain clearly and concretely what the Human Agency Protocol (HAP) does for individual growth: what it enforces, what it prevents, and how it changes self-direction and goal achievement in practice. Focus on how HAP ensures that no consequential personal development AI action can occur without explicit human ownership and growth commitment. Explain why implementing this now is critical to maintaining individual autonomy, preserving self-direction, and ensuring authentic personal growth as AI systems become more autonomous.',
+            placeholder: 'e.g. We need to understand how HAP will affect our personal development and growth processes...'
         }
     };
 
@@ -1147,14 +1223,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             currentDomain = btn.dataset.domain;
             document.querySelectorAll('[data-domain]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
+
             // Show lens selection row
             const lensSelection = document.getElementById('lens-selection');
             if (lensSelection) lensSelection.style.display = 'block';
-            
+
+            // Show only the appropriate lens options for the selected domain
+            updateLensOptions(currentDomain);
+
             updatePrompt();
         });
     });
+
+    function updateLensOptions(domain) {
+        // First, hide all lens options
+        document.querySelectorAll('[data-domains]').forEach(lensBtn => {
+            lensBtn.style.display = 'none';
+        });
+
+        // Then, show only the lens options for the selected domain
+        document.querySelectorAll(`[data-domains="${domain}"]`).forEach(lensBtn => {
+            lensBtn.style.display = 'flex';
+        });
+
+        // Update the lens intro text based on domain
+        const lensIntro = document.getElementById('lens-intro');
+        if (lensIntro) {
+            if (domain === 'startups') {
+                lensIntro.textContent = 'Develop service and apps for...';
+            } else {
+                lensIntro.textContent = 'Analyze this as...';
+            }
+        }
+    }
 
     // Handle Lens Selection
     document.querySelectorAll('[data-lens]').forEach(btn => {
