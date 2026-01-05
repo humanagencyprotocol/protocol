@@ -88,6 +88,7 @@ Your app must record, track, and enforce the Six Human Gates:
 - **Tradeoff** — "What do we sacrifice?"
 - **Commitment** — "What path do we choose, and what cost do we accept?"
 - **Decision Owner** — "Who takes responsibility?"
+- **Decision Owner Scope** — "the declared authority boundaries of each Decision Owner"
 
 This structure is mandatory.
 Your app may extend it, but may not skip or reorder it.
@@ -146,6 +147,7 @@ directionState = {
   tradeoff: { resolved: false, value: null },
   commitment: { resolved: false, value: null },
   decisionOwner: { resolved: false, value: null },
+  decisionOwnerScope: { resolved: false, value: null }  // ADD THIS
 };
 ```
 
@@ -262,6 +264,7 @@ Every HAP-compliant app must:
 - [x] Validate local compliance with Blueprint constraints before resolving gates
 - [x] Derive minimal execution payloads without semantic leakage
 - [x] Support combined SP+Proxy deployments (e.g., local HAP gateway)
+- [x] Validate Decision Owner Scope against declared consequences before emitting closure signals
 
 ### Optional but encouraged
 
@@ -328,6 +331,8 @@ When an application participates in a shared decision instance (e.g., team plann
 ### 1. Maintain Local Direction State Per Domain
 Each materially affected domain (e.g., user.wellbeing, user.time) is resolved entirely locally. No semantic content leaves the device.
 
+Also maintain decision_owner_scope per owner. This structure must be included in structural emissions if required by the Blueprint.
+
 ### 2. Publish Only Structural Domain Status
 When participating in a shared decision, the app may emit:
 
@@ -337,7 +342,11 @@ When participating in a shared decision, the app may emit:
   "frame_hash": "sha256:...",
   "domain": "wellbeing",
   "resolved_gates": ["problem", "tradeoff", "commitment"],
-  "resolved": true
+  "resolved": true,
+  "owner_scope": {  // OPTIONAL, if required
+    "domains": ["wellbeing"],
+    "constraints": {}
+  }
 }
 ```
 → Never include Problem text, Tradeoff description, or reasoning.
@@ -358,3 +367,12 @@ Before enabling joint action (e.g., sending a calendar invite, transferring fund
 
 ### 5. Treat Frame Drift as a Stop Condition
 If any participant's frame_hash differs from the declared Frame, the app must halt and signal: "Direction conflict: Frames do not align."
+
+### 6. Handle Divergence with Generative Prompts
+When structural signals reveal irreconcilable directions (e.g., mismatched frame_hash or tradeoffs that imply mutually exclusive actions), the app must not simulate agreement.
+
+Instead, it should offer a clear, non-coercive path forward:
+
+"Your directions diverge. Would you like to initiate a new decision?"
+
+This transforms potential conflict into explicit, ratifiable next steps—keeping agency human and collaboration honest.

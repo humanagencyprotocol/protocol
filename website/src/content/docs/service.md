@@ -1,6 +1,6 @@
 ---
 title: "Service Providers"
-version: "Version 0.4"
+version: "Version 0.1"
 date: "January 2026"
 ---
 
@@ -75,6 +75,9 @@ Reject if:
 - decision_owners does not cover all affected_domains
 - The blueprint_id in the request corresponds to an unknown or untrusted Blueprint
 - All required_domains and stop_conditions declared in the referenced Blueprint are not satisfied in the request
+- If decision_owner_scopes is present in the request, verify that for every Decision Owner, the declared consequences (inferred from affected_domains and Blueprint context) do not exceed their declared scope. If they do, reject the request.
+
+Note: Structural consequence inference is Blueprint-defined. SPs do not interpret semantics—they compare declared affected_domains and optional constraint keys against the owner's scope.
 
 ### Validate Blueprint Compliance
 

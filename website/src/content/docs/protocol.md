@@ -76,11 +76,35 @@ Ownership is not just a state — it is a **gate for valid decision-making**.
 
 ### The Decision Owner
 A **Decision Owner** is any actor who:
-1. Is materially affected by a decision frame.
-2. Participates in defining and committing to that decision.
-3. Bears the consequences of execution within their affected domain.
+1. Explicitly authorizes execution
+2. Accepts responsibility for consequences
+3. Declares the scope of authority within which that ownership is valid
 
-Authorship and ownership are inseparable. You cannot authorize what you do not own.
+A Decision Owner is invalid if the decision's declared consequences exceed their declared scope.
+
+### Decision Owner Scope (DOS)
+
+**Definition**
+Decision Owner Scope describes the boundaries within which a human is authorized to make binding commitments. It is a declarative structure attached to the Decision Owner gate.
+
+**Minimal Schema**
+```json
+{
+  "domains": ["delivery", "budget"],
+  "constraints": {}
+}
+```
+
+All fields are optional unless required by a Blueprint.
+
+**Semantics**
+
+Domains: Categories of consequence the owner is authorized to cover (e.g., delivery, financial, legal, reputational, wellbeing). Declared, not inferred.
+Constraints: Optional limits on authority within a domain (e.g., budget cap, impact threshold). Compared structurally against declared decision consequences.
+
+**Protocol Invariant (New)**
+
+A Decision Owner is invalid if the decision's declared consequence scope exceeds the Decision Owner's declared scope.
 
 ### Consequence Domains
 Consequences are partitioned by domain. Any actor materially affected in a domain must be a decision owner for that domain.
@@ -98,6 +122,25 @@ However, collective or symbolic ownership ("The Team owns this") is invalid.
 Ownership must be explicit, domain-scoped, and jointly committed.
 
 **Invariant:** No decision frame may be committed unless all materially affected decision owners are identified and participating.
+
+### Divergence Is Not Failure—False Unity Is
+
+When materially affected parties issue conflicting attestations (e.g., different Frame hashes or incompatible tradeoffs), HAP blocks shared execution—not human agency.
+
+This is not a deadlock. It is a boundary signal: "Your directions diverge."
+
+Example:
+
+Frame: "Spend Saturday together"
+You: "I accept the cost of walking 30 minutes to meet you in the park."
+Partner: "I accept the cost of you coming to my home (I won't leave)."
+These tradeoffs are incompatible under the same Frame—they demand opposite actions that cannot coexist. HAP detects this as Frame drift (different implied locations) or tradeoff collision, and blocks shared execution.
+
+Systems should respond by prompting users to:
+
+"Your directions diverge. Initiate a new decision?"
+
+This ensures drift is replaced by explicit divergence, preserving both autonomy and honesty. No shared action proceeds on unratified consensus.
 
 ---
 
@@ -268,12 +311,21 @@ Attestations do not contain semantic content. They enable executors to verify di
     "blueprint_id": "string",
     "resolved_gates": ["frame", "problem", ...],
     "decision_owners": ["did:key:..."],
+    "decision_owner_scopes": [
+      {
+        "owner_id": "did:key:...",
+        "domains": ["delivery", "budget"],
+        "constraints": { "budget_limit": "€25k" }
+      }
+    ],
     "affected_domains": ["wellbeing", "legal"],
     "issued_at": 1735888000,
     "expires_at": 1735888120
   }
 }
 ```
+
+Note: decision_owner_scopes is optional in the attestation unless required by the Blueprint. If present, the Executor Proxy must validate the scope invariant before execution.
 
 ---
 
@@ -381,4 +433,7 @@ Humans decide what execution is for.
 
 **HAP ensures automation serves human direction — not the reverse.**
 
+## Backward Compatibility
+
+All fields introduced by the Decision Owner Scope extension are optional. Scope validation is only enforced when a Blueprint explicitly requires it or when decision_owner_scopes is present in the attestation request.
 

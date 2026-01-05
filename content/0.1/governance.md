@@ -4,188 +4,160 @@ version: "Version 0.1"
 date: "January 2026"
 ---
 
-Intelligent automation now spans every layer of digital infrastructure. Yet the challenge is no longer how much intelligence we can automate—but how much human agency we can preserve.
+HAP is governed by invariant constraints, not institutions.
 
-Across domains—education, design, governance, health—systems are being built that claim to be “human‑first.” But without verifiable standards, that term risks dilution. The Global Protocol Stewardship Model (GPSM) defines how to maintain integrity across a decentralized ecosystem of human‑agency protocols.
+There is no central authority, no steward council, no registry, and no mandatory approval process. Compliance is enforced locally and cryptographically by any participant using the open specification.
 
-The model recognizes that governance cannot scale by bureaucratic oversight. It must be structural, lightweight, and enforceable through protocol behavior.
+Implementations may fork freely. However, breaking core invariants requires explicit renaming. The name HAP is reserved for systems that satisfy the canonical invariant set defined below.
 
----
+Governance is therefore achieved through:
 
-## Purpose
+- cryptographic verifiability
+- invariant preservation
+- local sovereignty
+- naming discipline
 
-GPSM provides a meta‑governance framework for any protocol that mediates between humans and intelligent systems.
+Not through consensus, committees, or institutional trust.
 
-It ensures that participation in a global network of inquiry or collaboration is limited to qualified service providers who uphold inviolable standards of privacy, transparency, and human authorship.
+## Core Laws
 
-It does not regulate local systems or cultural contexts. Each domain remains free to define what "human‑first" means within its own values.
-GPSM governs only those entities that operate the protocol layer—the technical intermediaries that move structural signals between local systems.
+HAP is designed to satisfy three non-negotiable laws of globally scalable protocols:
 
----
+1. Anyone can implement it
+2. Anyone can verify it
+3. No one can stop it
 
-## Governance Philosophy
+Any governance mechanism that violates these laws is invalid.
 
-### Minimalism
+## Canonical HAP Invariants
 
-Only what is necessary to protect human autonomy is enforced. All else remains voluntary. Governance exists to prevent extraction, not to dictate expression.
+A system may only claim to be HAP-compliant if all of the following invariants hold.
 
-### Sovereignty by Layer
+These invariants are intentionally minimal and unforkable without renaming.
 
-Local systems govern human use. Protocol service providers govern data integrity. The global registry governs participation rights.
+### Invariant 1 — No Execution Without Attestation
 
-### Proof over Promise
+A consequential action is any operation that affects external state, human wellbeing, financial position, legal standing, or reputation.
 
-Ethical claims are meaningless without technical evidence. Every qualified provider must demonstrate compliance through verifiable proofs—cryptographic, procedural, or statistical.
+No executor (human or machine) may perform a consequential action unless presented with a valid HAP attestation.
 
-### Transparency as Legitimacy
+### Invariant 2 — Explicit Human Decision Ownership
 
-Openness is not an option; it is the currency of trust. Every steward's conformance record must be public, inspectable, and auditable.
+Every attestation must reference at least one identifiable human Decision Owner. Collective, symbolic, or anonymous ownership is invalid.
 
-### Stewardship, not Ownership
+### Invariant 3 — Scope-Covering Ownership
 
-No entity owns the protocol; all stewards share its maintenance. Governance is custodial and renewable, never permanent.
+Each Decision Owner must declare a Decision Owner Scope. Execution is invalid if the declared consequence domains of a decision exceed the declared scope of all Decision Owners.
 
----
+Comparison Rule: Consequence domains and scope boundaries are compared structurally using exact string matching on domain names and constraint keys. Semantic interpretation is explicitly prohibited.
 
-## Layers of Responsibility
+### Invariant 4 — Binding Commitment
 
-| Layer                                 | Actor                                    | Responsibility                                          | Governance Mechanism                               |
-| ------------------------------------- | ---------------------------------------- | ------------------------------------------------------- | -------------------------------------------------- |
-| Local Human‑First Systems         | Organizations, communities, platforms    | Define how human agency is expressed and measured.      | Local governance, self‑defined ethics.             |
-| Protocol Service Providers (PSPs) | Operators of the protocol infrastructure | Enforce privacy, schema fidelity, and transparency.     | Qualification + periodic proof submission.         |
-| Global Coordination Layer         | Open registry of stewards                | Manage admission, verification, and revocation of PSPs. | Peer validation, rotating audits, public registry. |
+Once execution occurs, the associated commitment and ownership record must be append-only and non-reversible. History may be appended to, but not rewritten.
 
----
+### Invariant 5 — Semantic Isolation of Executors
 
-## Protocol Service Provider (PSP) Qualification
+Executors may not receive semantic intent, human reasoning, or contextual meaning. They operate only on minimal, non-semantic execution payloads bound to attestations.
 
-A PSP must pass a qualification process to participate in the global coordination layer. This process verifies that the provider enforces the protocol's foundational safeguards.
+## Permissionless Implementation
 
-### Core Criteria
+Any individual, team, or system may:
 
-1. Schema Fidelity – The provider implements the protocol's data schemas exactly; no hidden fields or mutable parameters.
-2. Privacy Integrity – No content leaves local custody; only structural or anonymized signals are transmitted.
-3. Transparency Ledger – Every transaction, update, and signal guide is logged in an open, auditable format.
-4. Non‑Extraction Commitment – No training, profiling, or optimization is performed on user‑generated content or structural telemetry.
-5. Ethos Affirmation – The provider signs and publishes an affirmation that intelligent systems must amplify, not replace, human authorship.
+- implement the HAP protocol
+- run a Service Provider
+- publish Blueprints
+- enforce HAP locally
+- reject non-compliant executors
 
-### Verification Proofs
+No approval is required. No registration is necessary. No authority may grant or revoke permission to participate.
 
-Each criterion must be backed by at least one verifiable artifact:
+## Cryptographic Self-Verification
 
-* Cryptographic proof (signature, hash chain, or attestation)
-* Procedural proof (public compliance checklist)
-* Statistical proof (privacy or fairness validation report)
+Compliance is proven exclusively through:
 
-### Renewal Cycle
+- correct schema usage
+- valid cryptographic signatures
+- invariant-preserving behavior
 
-Qualification expires every 12 months unless renewed through:
+If an implementation satisfies the invariants, it is compliant. If it does not, it is not.
 
-* Updated proofs
-* Recent audit log publication
-* Peer co‑signatures from two qualified stewards
+No external certification is required.
 
----
+## Adversarial Interoperability
 
-## Registry Architecture
+HAP assumes all remote parties are potentially hostile.
 
-The Global Registry maintains a public, append‑only directory of qualified PSPs.
+Local systems decide which entities to trust using:
 
-### Contents of Each Entry
+- public key whitelisting
+- local policy
+- user-defined reputation
 
-```json
-{
-  "provider_id": "psp-alpha",
-  "organization": "Example Labs",
-  "jurisdiction": "EU",
-  "schema_version": "2.1",
-  "privacy_audit_hash": "sha256:...",
-  "transparency_log_url": "https://...",
-  "ethos_affirmation": true,
-  "last_verified": "2025-11-01",
-  "verified_by": ["psp-omega", "psp-delta"]
-}
-```
+There is no global root of trust. There is only local sovereignty plus cryptographic proof.
 
-### Verification Process
+## Forkability and Naming
 
-* A new PSP submits its public key, schemas, and proofs.
-* Two existing stewards independently verify and sign its record.
-* Once two signatures are posted, the registry entry becomes active.
+Forking is a feature, not a failure.
 
-### Revocation
+Any community may fork:
 
-A Protocol Service Provider loses its qualification if it:
+- Blueprints
+- Service Provider implementations
+- UX layers
+- execution models
 
-* allows AI to act without resolving a required stop-condition,
-* allows inferred meaning to substitute for human-defined meaning,
-* bypasses human checkpoints at any Ladder stage.
+However:
 
-Governance enforces alignment not through trust, but through protocol-level accountability.
+- if core invariants are preserved, the system may call itself HAP
+- if any canonical invariant is broken, the system must rename itself
 
-If a PSP violates privacy or transparency guarantees:
+This preserves interoperability without requiring permission.
 
-* Any steward may propose revocation.
-* Two corroborating proofs (e.g., leaked content, falsified schema, checkpoint bypass) trigger automatic suspension.
-* PSP may reapply after correction and re‑audit.
+## Reference Conformance (Non-Authoritative)
 
----
+To support interoperability without institutional control, the HAP ecosystem maintains:
 
-## Proof‑of‑Stewardship
+- a public set of reference invariant tests
+- adversarial and failure test vectors
+- minimal reference flows
 
-Instead of centralized enforcement, GPSM relies on a recurring self‑audit mechanism:
+Running these tests is voluntary. Publishing results is optional.
 
-1. Quarterly Integrity Reports – Summary of all proofs and privacy checks.
-2. Public Transparency Logs – Hash‑chained updates for independent verification.
-3. Peer Challenge Right – Any steward can request clarification or sample audit.
-4. Dispute Resolution – Open arbitration via three neutral stewards; decisions recorded publicly.
+No entity grants approval. No entity issues certification.
 
----
+The tests exist solely to make invariant compliance observable and comparable.
 
-## Ethical Foundations
+## What Governance Is Not
 
-The model defines ethics as enforceable behavior, not as aspiration. Every qualified provider commits to:
+HAP governance explicitly rejects the following:
 
-* Human Primacy: Systems must defer to human direction in case of conflict.
-* Privacy by Architecture: No storage or transmission of personal or semantic content beyond local custody.
-* Transparency by Default: Operational data must be visible, queryable, and signed.
-* Non‑Extraction Economy: Data and interactions cannot be monetized or optimized for engagement.
+❌ Central registries
+❌ Steward councils
+❌ Qualification processes
+❌ Compliance certification bodies
+❌ Jurisdiction-based approval
+❌ Dispute resolution authorities
 
-Providers that violate these principles lose their qualification automatically through proof‑based revocation.
+HAP governs behavior, not actors.
 
----
+## Trust Model
 
-## Interoperability & Local Autonomy
+Trust in HAP is constructed as:
 
-Local human‑first systems remain fully sovereign. They may implement any governance or ethical model suited to their domain—educational, civic, artistic—so long as they use only qualified PSPs when connecting to the global layer.
+Public Key + Local Policy
 
-This structure ensures:
+Every Service Provider, Blueprint, Executor, or App identifies itself via a public key. Local systems choose which keys to trust. Unknown or untrusted keys are ignored by default.
 
-* Global interoperability of inquiry signals.
-* Local cultural and ethical independence.
-* Unified trust without centralized control.
+There is no global trust anchor.
 
----
+## Final Statement
 
-## Adoption Path
+HAP does not ask for permission. It does not seek legitimacy from institutions.
 
-1. Publish Qualification Guide – Public documentation of criteria, proof types, and submission process.
-2. Bootstrap Steward Council – Three independent PSPs form the initial quorum.
-3. Launch Open Registry – Minimal API + human‑readable index.
-4. Invite Regional Nodes – Encourage formation of regional PSPs under local data jurisdictions.
-5. Annual Transparency Summit – Stewards review proof formats, share metrics, and evolve criteria.
+Its authority derives from invariants that cannot be bypassed without detection.
 
----
+Systems that preserve those invariants interoperate. Systems that do not are ignored.
 
-## Outcome
-
-The Global Protocol Stewardship Model transforms governance from bureaucratic oversight to protocol‑level accountability.
-
-It does not centralize power—it codifies responsibility.
-It does not prescribe culture—it protects its possibility.
-
-By making service providers accountable through proof, not promise, GPSM ensures that every human‑first system, whatever its form, rests on infrastructure that honors the same universal commitments:
-
-> Privacy, transparency, authorship, and human autonomy.
+That is the entirety of governance.
 
 
