@@ -93,7 +93,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <!-- Expanded Prompt Display -->
             <div id="prompt-display" class="prompt-display" style="display: none;">
                 <div class="prompt-content">
-                    <h4 id="prompt-title" class="prompt-title"></h4>
+                    <div class="prompt-toggle">
+                        <label class="prompt-checkbox-label">
+                            <input type="checkbox" id="prompt-checkbox" class="prompt-checkbox" checked>
+                            <span class="checkbox-text">Include generated prompt (optional)</span>
+                        </label>
+                    </div>
                     <p id="prompt-text" class="prompt-text"></p>
                     <div id="context-input-container">
                         <p class="context-label">Add your specific context (optional):</p>
@@ -600,6 +605,39 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     .context-input:focus {
         outline: none;
         border-color: var(--accent);
+    }
+
+    .prompt-toggle {
+        margin-bottom: 1rem;
+    }
+
+    .context-toggle {
+        margin-bottom: 0.5rem;
+    }
+
+    .prompt-checkbox-label,
+    .context-checkbox-label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+    }
+
+    .prompt-checkbox,
+    .context-checkbox {
+        margin-right: 0.5rem;
+        cursor: pointer;
+        accent-color: var(--accent); /* Use the yellow accent color */
+    }
+
+    .checkbox-text {
+        cursor: pointer;
+    }
+
+    .prompt-text.crossed-out {
+        text-decoration: line-through;
+        opacity: 0.6;
     }
 
     /* Content Sections */
@@ -1277,11 +1315,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         const domainData = domains[currentDomain];
         const lensData = lenses[currentLens];
-        const promptTitle = document.getElementById('prompt-title');
         const promptText = document.getElementById('prompt-text');
         const contextInput = document.getElementById('context-input') as HTMLTextAreaElement;
 
-        if (promptTitle) promptTitle.textContent = `${domainData.title} + ${lensData.title}`;
         if (promptText) promptText.textContent = lensData.prompt.replace('[DOMAIN]', domainData.context);
         if (contextInput) {
             contextInput.placeholder = lensData.placeholder;
@@ -1289,10 +1325,29 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             const container = document.getElementById('context-input-container');
             if (container) container.style.display = currentLens === 'newcomer' ? 'none' : 'block';
         }
-        
+
         const display = document.getElementById('prompt-display');
         if (display) display.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
+
+    // Initialize prompt checkbox functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const promptCheckbox = document.getElementById('prompt-checkbox');
+        const promptText = document.getElementById('prompt-text');
+
+        if (promptCheckbox && promptText) {
+            // Set initial state
+            promptText.classList.remove('crossed-out');
+
+            promptCheckbox.addEventListener('change', () => {
+                if (promptCheckbox.checked) {
+                    promptText.classList.remove('crossed-out');
+                } else {
+                    promptText.classList.add('crossed-out');
+                }
+            });
+        }
+    });
 
     // Copy function (reusable)
     async function copyToClipboard(text, button, successMsg, originalText) {
@@ -1343,17 +1398,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const button = document.getElementById('copy-prompt-btn');
         const originalText = button.textContent;
         const context = await fetchContext();
-        
-        const domainData = domains[currentDomain];
-        const lensData = lenses[currentLens];
-        const userContext = (document.getElementById('context-input') as HTMLTextAreaElement).value.trim();
-        
-        const basePrompt = lensData.prompt.replace('[DOMAIN]', domainData.context);
-        const personaPrompt = userContext 
-            ? `${basePrompt}\n\nUSER SPECIFIC CONTEXT:\n${userContext}`
-            : basePrompt;
 
-        const combinedText = `${personaPrompt}\n\n---\n\n${context}`;
+        const promptCheckbox = document.getElementById('prompt-checkbox') as HTMLInputElement;
+        const userContextInput = document.getElementById('context-input') as HTMLTextAreaElement;
+
+        let combinedText = '';
+
+        // Include the generated prompt if the checkbox is checked
+        if (promptCheckbox && promptCheckbox.checked) {
+            const domainData = domains[currentDomain];
+            const lensData = lenses[currentLens];
+            const userContext = userContextInput?.value.trim();
+
+            const basePrompt = lensData.prompt.replace('[DOMAIN]', domainData.context);
+            const personaPrompt = userContext
+                ? `${basePrompt}\n\nUSER SPECIFIC CONTEXT:\n${userContext}`
+                : basePrompt;
+
+            combinedText = `${personaPrompt}\n\n---\n\n${context}`;
+        } else {
+            // If prompt is unchecked, only copy the context
+            combinedText = context;
+        }
 
         await copyToClipboard(combinedText, button, 'Copied! Paste it in your AI Chat', originalText);
     });
