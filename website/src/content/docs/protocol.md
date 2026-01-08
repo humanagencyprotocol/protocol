@@ -40,6 +40,23 @@ HAP exists to protect it.
 
 ---
 
+## Limitations of Existing Approaches to AI Control
+
+Most approaches to controlling advanced AI systems focus on behavior, oversight, or access, but fail to enforce **human authorship of consequential decisions**. They regulate how systems act, how organizations review outcomes, or who may initiate actions—without ensuring that irreversible execution is explicitly directed, justified, and owned by a human decision-maker. As AI systems operate at machine speed, these gaps allow direction to drift silently from humans to automation.
+
+### Comparison with the Human Agency Protocol
+
+| Approach | Primary Focus | Point of Intervention | Structural Limitation | How HAP Addresses It |
+|---|---|---|---|---|
+| **Alignment & Safety** | Model behavior | After objectives are set | Does not enforce who chose the objective or accepted consequences | **Objective & Tradeoff Gates** require explicit human choice before execution |
+| **Governance & Policy** | Oversight and accountability | After harm occurs | Cannot block irreversible execution at machine speed | **Commitment Gate** blocks execution until a human makes a binding decision |
+| **Access Control & Permissions** | Authorization | Before action, not justification | Allows actions without owned consequences | **Decision Owner Gate (+ Scope)** requires named, scoped human responsibility |
+| **Sandboxing & Capability Limits** | Capability containment | System boundaries | Delays power without governing use or intent | **Frame Gate** enforces explicit decision boundaries and prevents context drift |
+| **Human-Centered Design / "Slow AI"** | User reflection | Optional interaction points | Pauses are bypassed under pressure | **Stop → Ask → Confirm** makes direction checks mandatory |
+| **Responsible AI Platforms** | Compliance documentation | Post-execution review | Creates audit trails without binding responsibility | **Cryptographic Attestation** proves gate closure before execution |
+
+---
+
 ## Decision Closure States
 
 All productive human decision-making requires resolving these states.
@@ -129,12 +146,15 @@ When materially affected parties issue conflicting attestations (e.g., different
 
 This is not a deadlock. It is a boundary signal: "Your directions diverge."
 
-Example:
+#### Example: Product Release Decision (Non-Private, Widely Applicable)
 
-Frame: "Spend Saturday together"
-You: "I accept the cost of walking 30 minutes to meet you in the park."
-Partner: "I accept the cost of you coming to my home (I won't leave)."
-These tradeoffs are incompatible under the same Frame—they demand opposite actions that cannot coexist. HAP detects this as Frame drift (different implied locations) or tradeoff collision, and blocks shared execution.
+- **Frame:** "Release Feature X this quarter"
+- **Engineering:** "I accept the cost of increased on-call load to ship by the deadline."
+- **Legal:** "I accept the cost of delaying release until compliance review is complete."
+- **Marketing:** "I accept the cost of reduced launch scope to meet campaign timing."
+
+These tradeoffs are incompatible under the same Frame.
+Shipping this quarter, delaying for compliance, and reducing scope imply mutually exclusive execution paths that cannot coexist. HAP detects this as tradeoff collision across consequence domains and blocks shared execution.
 
 Systems should respond by prompting users to:
 
