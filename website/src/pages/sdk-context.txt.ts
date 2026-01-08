@@ -2,51 +2,67 @@ import fs from 'fs';
 import path from 'path';
 
 export async function GET() {
-  // Read the SDK documentation files from the local sdk-docs directory
-  const readmePath = path.join(process.cwd(), 'src/sdk-docs/README.md');
-  const apiPath = path.join(process.cwd(), 'src/sdk-docs/API.md');
-  const localDevPath = path.join(process.cwd(), 'src/sdk-docs/LOCAL_DEVELOPMENT.md');
-  const roadmapPath = path.join(process.cwd(), 'src/sdk-docs/ROADMAP.md');
+  // Read the comprehensive SDK documentation from the content/docs directory
+  const sdkDocPath = path.join(process.cwd(), 'src/content/docs/sdk.md');
+  const protocolContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/protocol.md'), 'utf-8');
+  const serviceContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/service.md'), 'utf-8');
+  const integrationContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/integration.md'), 'utf-8');
+  const governanceContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/governance.md'), 'utf-8');
 
-  const readmeContent = fs.readFileSync(readmePath, 'utf-8');
-  const apiContent = fs.readFileSync(apiPath, 'utf-8');
-  const localDevContent = fs.readFileSync(localDevPath, 'utf-8');
-  const roadmapContent = fs.readFileSync(roadmapPath, 'utf-8');
+  const sdkContent = fs.readFileSync(sdkDocPath, 'utf-8');
 
-  // Combine all SDK documentation
+  // Return the complete SDK documentation with full protocol context
   const combinedContent = `
-# HAP SDK (TypeScript) - Complete Documentation
+# HAP SDK (TypeScript) - Complete Documentation with Protocol Context
 
-**Version 0.1.0 — January 2026**
+**Version 0.1 — January 2026**
 
-This context includes the complete SDK documentation: README, API Reference, Local Development Guide, and Roadmap.
-
----
-
-${readmeContent}
-
----
-
-# API Reference
-
-${apiContent}
+This comprehensive SDK documentation provides everything developers need to integrate HAP into their applications:
+- Core SDK architecture and installation
+- API reference for all components
+- Local development and testing guidelines
+- Complete implementation of six human gates (Frame, Problem, Objective, Tradeoff, Commitment, Decision Owner)
+- Attestation and Decision Owner Scope (DOS) enforcement
+- Privacy-preserving architecture with zero semantic leakage
 
 ---
 
-# Local Development Guide
+## SDK Documentation
 
-${localDevContent}
+${sdkContent}
 
 ---
 
-# Roadmap: v0.3 and Beyond
+## Full Protocol Specification
 
-${roadmapContent}
+### Protocol Specification
+
+${protocolContent}
+
+---
+
+### Integration Specification
+
+${integrationContent}
+
+---
+
+### Service Provider Specification
+
+${serviceContent}
+
+---
+
+### Governance Framework
+
+${governanceContent}
 
 ---
 
 **Repository**: https://github.com/humanagencyprotocol/hap-sdk-typescript
 **Website**: https://humanagencyprotocol.org/integration/sdk
+
+For developers: This context provides the complete technical documentation needed to implement HAP-compliant applications with proper human direction enforcement.
 `.trim();
 
   return new Response(combinedContent, {
