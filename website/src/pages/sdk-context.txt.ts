@@ -17,7 +17,7 @@ export async function GET() {
   const combinedContent = `
 # HAP SDK (TypeScript) - Complete Documentation
 
-**Version 0.2.0 — November 2025**
+**Version 0.1.0 — January 2026**
 
 This context includes the complete SDK documentation: README, API Reference, Local Development Guide, and Roadmap.
 

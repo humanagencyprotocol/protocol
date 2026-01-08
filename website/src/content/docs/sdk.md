@@ -1,6 +1,6 @@
 ---
 title: "TypeScript SDK"
-version: "Version 1.0.0"
+version: "Version 0.1.0"
 date: "January 2026"
 ---
 
@@ -10,7 +10,7 @@ Gate-based TypeScript SDK for the Human Agency Protocol v0.1. Enforces the six g
 
 ## Overview
 
-**Version:** 1.0.0
+**Version:** 0.1.0
 **Protocol Version:** 0.1
 **Status:** Development
 **GitHub:** [humanagencyprotocol/hap-sdk-typescript](https://github.com/humanagencyprotocol/hap-sdk-typescript)
@@ -501,9 +501,7 @@ try {
 
 | SDK Version | Protocol Version | Status | Key Features |
 |-------------|------------------|--------|--------------|
-| 1.0.0       | 0.1              | Development | Gate-based architecture, attestation-first execution |
-| 0.2.x       | 0.1              | Deprecated | LocalHapProvider, metadata helpers, selection strategies |
-| 0.1.x       | 0.1              | Deprecated | Core protocol, HapClient, StopGuard |
+| 0.1.0       | 0.1              | Development | Gate-based architecture, attestation-first execution |
 
 ---
 
