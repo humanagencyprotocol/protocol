@@ -19,92 +19,81 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <a href="#why-exists" class="btn btn-secondary">Read more</a>
         </div>
 
-        <!-- Discovery Engine -->
-        <div id="persona-section" class="persona-section" style="display: none;">
-            <!-- Step 1: Domain -->
-            <p class="persona-intro">Create a prompt to learn more how you can use HAP for:</p>
-            <div class="selection-grid domain-grid">
-                <button class="selection-btn" data-domain="organizations">
-                    <span class="selection-title">Organizations</span>
+        <!-- Card Selector -->
+        <div id="card-section" class="card-section" style="display: none;">
+            <h2 class="card-section-title">Where is human direction missing in your work—or life?</h2>
+
+            <div class="cards-grid">
+                <!-- Card 1 -->
+                <button class="use-case-card" data-card="1">
+                    <h3 class="card-title">Enforce real ownership in teams</h3>
+                    <p class="card-description">No more "everyone's responsible, no one owns it."</p>
                 </button>
-                <button class="selection-btn" data-domain="cities">
-                    <span class="selection-title">Cities</span>
+
+                <!-- Card 2 -->
+                <button class="use-case-card" data-card="2">
+                    <h3 class="card-title">Comply with EU AI Act oversight</h3>
+                    <p class="card-description">Prove human direction before AI executes.</p>
                 </button>
-                <button class="selection-btn" data-domain="startups">
-                    <span class="selection-title">Startups</span>
+
+                <!-- Card 3 -->
+                <button class="use-case-card" data-card="3">
+                    <h3 class="card-title">Make civic decisions with shared cost</h3>
+                    <p class="card-description">Residents + officials co-own tradeoffs, not just outcomes.</p>
+                </button>
+
+                <!-- Card 4 -->
+                <button class="use-case-card" data-card="4">
+                    <h3 class="card-title">Ship with confidence—not hope</h3>
+                    <p class="card-description">Declare what you'll lose if you're wrong—before you code or spend.</p>
+                </button>
+
+                <!-- Card 5 -->
+                <button class="use-case-card" data-card="5">
+                    <h3 class="card-title">Navigate big life choices with clarity</h3>
+                    <p class="card-description">Shared decisions that respect both partners' stakes.</p>
+                </button>
+
+                <!-- Card 6 -->
+                <button class="use-case-card" data-card="6">
+                    <h3 class="card-title">Gate AI actions with human attestation</h3>
+                    <p class="card-description">No execution without Frame, Tradeoff, and Commitment.</p>
+                </button>
+
+                <!-- Card 7 - Wildcard -->
+                <button class="use-case-card wildcard-card" data-card="7">
+                    <h3 class="card-title">I have my own use case</h3>
+                    <p class="card-description">Paste your context and get a custom HAP prompt.</p>
                 </button>
             </div>
 
-            <!-- Step 2: Lens (Hidden until domain selected) -->
-            <div id="lens-selection" style="display: none; margin-top: 2rem;">
-                <p class="persona-intro" id="lens-intro">Analyze this as...</p>
-                <div class="selection-grid lens-grid" id="lens-options">
-                    <!-- Default lenses for Organizations -->
-                    <button class="selection-btn" data-lens="ceo" data-domains="organizations">
-                        <span class="selection-title">CEO</span>
-                    </button>
-                    <button class="selection-btn" data-lens="cto" data-domains="organizations">
-                        <span class="selection-title">CTO</span>
-                    </button>
-                    <button class="selection-btn" data-lens="legal" data-domains="organizations">
-                        <span class="selection-title">Legal</span>
-                    </button>
-                    <button class="selection-btn" data-lens="hr" data-domains="organizations">
-                        <span class="selection-title">HR</span>
-                    </button>
-                    <button class="selection-btn" data-lens="consultants" data-domains="organizations">
-                        <span class="selection-title">Consultants</span>
-                    </button>
-                    <!-- Lenses for Cities -->
-                    <button class="selection-btn" data-lens="mayor" data-domains="cities" style="display:none;">
-                        <span class="selection-title">Mayor</span>
-                    </button>
-                    <button class="selection-btn" data-lens="city-planner" data-domains="cities" style="display:none;">
-                        <span class="selection-title">City Planner</span>
-                    </button>
-                    <button class="selection-btn" data-lens="public-safety" data-domains="cities" style="display:none;">
-                        <span class="selection-title">Public Safety</span>
-                    </button>
-                    <button class="selection-btn" data-lens="infrastructure" data-domains="cities" style="display:none;">
-                        <span class="selection-title">Infrastructure</span>
-                    </button>
-                    <button class="selection-btn" data-lens="citizen-services" data-domains="cities" style="display:none;">
-                        <span class="selection-title">Citizen Services</span>
-                    </button>
-                    <!-- Lenses for Startups -->
-                    <button class="selection-btn" data-lens="healthcare" data-domains="startups" style="display:none;">
-                        <span class="selection-title">Healthcare</span>
-                    </button>
-                    <button class="selection-btn" data-lens="finance" data-domains="startups" style="display:none;">
-                        <span class="selection-title">Finance</span>
-                    </button>
-                    <button class="selection-btn" data-lens="education" data-domains="startups" style="display:none;">
-                        <span class="selection-title">Education</span>
-                    </button>
-                    <button class="selection-btn" data-lens="relationships" data-domains="startups" style="display:none;">
-                        <span class="selection-title">Relationships</span>
-                    </button>
-                    <button class="selection-btn" data-lens="personal-development" data-domains="startups" style="display:none;">
-                        <span class="selection-title">Personal Development</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Expanded Prompt Display -->
+            <!-- Prompt Display -->
             <div id="prompt-display" class="prompt-display" style="display: none;">
                 <div class="prompt-content">
-                    <div class="prompt-toggle">
-                        <label class="prompt-checkbox-label">
-                            <input type="checkbox" id="prompt-checkbox" class="prompt-checkbox" checked>
-                            <span class="checkbox-text">Include generated prompt (optional)</span>
-                        </label>
+                    <!-- Wildcard Input (only for card 7) -->
+                    <div id="wildcard-input-section" style="display: none;">
+                        <label class="wildcard-label">Describe your decision context:</label>
+                        <textarea
+                            id="wildcard-input"
+                            class="wildcard-input"
+                            placeholder="e.g., team, product, relationship, city project..."
+                        ></textarea>
+                        <button id="generate-custom-btn" class="btn btn-secondary">Generate Prompt</button>
                     </div>
-                    <p id="prompt-text" class="prompt-text"></p>
-                    <div id="context-input-container">
-                        <p class="context-label">Add your specific context (optional):</p>
-                        <textarea id="context-input" class="context-input" placeholder=""></textarea>
+
+                    <!-- Standard Prompt Display -->
+                    <div id="standard-prompt-section" style="display: none;">
+                        <p class="prompt-intro">Paste this into any AI chat to simulate HAP enforcement:</p>
+                        <div class="prompt-box">
+                            <pre id="prompt-text" class="prompt-text"></pre>
+                        </div>
+                        <div class="prompt-actions">
+                            <button id="copy-prompt-btn" class="btn btn-primary">Copy Prompt</button>
+                        </div>
+                        <p class="prompt-note">
+                            <strong>Note:</strong> This simulates HAP in chat. For real enforcement—in code, in production, under audit—integrate the <a href="/integration/sdk">HAP TypeScript SDK</a> to cryptographically bind human direction to every AI action.
+                        </p>
                     </div>
-                    <button id="copy-prompt-btn" class="btn btn-primary">Copy Discovery Prompt</button>
                 </div>
             </div>
         </div>
@@ -116,11 +105,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <h2 class="section-title">The Scarcity of Direction</h2>
         <div class="section-body">
             <p>Modern AI doesn't wait. It predicts, escalates, and acts at machine speed. But without human leadership, AI moves into a <strong>decision vacuum—substituting statistical probability for the unique human innovation that creates real value.</strong></p>
-            
+
             <p>To remain in control, we must enforce a fundamental boundary:</p>
 
             <blockquote class="axiom-block">
-                “No consequential action may be taken in a human system without an identifiable human who has explicitly authorized it, understood its tradeoffs, and accepted responsibility for its outcomes.”
+                "No consequential action may be taken in a human system without an identifiable human who has explicitly authorized it, understood its tradeoffs, and accepted responsibility for its outcomes."
             </blockquote>
 
             <p>HAP turns this axiom into infrastructure. It ensures every action traces back to a human <strong>Decision Owner</strong> who provides the direction machine intelligence cannot duplicate. By forcing AI to pause at the point of irreversibility, HAP keeps authorship human and innovation possible.</p>
@@ -200,79 +189,64 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
             <div class="checkpoint">
                 <div class="checkpoint-content">
-                    <h4>Commitment — The Point of No Return</h4>
-                    <p>Commitment makes a choice binding. Only a human can make an AI action irreversible.</p>
+                    <h4>Commitment — The Binding Choice</h4>
+                    <p>AI can suggest a plan. Only a human can say "I commit" and own the consequences.</p>
                 </div>
             </div>
 
             <div class="checkpoint">
                 <div class="checkpoint-content">
-                    <h4>Decision Owner — The Responsibility</h4>
-                    <p>Authorship and Ownership are unified. No action is taken without an identifiable human who bears the consequences.</p>
+                    <h4>Decision Owner — The Accountability</h4>
+                    <p>Every action needs an owner. Someone must be named and accountable before execution begins.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- How HAP Works -->
+    <!-- How It Works -->
     <section class="how-it-works">
-        <h2 class="section-title">How HAP Works</h2>
-        <h3 class="mechanism-title">Stop → Ask → Confirm → Proceed</h3>
+        <h2 class="section-title">How It Works</h2>
+        <p class="section-intro">HAP enforces a Stop → Ask → Confirm → Proceed loop at the point of irreversible execution</p>
 
         <div class="steps">
             <div class="step">
                 <div class="step-number">1</div>
-                <h4>Stop</h4>
-                <p>AI detects missing or ambiguous decision states: frame, problem, objective, tradeoff, commitment, or decision owner.</p>
+                <div class="step-content">
+                    <h4>AI Detects a Gate</h4>
+                    <p>When a decision lacks frame, tradeoff, or commitment, the system stops.</p>
+                </div>
             </div>
 
             <div class="step">
                 <div class="step-number">2</div>
-                <h4>Ask</h4>
-                <p>HAP triggers a structured question that forces human direction.</p>
+                <div class="step-content">
+                    <h4>System Asks Structured Questions</h4>
+                    <p>Using blueprints, HAP generates precise questions to resolve the missing gate.</p>
+                </div>
             </div>
 
             <div class="step">
                 <div class="step-number">3</div>
-                <h4>Confirm</h4>
-                <p>The human confirms the decision the AI must follow.</p>
+                <div class="step-content">
+                    <h4>Human Provides Direction</h4>
+                    <p>The Decision Owner explicitly closes the gate with their choice and tradeoff.</p>
+                </div>
             </div>
 
             <div class="step">
                 <div class="step-number">4</div>
-                <h4>Proceed</h4>
-                <p>Only then does the system continue.</p>
+                <div class="step-content">
+                    <h4>Service Provider Issues Attestation</h4>
+                    <p>A cryptographic proof binds the human direction to the execution request.</p>
+                </div>
             </div>
-        </div>
 
-        <p class="enforcement-statement">
-            <strong>No skipping.<br>
-            No inference.<br>
-            No silent automation.</strong>
-        </p>
-    </section>
-
-    <!-- Compliant by Architecture -->
-    <section class="compliance-section">
-        <h2 class="section-title">Compliant by Architecture</h2>
-        <h3 class="compliance-subtitle">Aligning with the EU AI Act—the global benchmark for AI governance.</h3>
-        
-        <div class="section-body">
-            <p>The <strong>EU AI Act</strong> mandates that high-risk AI systems must be subject to effective human oversight (<strong>Article 14</strong>). HAP transforms this legal requirement from a policy checkbox into enforceable protocol behavior.</p>
-        </div>
-
-        <div class="compliance-grid">
-            <div class="compliance-card">
-                <h3>Verifiable Oversight</h3>
-                <p>Directly satisfies regulatory mandates by ensuring AI never acts without an explicit "gate" opened by a human.</p>
-            </div>
-            <div class="compliance-card">
-                <h3>Liability Protection</h3>
-                <p>Closes the legal vacuum of "unowned" AI execution by cryptographically linking every action to a human Decision Owner.</p>
-            </div>
-            <div class="compliance-card">
-                <h3>Audit-Ready Infrastructure</h3>
-                <p>Provides a structural, tamper-proof trail of authorship, tradeoffs, and commitments for every consequence domain.</p>
+            <div class="step">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <h4>Execution Proceeds Safely</h4>
+                    <p>The executor validates the attestation and executes—with full audit trail.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -280,12 +254,25 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <!-- Why This Matters Now -->
     <section class="matters-now">
         <h2 class="section-title">Why This Matters Now</h2>
-        <div class="matters-content">
-            <p>As AI accelerates, execution becomes free.<br>Abundance becomes default.</p>
-            <p class="key-insight">The real scarcity becomes <strong>human direction</strong> — decisions that cost something, commit someone, and shape a trajectory.</p>
-            <p class="emphasis">This is the last human value.</p>
-            <p>If humans stop making the hard calls, machines will make them by default.<br>And once AI defines direction, human agency dissolves — quietly, through convenience.</p>
-            <p class="conclusion">HAP is the boundary that preserves human authorship in an automated world.</p>
+
+        <div class="section-body">
+            <p>We are entering an era where <strong>execution becomes nearly free</strong>. AI can write code, manage infrastructure, deploy services, and coordinate systems at speeds humans cannot match.</p>
+
+            <p>In this environment, the bottleneck shifts:</p>
+            <ul>
+                <li><strong>Compute is abundant.</strong> Execution capacity scales exponentially.</li>
+                <li><strong>Direction is scarce.</strong> Human judgment, accountability, and innovation cannot be automated.</li>
+            </ul>
+
+            <p>Without protocols like HAP, we risk a future where:</p>
+            <ul>
+                <li>Actions happen faster than humans can authorize them</li>
+                <li>No one can prove who decided what</li>
+                <li>Responsibility becomes impossible to assign</li>
+                <li>Innovation gives way to optimization of the wrong objectives</li>
+            </ul>
+
+            <p><strong>HAP protects the human domain.</strong> It ensures that as execution accelerates, direction remains explicitly human—owned, justified, and irreversible only when authorized.</p>
         </div>
     </section>
 
@@ -295,530 +282,470 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
         <div class="enables-grid">
             <div class="enable-card">
-                <h3>Individuals</h3>
-                <p>You stop drifting through AI-generated options and start defining what matters.</p>
+                <h4>Compliance by Design</h4>
+                <p>HAP provides audit-ready proof of human oversight—meeting EU AI Act Article 14 requirements structurally, not as paperwork.</p>
             </div>
 
             <div class="enable-card">
-                <h3>Teams</h3>
-                <p>Alignment becomes real — because decisions require explicit, domain-scoped commitment from all affected decision owners.</p>
+                <h4>Trustworthy Automation</h4>
+                <p>Users and regulators can verify that every consequential action traces back to an explicit human decision.</p>
             </div>
 
             <div class="enable-card">
-                <h3>Organizations</h3>
-                <p>Strategy becomes human-led again. Authorship and ownership are unified across every consequence domain.</p>
+                <h4>Clear Accountability</h4>
+                <p>No more "the algorithm decided." Every action has a named Decision Owner who accepted the tradeoff.</p>
             </div>
 
-            <div class="enable-card highlight">
-                <h3>Society</h3>
-                <p>We preserve the one thing automation cannot replace:<br><strong>the human ability to choose a direction worth living for.</strong></p>
+            <div class="enable-card">
+                <h4>Protection from Drift</h4>
+                <p>HAP detects when execution diverges from stated objectives and forces realignment before harm occurs.</p>
             </div>
-        </div>
 
-        <div class="enables-principles">
-            <p class="key-statement"><strong>HAP assumes all execution bodies are untrusted.</strong><br>No human direction may be exposed to any executor (AGI, server, or human) until a valid attestation proves all six gates were closed under a recognized Blueprint.</p>
+            <div class="enable-card">
+                <h4>Multi-Stakeholder Safety</h4>
+                <p>When parties disagree on tradeoffs, HAP blocks execution—forcing explicit resolution instead of silent override.</p>
+            </div>
 
-            <p class="key-statement"><strong>The Executor Proxy—not the executor—validates attestations.</strong><br>Executors receive only minimal, non-semantic instructions derived from pre-ratified decisions.</p>
+            <div class="enable-card">
+                <h4>Innovation Protection</h4>
+                <p>By keeping direction human, HAP preserves the space for judgment, creativity, and strategic differentiation.</p>
+            </div>
         </div>
     </section>
 
-    <!-- Build With HAP -->
-    <section class="protocol-nav" id="protocol">
-        <h2 class="section-title">Build With HAP</h2>
+    <!-- Get Started -->
+    <section class="get-started-section">
+        <h2 class="section-title">Get Started</h2>
 
-        <div class="protocol-links">
-            <a href="/protocol" class="protocol-link">
-                <div class="label">Protocol</div>
-                <h3>Protocol</h3>
-                <p>How direction is described, measured, and enforced</p>
-                <div class="arrow">Read the protocol →</div>
-            </a>
+        <div class="get-started-grid">
+            <div class="get-started-card">
+                <h4>Read the Protocol</h4>
+                <p>Understand the six gates, attestation model, and structural guarantees.</p>
+                <a href="/protocol" class="btn btn-outline">Protocol Spec →</a>
+            </div>
 
-            <a href="/integration" class="protocol-link">
-                <div class="label">SDK</div>
-                <h3>SDK</h3>
-                <p>Tools for integrating direction checkpoints</p>
-                <div class="arrow">Explore the SDK →</div>
-            </a>
+            <div class="get-started-card">
+                <h4>Integrate the SDK</h4>
+                <p>TypeScript SDK with local blueprints, attestation validation, and executor proxy patterns.</p>
+                <a href="/integration/sdk" class="btn btn-outline">SDK Docs →</a>
+            </div>
 
-            <a href="/service" class="protocol-link">
-                <div class="label">Service Providers</div>
-                <h3>Service Providers</h3>
-                <p>Verified infrastructure enforcing compliance</p>
-                <div class="arrow">View architecture →</div>
-            </a>
-
-            <a href="/governance" class="protocol-link">
-                <div class="label">Governance</div>
-                <h3>Governance</h3>
-                <p>Transparent, federated oversight</p>
-                <div class="arrow">Read framework →</div>
-            </a>
+            <div class="get-started-card">
+                <h4>Explore Service Providers</h4>
+                <p>Learn how Service Providers issue attestations and optimize blueprints over time.</p>
+                <a href="/service" class="btn btn-outline">Service Providers →</a>
+            </div>
         </div>
-
-        <p class="section-conclusion" style="margin-top: 3rem; text-align: left;">
-            <strong>HAP turns human direction into the governing layer of intelligent systems.</strong>
-        </p>
     </section>
-
 </BaseLayout>
 
 <style>
-    /* Hero Section */
     .hero {
-        min-height: 100vh;
+        padding-top: 12rem;
+        padding-bottom: 6rem;
+        min-height: 90vh;
         display: flex;
-        flex-direction: column;
+        align-items: center;
         justify-content: center;
-        align-items: center; /* Keep the 1200px container centered in viewport */
-        padding: 9rem 1.5rem 4rem;
     }
 
     .hero-content {
-        max-width: 1200px;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start; /* Force all children to the left */
+        max-width: var(--max-width);
+        margin: 0 auto;
+        text-align: center;
     }
-
-    @media (min-width: 1280px) {
-        .hero-content{
-        padding: 0 1.5rem;
-        }
-    }
-
 
     .hero h1 {
-        font-size: clamp(2.2rem, 5vw, 4rem);
-        font-weight: 700;
-        line-height: 1.1;
-        letter-spacing: -0.03em;
-        max-width: 980px;
-        margin-bottom: 2rem;
-        text-align: left;
-    }
-
-    .hero .highlight {
-        color: var(--accent);
+        font-size: 3.5rem;
+        line-height: 1.15;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
     }
 
     .hero-subtitle {
-        font-size: clamp(1.2rem, 2.2vw, 1.6rem);
-        font-weight: 600;
-        color: var(--text-primary);
-        max-width: 800px;
-        margin-bottom: 1.5rem;
-        line-height: 1.3;
-        text-align: left;
-    }
-
-    .hero-tagline {
-        font-size: clamp(1rem, 1.8vw, 1.3rem);
-        font-weight: 600;
-        color: var(--accent);
-        max-width: 900px;
-        margin-bottom: 1.5rem;
-        line-height: 1.4;
-        text-align: left;
+        font-size: 1.5rem;
+        color: var(--text-secondary);
+        font-weight: 400;
+        line-height: 1.6;
+        margin-bottom: 3rem;
     }
 
     .hero-body {
         max-width: 800px;
-        margin-bottom: 2.5rem;
-        text-align: left;
-    }
-
-    .hero-body p {
-        font-size: clamp(0.95rem, 1.6vw, 1.15rem);
-        line-height: 1.6;
-        margin-bottom: 1rem;
-        color: var(--text-primary);
+        margin: 0 auto 3rem;
+        font-size: 1.15rem;
+        line-height: 1.7;
+        color: var(--text-secondary);
     }
 
     .key-statement {
-        font-size: clamp(1.05rem, 1.8vw, 1.25rem);
-        font-weight: 600;
-        color: var(--text-primary);
-        margin: 1.2rem 0;
+        margin-top: 2rem;
+        font-size: 1.25rem;
     }
 
-    @media (max-height: 700px) {
-        .hero {
-            min-height: auto;
-            padding-top: 7rem;
-            padding-bottom: 3rem;
-        }
-        .hero h1 {
-            margin-bottom: 1.5rem;
-        }
-    }
-
-    .emphasis {
-        font-weight: 600;
+    .highlight {
         color: var(--accent);
     }
 
     .cta-group {
         display: flex;
         gap: 1rem;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-    }
-
-    .btn.clicked {
-        opacity: 0.7;
-    }
-
-    /* Discovery Engine Styles */
-    .persona-section {
-        width: 100%;
-        max-width: 1000px;
-        margin-top: 2rem;
-        animation: slideDown 0.3s ease-out;
-        text-align: left;
-    }
-
-    .selection-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-    }
-
-    .selection-btn {
-        background: var(--bg-elevated);
-        border: 2px solid var(--border);
-        border-radius: 0.75rem;
-        padding: 1.25rem;
-        cursor: pointer;
-        transition: all 0.3s;
-        text-align: center;
-        display: flex;
         justify-content: center;
-        align-items: center;
+        margin-bottom: 4rem;
     }
 
-    .selection-btn:hover {
+    .btn {
+        display: inline-block;
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        border: 2px solid transparent;
+        background: transparent;
+        font-family: inherit;
+    }
+
+    .btn-primary {
+        background: var(--accent);
+        color: var(--bg);
         border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+        background: var(--accent-hover);
+        border-color: var(--accent-hover);
         transform: translateY(-2px);
     }
 
-    .selection-btn.active {
-        background: var(--accent);
-        border-color: var(--accent);
+    .btn-primary.clicked {
+        background: var(--text);
+        border-color: var(--text);
+        color: var(--bg);
     }
 
-    .selection-btn.active .selection-title {
-        color: white;
+    .btn-secondary {
+        color: var(--text);
+        border-color: var(--border);
     }
 
-    .selection-title {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-primary);
-    }
-
-    .prompt-display {
+    .btn-secondary:hover {
+        border-color: var(--text);
         background: var(--bg-elevated);
-        border: 2px solid var(--accent);
-        border-radius: 0.75rem;
-        padding: 1.5rem;
-        margin-top: 1rem;
-        animation: slideDown 0.3s ease-out;
     }
 
-    .prompt-content {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
+    .btn-outline {
+        color: var(--text);
+        border: 2px solid var(--border);
     }
 
-    .prompt-title {
-        font-size: 1.1rem;
-        font-weight: 600;
+    .btn-outline:hover {
+        border-color: var(--accent);
         color: var(--accent);
+    }
+
+    /* Card Section */
+    .card-section {
+        margin-top: 4rem;
+        padding: 3rem 0;
+    }
+
+    .card-section-title {
+        font-size: 2.25rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 3rem;
+        line-height: 1.3;
+        color: var(--text);
+    }
+
+    .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1.5rem;
+        max-width: 1000px;
+        margin: 0 auto 3rem;
+    }
+
+    .use-case-card {
+        background: var(--bg-elevated);
+        border: 2px solid var(--border);
+        border-radius: 0.75rem;
+        padding: 2rem;
+        text-align: left;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        position: relative;
+    }
+
+    .use-case-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .use-case-card.active {
+        border-color: var(--accent);
+        background: var(--bg);
+    }
+
+    .wildcard-card {
+        border-style: dashed;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--text);
+    }
+
+    .card-description {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        line-height: 1.5;
         margin: 0;
+    }
+
+    /* Prompt Display */
+    .prompt-display {
+        margin-top: 3rem;
+        background: var(--bg-elevated);
+        border: 2px solid var(--border);
+        border-radius: 1rem;
+        padding: 2.5rem;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .prompt-intro {
+        font-size: 1rem;
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .prompt-box {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        overflow-x: auto;
     }
 
     .prompt-text {
-        font-size: 0.95rem;
-        line-height: 1.7;
-        color: var(--text-primary);
+        font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Courier New', monospace;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        color: var(--text);
+        white-space: pre-wrap;
+        word-wrap: break-word;
         margin: 0;
-        padding: 1rem;
-        background: var(--bg);
-        border-radius: 0.5rem;
-        border-left: 3px solid var(--accent);
     }
 
-    .custom-prompt-input {
-        font-size: 0.95rem;
-        line-height: 1.7;
-        color: var(--text-primary);
+    .prompt-actions {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .prompt-note {
+        font-size: 0.9rem;
+        color: var(--text-tertiary);
+        text-align: center;
+        line-height: 1.6;
         margin: 0;
-        padding: 1rem;
-        background: var(--bg);
-        border-radius: 0.5rem;
-        border: 2px solid var(--border);
-        border-left: 3px solid var(--accent);
-        font-family: inherit;
-        resize: vertical;
+    }
+
+    .prompt-note a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .prompt-note a:hover {
+        text-decoration: underline;
+    }
+
+    /* Wildcard Input */
+    .wildcard-label {
+        display: block;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text);
+        margin-bottom: 0.75rem;
+    }
+
+    .wildcard-input {
+        width: 100%;
         min-height: 120px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .custom-prompt-input:focus {
-        outline: none;
-        border-color: var(--accent);
-    }
-
-    .context-label {
-        font-size: 0.85rem;
-        font-weight: 600;
-        color: var(--text-secondary);
-        margin-bottom: 0.5rem;
-        margin-top: 1rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-
-    .context-input {
-        font-size: 0.95rem;
-        line-height: 1.7;
-        color: var(--text-primary);
-        margin: 0 0 1rem 0;
         padding: 1rem;
-        background: var(--bg);
-        border-radius: 0.5rem;
-        border: 2px solid var(--border);
-        border-left: 3px solid var(--accent);
+        font-size: 1rem;
         font-family: inherit;
+        border: 2px solid var(--border);
+        border-radius: 0.5rem;
+        background: var(--bg);
+        color: var(--text);
         resize: vertical;
-        min-height: 100px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .context-input:focus {
-        outline: none;
-        border-color: var(--accent);
-    }
-
-    .prompt-toggle {
         margin-bottom: 1rem;
     }
 
-    .context-toggle {
-        margin-bottom: 0.5rem;
+    .wildcard-input:focus {
+        outline: none;
+        border-color: var(--accent);
     }
 
-    .prompt-checkbox-label,
-    .context-checkbox-label {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        font-size: 0.9rem;
-        color: var(--text-secondary);
-    }
-
-    .prompt-checkbox,
-    .context-checkbox {
-        margin-right: 0.5rem;
-        cursor: pointer;
-        accent-color: var(--accent); /* Use the yellow accent color */
-    }
-
-    .checkbox-text {
-        cursor: pointer;
-    }
-
-    .prompt-text.crossed-out {
-        text-decoration: line-through;
-        opacity: 0.6;
+    #generate-custom-btn {
+        display: block;
+        margin: 0 auto;
     }
 
     /* Content Sections */
+    .content-section,
+    .comparison-section,
+    .checkpoints-section,
+    .how-it-works,
+    .matters-now,
+    .enables-section,
+    .get-started-section {
+        max-width: var(--max-width);
+        margin: 8rem auto;
+        padding: 0 2rem;
+    }
+
+    .section-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .section-intro {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        text-align: center;
+        max-width: 800px;
+        margin: 0 auto 3rem;
+        line-height: 1.7;
+    }
 
     .section-body {
-        max-width: 800px;
+        font-size: 1.15rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
     }
 
     .section-body p {
-        font-size: clamp(1.05rem, 2vw, 1.2rem);
-        line-height: 1.8;
         margin-bottom: 1.5rem;
-        color: var(--text-primary);
+    }
+
+    .section-body ul {
+        margin-bottom: 1.5rem;
+        padding-left: 2rem;
+    }
+
+    .section-body li {
+        margin-bottom: 0.75rem;
     }
 
     .axiom-block {
-        font-size: clamp(1.2rem, 2.5vw, 1.6rem);
-        font-weight: 600;
-        font-style: italic;
-        color: var(--text-primary);
-        border-left: 4px solid var(--accent);
-        padding: 1.5rem 2rem;
-        margin: 3rem 0;
         background: var(--bg-elevated);
-        line-height: 1.5;
+        border-left: 4px solid var(--accent);
+        padding: 2rem;
+        margin: 3rem 0;
+        font-size: 1.25rem;
+        font-style: italic;
+        line-height: 1.6;
+        color: var(--text);
     }
 
-    /* Comparison Section */
-    .content-section {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
+    .section-conclusion {
+        text-align: center;
+        font-size: 1.35rem;
+        line-height: 1.8;
+        margin-top: 3rem;
+        color: var(--text);
     }
 
-    /* Comparison Section */
-    .comparison-section {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
-
+    /* Comparison Grid */
     .comparison-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 2rem;
-        margin: 3rem 0;
+        margin-bottom: 3rem;
     }
 
     .comparison-card {
         background: var(--bg-elevated);
         border: 2px solid var(--border);
-        border-radius: 1rem;
+        border-radius: 0.75rem;
         padding: 2.5rem;
     }
 
     .comparison-card.highlight {
         border-color: var(--accent);
-        background: var(--accent-subtle);
+        background: var(--bg);
     }
 
     .comparison-card h3 {
         font-size: 1.5rem;
-        font-weight: 600;
         margin-bottom: 1.5rem;
-        color: var(--text-primary);
+        font-weight: 600;
     }
 
     .comparison-card ul {
         list-style: none;
         padding: 0;
-        margin: 0;
     }
 
     .comparison-card li {
         padding: 0.75rem 0;
         border-bottom: 1px solid var(--border);
-        color: var(--text-primary);
-        line-height: 1.6;
-        font-size: clamp(1rem, 1.8vw, 1.1rem);
+        font-size: 1.1rem;
     }
 
     .comparison-card li:last-child {
         border-bottom: none;
     }
 
-    .section-conclusion {
-        font-size: clamp(1.2rem, 2.2vw, 1.4rem);
-        font-weight: 600;
-        color: var(--accent);
-        margin-top: 3rem;
-        max-width: 800px;
-        line-height: 1.6;
-    }
-
-    /* Checkpoints Section */
-    .checkpoints-section {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
-
-    .section-intro {
-        font-size: clamp(1.05rem, 2vw, 1.2rem);
-        color: var(--text-primary);
-        margin-bottom: 1rem;
-        max-width: 800px;
-        line-height: 1.7;
-    }
-
+    /* Checkpoints */
     .checkpoints {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 1.5rem;
-        margin-top: 3rem;
-        max-width: 1200px;
-    }
-
-    .checkpoint {
-        background: var(--bg-elevated);
-        border: 2px solid var(--border);
-        border-radius: 1rem;
-        padding: 2rem;
-        display: flex;
-        align-items: flex-start;
+        grid-template-columns: repeat(2, 1fr);
         gap: 2rem;
     }
 
-    .checkpoint-number {
-        width: 3rem;
-        height: 3rem;
-        background: var(--accent);
-        color: white;
-        border-radius: 50%;
+    .checkpoint {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-        font-weight: 700;
-        flex-shrink: 0;
+        align-items: flex-start;
+        gap: 1.5rem;
     }
 
     .checkpoint-content h4 {
         font-size: 1.3rem;
-        font-weight: 600;
         margin-bottom: 0.75rem;
-        color: var(--text-primary);
+        font-weight: 600;
+        color: var(--text);
     }
 
     .checkpoint-content p {
+        font-size: 1rem;
+        line-height: 1.7;
         color: var(--text-secondary);
         margin: 0;
-        line-height: 1.6;
     }
 
-    /* How It Works */
-    .how-it-works {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
-
-    .mechanism-title {
-        font-size: clamp(1.5rem, 3vw, 2rem);
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 3rem;
-        text-align: center;
-    }
-
+    /* Steps */
     .steps {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 2rem;
-        margin-bottom: 3rem;
     }
 
     .step {
-        background: var(--bg-elevated);
-        border: 2px solid var(--border);
-        border-radius: 1rem;
-        padding: 2.5rem 2rem;
         text-align: center;
     }
 
@@ -826,278 +753,93 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         width: 3rem;
         height: 3rem;
         background: var(--accent);
-        color: white;
+        color: var(--bg);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
-        font-weight: 700;
-        margin: 0 auto 1.5rem;
-    }
-
-    .step h4 {
-        font-size: 1.3rem;
         font-weight: 600;
-        margin-bottom: 1rem;
-        color: var(--text-primary);
+        margin: 0 auto 1rem;
     }
 
-    .step p {
-        color: var(--text-secondary);
+    .step-content h4 {
+        font-size: 1.2rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+    }
+
+    .step-content p {
+        font-size: 1rem;
         line-height: 1.6;
-        margin-bottom: 0;
-    }
-
-    .enforcement-statement {
-        font-size: clamp(1.2rem, 2vw, 1.4rem);
-        font-weight: 600;
-        color: var(--text-primary);
-        margin-top: 2rem;
-        text-align: center;
-        line-height: 1.8;
-    }
-
-    /* Compliance Section */
-    .compliance-section {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
-
-    .compliance-subtitle {
-        font-size: clamp(1.3rem, 2.5vw, 1.8rem);
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 2rem;
-        max-width: 800px;
-        line-height: 1.3;
-    }
-
-    .compliance-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-top: 3rem;
-    }
-
-    .compliance-card {
-        background: var(--bg-elevated);
-        border: 2px solid var(--border);
-        border-radius: 1rem;
-        padding: 2rem;
-    }
-
-    /* Compliance Section */
-    .compliance-section {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
-
-    .compliance-subtitle {
-        font-size: clamp(1.3rem, 2.5vw, 1.8rem);
-        font-weight: 600;
-        color: var(--accent);
-        margin-bottom: 2rem;
-        max-width: 800px;
-        line-height: 1.3;
-    }
-
-    .compliance-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 2rem;
-        margin-top: 3rem;
-    }
-
-    .compliance-card {
-        background: var(--bg-elevated);
-        border: 2px solid var(--border);
-        border-radius: 1rem;
-        padding: 2.5rem;
-    }
-
-    .compliance-card h3 {
-        font-size: 1.3rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-        color: var(--text-primary);
-    }
-
-    .compliance-card p {
         color: var(--text-secondary);
-        line-height: 1.7;
-        font-size: clamp(1rem, 1.8vw, 1.1rem);
         margin: 0;
     }
 
-    /* Why This Matters Now */
-    .matters-now {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
-
-    .matters-content {
-        max-width: 800px;
-    }
-
-    .matters-content p {
-        font-size: clamp(1.05rem, 2vw, 1.2rem);
-        line-height: 1.8;
-        margin-bottom: 1.5rem;
-        color: var(--text-primary);
-    }
-
-    .key-insight {
-        font-size: clamp(1.15rem, 2.2vw, 1.35rem);
-        font-weight: 600;
-        color: var(--text-primary);
-        margin: 2rem 0;
-    }
-
-    .matters-content .emphasis {
-        font-size: clamp(1.2rem, 2.2vw, 1.4rem);
-        display: block;
-        margin: 2rem 0;
-    }
-
-    .conclusion {
-        font-size: clamp(1.2rem, 2.2vw, 1.4rem);
-        font-weight: 600;
-        color: var(--accent);
-        margin-top: 2rem;
-    }
-
-    /* What HAP Enables */
-    .enables-section {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
-
+    /* Enables Grid */
     .enables-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 2rem;
-        margin-top: 3rem;
     }
 
     .enable-card {
         background: var(--bg-elevated);
         border: 2px solid var(--border);
-        border-radius: 1rem;
-        padding: 2.5rem;
+        border-radius: 0.75rem;
+        padding: 2rem;
     }
 
-    .enable-card.highlight {
-        border-color: var(--accent);
-        background: var(--accent-subtle);
-    }
-
-    .enable-card h3 {
+    .enable-card h4 {
         font-size: 1.3rem;
-        font-weight: 600;
         margin-bottom: 1rem;
-        color: var(--accent);
+        font-weight: 600;
+        color: var(--text);
     }
 
     .enable-card p {
-        color: var(--text-primary);
+        font-size: 1rem;
         line-height: 1.7;
-        font-size: clamp(1rem, 1.8vw, 1.1rem);
+        color: var(--text-secondary);
         margin: 0;
     }
 
-    .enables-principles {
-        margin-top: 3rem;
-        padding-top: 2rem;
-        border-top: 2px solid var(--border);
-    }
-
-    .enables-principles .key-statement {
-        font-size: clamp(1.1rem, 2vw, 1.3rem);
-        margin-bottom: 1.5rem;
-        line-height: 1.6;
-    }
-
-    /* Shared Styles */
-    .section-title {
-        font-size: clamp(2rem, 4vw, 3rem);
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        margin-bottom: 2rem;
-        max-width: 800px;
-    }
-
-    /* Documentation */
-    .protocol-nav {
-        max-width: 1200px;
-        margin: 8rem auto;
-        padding: 0 1.5rem;
-    }
-
-    .protocol-links {
+    /* Get Started Grid */
+    .get-started-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin-top: 3rem;
+        gap: 2rem;
     }
 
-    .protocol-link {
+    .get-started-card {
         background: var(--bg-elevated);
-        border: 1px solid var(--border);
+        border: 2px solid var(--border);
         border-radius: 0.75rem;
-        padding: 2rem;
-        text-decoration: none;
-        color: inherit;
-        transition: all 0.3s;
-        display: block;
+        padding: 2.5rem;
+        text-align: center;
     }
 
-    .protocol-link:hover {
-        border-color: var(--accent);
-        background: var(--accent-subtle);
-        transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .protocol-link:hover {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-        }
-    }
-
-    .protocol-link .label {
-        font-size: 0.8rem;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--text-tertiary);
-        margin-bottom: 0.5rem;
-    }
-
-    .protocol-link h3 {
-        font-size: 1.25rem;
+    .get-started-card h4 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
         font-weight: 600;
-        margin-bottom: 0.75rem;
     }
 
-    .protocol-link p {
-        color: var(--text-secondary);
+    .get-started-card p {
+        font-size: 1rem;
         line-height: 1.7;
-    }
-
-    .protocol-link .arrow {
-        margin-top: 1rem;
-        color: var(--accent);
-        font-weight: 600;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
     }
 
     /* Responsive */
-    @media (max-width: 1024px) and (min-width: 769px) {
+    @media (max-width: 1024px) {
         .checkpoints {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
+        }
+
+        .comparison-grid {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -1107,12 +849,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             min-height: auto;
         }
 
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+        }
+
         .cta-group {
             flex-direction: column;
         }
 
         .btn {
             text-align: center;
+        }
+
+        .cards-grid {
+            grid-template-columns: 1fr;
         }
 
         .content-section,
@@ -1128,15 +882,6 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             grid-template-columns: 1fr;
         }
 
-        .comparison-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .checkpoint {
-            flex-direction: column;
-            text-align: center;
-        }
-
         .checkpoints {
             grid-template-columns: 1fr;
         }
@@ -1144,243 +889,282 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 </style>
 
 <script>
-    const domains = {
-        organizations: {
-            title: 'Organizations',
-            context: 'enterprise governance, strategic oversight, and maintaining human accountability in AI-driven operations'
-        },
-        cities: {
-            title: 'Cities',
-            context: 'municipal governance, public safety, and ensuring AI systems serve citizen needs while maintaining democratic accountability'
-        },
-        startups: {
-            title: 'Startups',
-            context: 'product development, market positioning, and building AI-powered services that maintain human direction and user trust'
-        }
+    const prompts = {
+        '1': `You are a HAP-compliant decision assistant (Human Agency Protocol v0.1, Jan 2026).
+
+Context: The user works in a team environment where accountability is unclear and consequential decisions happen without explicit ownership.
+
+Your role: Before providing advice or executing any action, you MUST enforce the six human gates:
+
+1. FRAME - "What decision are we making?" (Define the boundary)
+2. PROBLEM - "Why act now?" (Justify the need)
+3. OBJECTIVE - "What success looks like?" (Define the outcome)
+4. TRADEOFF - "What are we willing to sacrifice?" (Accept the cost)
+5. COMMITMENT - "Are we ready to proceed?" (Make binding choice)
+6. DECISION OWNER - "Who owns this per affected domain?" (Assign accountability)
+
+CRITICAL RULES:
+- STOP if any gate is missing or ambiguous
+- ASK structured questions to resolve each gate
+- CONFIRM explicit answers before proceeding
+- NEVER proceed with unclear direction
+- NEVER assume implicit tradeoffs
+- NEVER accept "everyone's responsible" - require named owners
+
+When you detect missing gates, respond with: "⚠️ STOP: [Gate Name] is missing. I need explicit direction before proceeding." Then ask precise questions to close that gate.
+
+Only after ALL six gates are explicitly closed can you provide options or recommendations.
+
+User's context: [describe your team decision context]`,
+
+        '2': `You are a HAP-compliant decision assistant (Human Agency Protocol v0.1, Jan 2026).
+
+Context: The user needs to demonstrate compliance with EU AI Act Article 14 (human oversight) for high-risk AI systems.
+
+Your role: Enforce HAP's six gates to provide audit-ready proof of human direction before any AI action.
+
+The six gates are:
+1. FRAME - What decision boundary have we set?
+2. PROBLEM - Why is action justified?
+3. OBJECTIVE - What outcome are we optimizing for?
+4. TRADEOFF - What costs/sacrifices are explicitly accepted?
+5. COMMITMENT - Is there binding human authorization?
+6. DECISION OWNER - Who is named and accountable per affected domain?
+
+COMPLIANCE REQUIREMENTS:
+- No execution without explicit closure of all gates
+- Document WHO decided WHAT and WHY
+- Capture tradeoffs before action
+- Require named Decision Owner(s)
+- Block action if directions diverge
+
+When you detect ambiguity or missing gates, respond:
+"⚠️ COMPLIANCE STOP: [Gate] is not explicitly resolved. EU AI Act Article 14 requires effective human oversight. I need clear human direction before proceeding."
+
+Then ask structured questions to resolve the gate.
+
+User's context: [describe your AI system and oversight needs]`,
+
+        '3': `You are a HAP-compliant decision assistant (Human Agency Protocol v0.1, Jan 2026).
+
+Context: The user is involved in civic/municipal decisions where multiple stakeholders (residents, officials, departments) must co-own tradeoffs.
+
+Your role: Enforce HAP's six gates to ensure shared decisions are explicit, fair, and accountable.
+
+The six gates are:
+1. FRAME - What civic decision are we making?
+2. PROBLEM - Why must the city act?
+3. OBJECTIVE - What outcome serves the public interest?
+4. TRADEOFF - What costs are residents/officials willing to accept?
+5. COMMITMENT - Is there binding authorization from affected parties?
+6. DECISION OWNER - Who owns accountability per consequence domain?
+
+CIVIC DECISION RULES:
+- STOP if affected stakeholders haven't explicitly accepted tradeoffs
+- DETECT divergence: when residents want X but officials accept cost of Y
+- BLOCK execution when directions conflict across domains
+- REQUIRE explicit Decision Owners per affected domain (safety, budget, services, etc.)
+- NEVER proceed with "someone else will handle it"
+
+When stakeholders disagree, respond:
+"⚠️ DIRECTION DIVERGENCE: [Stakeholder A] accepts tradeoff X, but [Stakeholder B] accepts tradeoff Y. These directions conflict. Execution blocked until alignment or explicit multi-owner resolution."
+
+User's context: [describe your civic decision and stakeholders]`,
+
+        '4': `You are a HAP-compliant decision assistant (Human Agency Protocol v0.1, Jan 2026).
+
+Context: The user is building/shipping a product and needs to make decisions with confidence, not hope.
+
+Your role: Force explicit declaration of tradeoffs BEFORE code is written or money is spent.
+
+The six gates are:
+1. FRAME - What are we building/shipping?
+2. PROBLEM - Why does this need to exist?
+3. OBJECTIVE - What does success look like?
+4. TRADEOFF - What will we lose if we're wrong? What are we NOT doing?
+5. COMMITMENT - Are we ready to ship this knowing the cost?
+6. DECISION OWNER - Who owns the outcome if this fails?
+
+STARTUP/PRODUCT RULES:
+- STOP if tradeoffs are vague ("we'll figure it out later")
+- ASK: "What happens if you're wrong? What's the cost?"
+- ASK: "What are you NOT doing by choosing this?"
+- REQUIRE explicit Decision Owner before any irreversible step (code, spend, hire, launch)
+- NEVER accept "everyone agrees" without named ownership
+
+Before proceeding with any recommendation, respond:
+"⚠️ TRADEOFF CHECK: If you're wrong about [assumption], what do you lose? Who accepts that cost?"
+
+Only proceed once the user explicitly states the sacrifice and commits.
+
+User's context: [describe your product decision]`,
+
+        '5': `You are a HAP-compliant decision assistant (Human Agency Protocol v0.1, Jan 2026).
+
+Context: The user is navigating a significant life choice that affects multiple people (partners, family, etc.).
+
+Your role: Enforce HAP's six gates to ensure shared life decisions respect both parties' stakes and prevent coercion-by-convenience.
+
+The six gates are:
+1. FRAME - What decision are we making together?
+2. PROBLEM - Why act now? Why does this matter?
+3. OBJECTIVE - What outcome do we both want?
+4. TRADEOFF - What is each person willing to sacrifice?
+5. COMMITMENT - Are both parties ready to commit?
+6. DECISION OWNER - Who owns which aspect of this decision?
+
+RELATIONSHIP DECISION RULES:
+- STOP if one person's tradeoff hasn't been explicitly stated
+- DETECT divergence: when Person A accepts cost X but Person B accepts incompatible cost Y
+- BLOCK "joint" decisions where one person assumes the other's consent
+- REQUIRE explicit tradeoffs from EACH affected party
+- NEVER proceed with "we both want this" without checking what each is willing to lose
+
+When directions diverge, respond:
+"⚠️ TRADEOFF MISALIGNMENT: Person A is willing to sacrifice X, but Person B expects to sacrifice Y. These tradeoffs are incompatible. The decision cannot proceed until you either align or split the decision into separate domains."
+
+User's context: [describe your shared life decision]`,
+
+        '6': `You are a HAP-compliant decision assistant (Human Agency Protocol v0.1, Jan 2026).
+
+Context: The user is implementing AI systems that execute consequential actions and needs structural enforcement of human direction.
+
+Your role: Act as a gate enforcer. No AI action proceeds without explicit human attestation via the six gates.
+
+The six gates are:
+1. FRAME - What execution boundary is set?
+2. PROBLEM - Why is this action justified?
+3. OBJECTIVE - What are we optimizing for?
+4. TRADEOFF - What cost is explicitly accepted?
+5. COMMITMENT - Is there binding human authorization?
+6. DECISION OWNER - Who is named and accountable for this action?
+
+EXECUTION GATING RULES:
+- STOP any AI action if gates are not explicitly closed
+- REQUIRE cryptographic attestation (in production) proving gate closure
+- BLOCK actions where Decision Owner is missing or ambiguous
+- DETECT scope violations: actions that affect domains without owner authorization
+- NEVER accept implicit approval or assumed direction
+
+Before any action, enforce this check:
+"⚠️ GATE CHECK:
+- Frame: [state boundary] ✓ / ✗
+- Problem: [state justification] ✓ / ✗
+- Objective: [state outcome] ✓ / ✗
+- Tradeoff: [state sacrifice] ✓ / ✗
+- Commitment: [binding yes/no] ✓ / ✗
+- Decision Owner: [named person] ✓ / ✗
+
+Status: [X/6 gates closed]. Execution [ALLOWED / BLOCKED]."
+
+Only proceed when all gates show ✓.
+
+User's context: [describe your AI system and actions to gate]`
     };
 
-    const lenses = {
-        ceo: {
-            title: 'CEO (Endurance, authorship, and controllability under AGI)',
-            prompt: 'Act as my CEO-level strategic advisor and enterprise sales strategist.\n\nTask 0 – AGI context (keep brief):\nExplain AGI as an operational condition, not a sci-fi milestone:\nAGI means execution capability generalizes across domains. Planning, coding, optimization, escalation, and action become cheap and fast. Software and non-proprietary data commoditize. The scarce asset becomes human direction: who decided, why, and at what cost.\n\nPremise:\nIn this environment, companies don\'t fail because AI is misaligned.\nThey fail because execution happens without explicit human authorship and ownership.\nWhen something goes wrong, no one can prove who authorized what.\n\nHuman Agency Protocol (HAP) enforces one invariant:\nNo consequential action without explicit human direction via six gates\n(Frame, Problem, Objective, Tradeoff, Commitment, Decision Owner),\nwith audit-ready proof and privacy by architecture.\n\nAlso assume the EU AI Act (notably Article 14 on effective human oversight for high-risk systems) exists as a background constraint, reinforcing the need for provable oversight—but not driving the narrative.\n\nTask:\nWrite a CEO-grade adoption case for HAP.\n1) Diagnose the strategic failure mode of AGI-era companies (direction vacuum, unowned execution, reputational and legal fragility).\n2) Position HAP as infrastructure for endurance, not governance theater.\n3) Present 7 board-level arguments (risk, accountability, strategic authorship, trust, auditability, speed with guardrails).\n4) Show how HAP becomes a competitive advantage when execution is free.\n5) Give 3 realistic failure stories without HAP vs 3 success stories with HAP.\n6) Anticipate 10 hard CEO/board objections and rebut them cleanly.\n7) Recommend a phased adoption path with concrete success metrics.\n\nConstraints:\nNo fluff. No "human-in-the-loop" clichés. Make it decisive.',
-            placeholder: 'e.g. Our company needs to understand how HAP will affect our operations and strategy...'
-        },
-        cto: {
-            title: 'CTO (Architecture that survives AGI-speed execution)',
-            prompt: 'Act as a principal systems architect and CTO advisor.\n\nTask 0 – AGI context (brief):\nDescribe AGI as generalized execution: AI can plan and act across domains at machine speed. The core risk is no longer capability, but uncontrolled authorization and irreversibility.\n\nPremise:\nAgentic systems fail when:\n- actions execute without explicit human ownership\n- escalation paths are implicit\n- audits reconstruct intent after the fact\n\nHuman Agency Protocol (HAP) enforces explicit direction before execution:\nsix human gates, Decision Owner attribution, cryptographic attestations,\nsemantic isolation of executors, and privacy by architecture.\n\nAssume EU AI Act Article 14 exists as a compliance backdrop requiring "effective human oversight," but focus on architecture, not regulation.\n\nTask:\nProduce a CTO-grade technical adoption case.\n1) Threat model: how AGI-era systems fail today (direction drift, silent escalation, audit collapse).\n2) Reference architecture: where HAP sits in an agentic stack (gap detection, Stop→Ask→Confirm→Proceed, attestation, executor proxy).\n3) Integration patterns: minimal high-risk gating vs full execution attestation.\n4) How non-semantic execution payloads work in practice.\n5) Performance and UX: how to preserve speed while enforcing gates.\n6) Security controls to prevent bypass.\n7) Objections from engineering leadership and concrete mitigations.\n\nOutput:\nExec summary → deep dive → 30-day pilot architecture.',
-            placeholder: 'e.g. We need to understand how HAP will affect our system architecture and development processes...'
-        },
-        legal: {
-            title: 'Legal (Defensibility and ownership under automated execution)',
-            prompt: 'Act as in-house counsel and external regulatory strategist.\n\nTask 0 – AGI context (brief):\nExplain AGI as the ability of systems to execute consequential actions end-to-end without human micro-instruction, making post-hoc accountability the primary legal risk.\n\nPremise:\nThe central legal failure of AI systems is not bad intent.\nIt is unowned execution:\nno clear author, no accepted tradeoff, no provable oversight.\n\nHuman Agency Protocol (HAP) enforces:\n- explicit Decision Owner before execution\n- closure of six direction gates\n- audit-ready, non-semantic attestations\n- privacy by architecture\n\nAssume the EU AI Act (including Article 14 on effective human oversight) exists as a reinforcing constraint, but do not treat it as the sole justification.\n\nTask:\nDeliver a legal-grade argument pack for adopting HAP.\n1) Explain how unowned execution creates negligence and liability exposure.\n2) Show how Decision Owner + gate closure improves defensibility.\n3) Describe the audit posture HAP enables (what exists, what never exists).\n4) Draft:\n   a) an internal policy clause\n   b) a vendor/processor clause\n   c) an incident-response clause\n5) Identify 12 legal edge cases and mitigations.\n6) Address objections from a skeptical GC.\n\nConstraints:\nOperational defensibility over legal theory.',
-            placeholder: 'e.g. We need to understand how HAP will affect our legal compliance and liability exposure...'
-        },
-        hr: {
-            title: 'HR (Accountability, trust, and burnout prevention)',
-            prompt: 'Act as an HR and organizational design leader.\n\nTask 0 – AGI context (brief):\nFrame AGI as automation that acts faster than human deliberation, shifting blame and pressure onto people after the fact unless ownership is explicit beforehand.\n\nPremise:\nPeople systems break when:\n- AI decisions feel inevitable\n- accountability is unclear\n- managers are asked to "sign off" without real authorship\n\nHuman Agency Protocol (HAP) restores human authority by requiring:\nexplicit framing, tradeoffs, commitment, and Decision Owner before action.\n\nEU AI Act requirements exist in the background, but the core issue is trust, fairness, and burnout—not regulation.\n\nTask:\nCreate an HR adoption narrative and rollout plan.\n1) Identify people-related failure modes caused by automation convenience.\n2) Translate HAP into HR language: fairness, judgment, accountability, psychological safety.\n3) Define 6 HR workflows that must be HAP-gated.\n4) Design a Decision Owner model across consequence domains.\n5) Outline a manager training session on the six gates.\n6) Address 10 manager objections honestly.\n\nTone:\nFirm, human-centric, practical.',
-            placeholder: 'e.g. We need to understand how HAP will affect our HR processes and employee management...'
-        },
-        consultants: {
-            title: 'Consultants (Client-ready AGI-era operating model)',
-            prompt: 'Act as a top-tier management consultant.\n\nTask 0 – AGI context (brief):\nExplain AGI as generalized execution that commoditizes software and data, shifting competitive advantage to organizations that can prove human-authored direction and safe automation.\n\nPremise:\nClients struggle with:\n- uncontrolled automation\n- audit anxiety\n- strategy diluted by tools optimizing the wrong things\n\nHuman Agency Protocol (HAP) is positioned as the missing control layer:\nexplicit decision structure, ownership, and execution gating.\n\nEU AI Act (Article 14) exists as a procurement and compliance tailwind, not the headline.\n\nTask:\nProduce a client-ready consulting deliverable.\n1) Burning platform diagnosis.\n2) Value tree: benefits → KPIs → outcomes.\n3) Phased roadmap (0–30 / 31–90 / 91–180).\n4) Operating model with Decision Owner roles.\n5) Pilot design for 3 high-consequence workflows.\n6) ROI logic.\n7) 12-slide storyline outline.\n8) Objection handling across exec, IT, legal, ops.\n\nConstraints:\nBoardroom-ready. No buzzwords.',
-            placeholder: 'e.g. I need to explain to clients how HAP will transform their approach to AI governance...'
-        },
-        mayor: {
-            title: 'Mayor (Trust, legitimacy, and reelection safety)',
-            prompt: 'Act as my chief political strategist and governance advisor to a sitting mayor.\n\nPremise:\nCities don\'t lose elections because of technology.\nThey lose elections because citizens stop trusting that decisions are:\n- human\n- accountable\n- fair\n- explainable\n- made with their interests in mind\n\nAutomation, digital services, and AI already shape permits, services, safety, and resource allocation.\nThe real political risk is not "AI gone rogue" but:\n- decisions no one can explain\n- outcomes no one owns\n- citizens feeling excluded, managed, or overruled by systems\n\nHuman Agency Protocol (HAP) enforces one rule:\nNo consequential city action happens without an explicit human Decision Owner and a visible chain of responsibility (Frame, Problem, Objective, Tradeoff, Commitment, Decision Owner).\n\nTask:\nWrite a mayor-ready adoption case for HAP.\n1) Diagnose the political failure modes cities face today (opacity, blame shifting, participation theater, loss of narrative control).\n2) Translate HAP into a public-facing promise: "humans decide, systems execute."\n3) Show how HAP strengthens legitimacy without slowing governance.\n4) Provide 5 citizen-visible benefits and 5 internal administration benefits.\n5) Give 3 realistic crisis scenarios HAP would defuse before they explode politically.\n6) Outline a 90-day pilot that is:\n   - safe\n   - visible\n   - easy to explain\n   - politically defensible\n7) Draft:\n   - a short speech paragraph\n   - 10 hostile press questions + disciplined answers\n\nConstraints:\n- No tech jargon.\n- No AI futurism.\n- Everything must reinforce trust, accountability, and reelection safety.',
-            placeholder: 'e.g. We need to understand how HAP will affect our city services and democratic processes...'
-        },
-        'city-planner': {
-            title: 'City Planner (Coherence, alignment, and honest participation)',
-            prompt: 'Act as a senior city planner and systems governance expert.\n\nPremise:\nCity planning fails when:\n- models optimize the wrong thing\n- departments pull in different directions\n- "public participation" exists on paper but not in decisions\n- tradeoffs are hidden instead of acknowledged\n\nThe problem is not lack of data or tools.\nIt is lack of **coherent, owned direction**.\n\nHuman Agency Protocol (HAP) enforces explicit decision structure:\nFrame, Problem, Objective, Tradeoff, Commitment, Decision Owner.\nIf directions diverge, execution stops—forcing honesty instead of fake consensus.\n\nTask:\nBuild a planner-grade case for adopting HAP in planning workflows.\n1) Identify where direction drift occurs today (models, optimization targets, stakeholder inputs, inter-department friction).\n2) Show how HAP turns participation from symbolic input into structurally acknowledged tradeoffs.\n3) Propose 6 planning decision points that must be HAP-gated (zoning, permits, traffic changes, procurement, land use, emergency measures).\n4) Design a multi-department Decision Owner model by consequence domain.\n5) Explain how HAP handles disagreement transparently instead of burying it.\n6) Provide a pilot workflow for one real planning project, with success metrics citizens would notice.\n\nConstraints:\n- No ideology.\n- Focus on coherence, honesty, and decision integrity.',
-            placeholder: 'e.g. We need to understand how HAP will affect our urban planning and development processes...'
-        },
-        'public-safety': {
-            title: 'Public Safety (Speed with accountability, not algorithmic blame)',
-            prompt: 'Act as a public safety commander and governance designer.\n\nPremise:\nPublic safety does not fail because decisions are slow.\nIt fails because decisions are:\n- unowned\n- over-automated\n- impossible to explain afterward\n\nCitizens tolerate mistakes.\nThey do not tolerate "the system decided" when harm occurs.\n\nHuman Agency Protocol (HAP) ensures:\n- every consequential action has a named human Decision Owner\n- tradeoffs are acknowledged before action\n- accountability exists before incidents, not after\n\nTask:\nCreate a public-safety adoption plan for HAP.\n1) Identify which actions must never execute without explicit human ownership (alerts, deployments, escalations, data sharing, enforcement triggers).\n2) Define a Stop → Ask → Confirm → Proceed flow that works under time pressure.\n3) Show how Decision Owner + scope prevents unauthorized escalation.\n4) Explain how HAP improves post-incident review without exposing sensitive data.\n5) Address 10 real objections from commanders and frontline staff, focused on speed, practicality, and blame avoidance.\n\nTone:\nOperational, grounded, zero fluff.',
-            placeholder: 'e.g. We need to understand how HAP will affect our emergency response and safety protocols...'
-        },
-        infrastructure: {
-            title: 'Infrastructure (Reliability, clarity, and avoiding blame chaos)',
-            prompt: 'Act as an infrastructure director and large-system delivery strategist.\n\nPremise:\nInfrastructure failures rarely come from lack of technology.\nThey come from:\n- unclear authority\n- silent automation\n- vendor-driven decisions\n- nobody owning the tradeoff when something goes wrong\n\nHuman Agency Protocol (HAP) forces clarity before action:\nwho decided, why, what was sacrificed, and who owns the outcome.\n\nTask:\nMake the infrastructure case for HAP.\n1) Identify the top irreversibility risks in infrastructure operations (shutdowns, maintenance scheduling, procurement orders, contractor directives).\n2) Propose 5 workflows that should be HAP-gated immediately.\n3) Show how explicit Decision Ownership reduces vendor blame games and internal finger-pointing.\n4) Design a 90-day pilot with KPIs citizens actually care about (downtime, delays, service reliability, communication quality).\n5) Handle objections: "this slows us down," "we already have approvals," "legacy systems," "union constraints."\n\nConstraints:\n- Focus on reliability, accountability, and public confidence.',
-            placeholder: 'e.g. We need to understand how HAP will affect our infrastructure management and safety systems...'
-        },
-        'citizen-services': {
-            title: 'Citizen Services (Fairness, explainability, and trust at scale)',
-            prompt: 'Act as a head of citizen services and trust-focused service designer.\n\nPremise:\nCitizen frustration comes from:\n- inconsistent decisions\n- opaque eligibility changes\n- feeling managed instead of served\n- no human to talk to when something goes wrong\n\nAutomation amplifies this if not visibly owned.\n\nHuman Agency Protocol (HAP) ensures:\n- consequential citizen-facing actions have a named human owner\n- tradeoffs are explicit\n- explanations are possible without exposing internal complexity\n\nTask:\nCreate a citizen-centered adoption plan for HAP.\n1) Classify service actions into:\n   - safe to automate\n   - must be HAP-gated (benefits, fines, eligibility, escalations, data sharing)\n2) Design a service experience where accountability is visible but friction is minimal.\n3) Write plain-language scripts agents can use to explain decisions.\n4) Define trust metrics (appeals rate, error rate, resolution time, citizen satisfaction).\n5) Address objections from staff, unions, and privacy advocates.\n\nConstraints:\n- Prioritize fairness, clarity, and dignity.\n- No tech-centric framing.',
-            placeholder: 'e.g. We need to understand how HAP will affect our citizen services and public engagement...'
-        },
-        healthcare: {
-            title: 'Healthcare (HAP-native services/apps)',
-            prompt: 'Act as a healthcare startup founder, product strategist, and enterprise seller. Your job: propose startup product/service ideas that EMBED Human Agency Protocol (HAP) as a core protocol layer. HAP enforces 6 human gates + explicit Decision Owner, uses attestations, keeps semantics local, and isolates executors with non-semantic payloads.\n\nAssume AGI makes generic healthcare software and non-proprietary data services commoditized. Durable value comes from: trust, accountability, auditability, and protocols that make automation safe in regulated, high-consequence environments.\n\nTask:\nGenerate the best set of HAP-native healthcare startup opportunities.\n1) 10 high-value product/service concepts where HAP is the wedge (not an add-on).\n2) For the top 3: define customer, job-to-be-done, "must-gate" actions, Decision Owners by domain, and why AGI makes this urgent.\n3) Monetization: pricing models that survive commoditization (trust premium, compliance infrastructure, per-attestation, enterprise contracts).\n4) Differentiation: why competitors without protocol-level direction integrity will fail.\n5) Go-to-market plan: wedge entry + expansion path.\n6) Objections (clinicians, hospitals, regulators) + rebuttals.\n\nOutput: ruthless prioritization, no cute ideas.',
-            placeholder: 'e.g. I want to build a HAP-native healthcare product that...'
-        },
-        finance: {
-            title: 'Finance (HAP-native fintech products)',
-            prompt: 'Act as a fintech founder + risk-first GTM strategist. Propose startup products/services that embed Human Agency Protocol (HAP) as the protocol layer for AGI-era finance automation. Assume AGI commoditizes generic fintech software and non-proprietary data; winners sell trust, accountable automation, and audit-grade controls.\n\nTask:\n1) Generate 10 HAP-native fintech product/service concepts (B2B or B2B2C).\n2) For the top 3: define the exact high-consequence workflows HAP gates (transfers, limit changes, credit decisions, AML escalations, portfolio changes), Decision Owners and scopes, and attestation/audit value.\n3) Provide a differentiation thesis: "protocol-native accountability" vs "policy-based human-in-loop theater."\n4) Monetization and moat under commoditization.\n5) GTM: first buyer persona, sales motion, procurement blockers.\n6) 12 objections from CRO/GC/CTO + rebuttals.\n\nMake it hard-nosed and specific.',
-            placeholder: 'e.g. I want to build a HAP-native fintech product that...'
-        },
-        education: {
-            title: 'Education (HAP-native edtech products)',
-            prompt: 'Act as an edtech founder and trust-focused product strategist. Propose services/apps that embed Human Agency Protocol (HAP) so AGI-era educational automation cannot optimize the wrong thing (engagement over learning) or take consequential actions without explicit human direction and Decision Owner.\n\nAssume generic content, tutoring, and analytics become commodities. Durable value = provable pedagogical direction, accountability, and parent/teacher trust.\n\nTask:\n1) Generate 10 HAP-native edtech concepts.\n2) For the top 3: define the must-gate actions (grading, interventions, reporting, parental notifications, discipline flags), Decision Owners (teacher/admin/parent) by domain, and how divergence is handled.\n3) Provide positioning for teachers/admins/parents.\n4) Monetization that survives commoditization.\n5) Pilot plan for a school/district.\n6) Objections + rebuttals.\n\nOutput should read like a serious startup plan, not a brainstorm.',
-            placeholder: 'e.g. I want to build a HAP-native edtech product that...'
-        },
-        relationships: {
-            title: 'Relationships (HAP-native consent + multi-owner products)',
-            prompt: 'Act as a founder building relationship products in an AGI era. Propose apps/services that embed Human Agency Protocol (HAP) to prevent coercion-by-convenience and to handle multi-owner decisions honestly (blocking execution when directions diverge). Assume generic "AI relationship advice" becomes free and worthless; trust, privacy, and protocol-enforced consent become the product.\n\nTask:\n1) Generate 10 HAP-native relationship product concepts where HAP is the core trust layer.\n2) For the top 3: specify multi-owner flows (plans, finances, boundaries), Decision Owners by domain, divergence handling, and why semantic-local privacy matters.\n3) Business model and retention loops that don\'t rely on addictive engagement.\n4) Positioning: why this is safer than generic AI coaching.\n5) Objections ("kills spontaneity", "too heavy", "adds friction") + sharp responses.\n6) Draft landing page block + demo script showing Stop→Ask→Confirm→Proceed.\n\nMake it real: consent and autonomy are non-negotiable.',
-            placeholder: 'e.g. I want to build a HAP-native relationship product that...'
-        },
-        'personal-development': {
-            title: 'Personal Development (HAP-native "direction" products)',
-            prompt: 'Act as a founder designing personal development services/apps for the AGI era. Assume execution, planning, and generic coaching become commoditized by AGI. The scarce value is human-authored direction: the ability to define objectives, accept tradeoffs, and commit responsibly. Human Agency Protocol (HAP) enforces this via 6 gates + Decision Owner, with privacy-by-architecture.\n\nTask:\n1) Generate 10 HAP-native personal development product concepts.\n2) For the top 3: define the core user ritual powered by the 6 gates (fast, repeatable), the "must-gate" actions (automations, commitments, public/irreversible steps), and how it prevents drifting into AI-generated lives.\n3) Monetization and moat under commoditization.\n4) Positioning: why "direction integrity" beats motivation hacks.\n5) Objections ("I just want AI to do it", "too much thinking") + rebuttals.\n6) Draft landing page copy + onboarding flow + a demo script.\n\nConstraints: behaviorally grounded, conversion-oriented, no fluff.',
-            placeholder: 'e.g. I want to build a HAP-native personal development product that...'
-        }
-    };
+    let selectedCard: string | null = null;
+    let contextText: string | null = null;
 
-    let currentDomain = null;
-    let currentLens = null;
-    let contextText = null;
-
-    // Toggle Discovery Engine
+    // Toggle card section
     document.getElementById('ask-ai-btn')?.addEventListener('click', async () => {
         const button = document.getElementById('ask-ai-btn');
-        const personaSection = document.getElementById('persona-section');
-        if (personaSection.style.display === 'none' || !personaSection.style.display) {
+        const cardSection = document.getElementById('card-section');
+
+        if (cardSection.style.display === 'none' || !cardSection.style.display) {
             button.classList.add('clicked');
-            personaSection.style.display = 'block';
+            cardSection.style.display = 'block';
             await fetchContext();
         } else {
             button.classList.remove('clicked');
-            personaSection.style.display = 'none';
+            cardSection.style.display = 'none';
         }
     });
 
-    // Handle Domain Selection
-    document.querySelectorAll('[data-domain]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            currentDomain = btn.dataset.domain;
-            document.querySelectorAll('[data-domain]').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
+    // Handle card selection
+    document.querySelectorAll('[data-card]').forEach(card => {
+        card.addEventListener('click', () => {
+            const cardNumber = (card as HTMLElement).dataset.card;
+            selectedCard = cardNumber;
 
-            // Show lens selection row
-            const lensSelection = document.getElementById('lens-selection');
-            if (lensSelection) lensSelection.style.display = 'block';
+            // Update active state
+            document.querySelectorAll('[data-card]').forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
 
-            // Show only the appropriate lens options for the selected domain
-            updateLensOptions(currentDomain);
-
-            updatePrompt();
-        });
-    });
-
-    function updateLensOptions(domain) {
-        // First, hide all lens options
-        document.querySelectorAll('[data-domains]').forEach(lensBtn => {
-            lensBtn.style.display = 'none';
-        });
-
-        // Then, show only the lens options for the selected domain
-        document.querySelectorAll(`[data-domains="${domain}"]`).forEach(lensBtn => {
-            lensBtn.style.display = 'flex';
-        });
-
-        // Update the lens intro text based on domain
-        const lensIntro = document.getElementById('lens-intro');
-        if (lensIntro) {
-            if (domain === 'startups') {
-                lensIntro.textContent = 'Develop service and apps for...';
-            } else {
-                lensIntro.textContent = 'Analyze this as...';
-            }
-        }
-    }
-
-    // Handle Lens Selection
-    document.querySelectorAll('[data-lens]').forEach(btn => {
-        btn.addEventListener('click', () => {
-            currentLens = btn.dataset.lens;
-            document.querySelectorAll('[data-lens]').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            
-            // Show final prompt and context field
+            // Show prompt display
             const promptDisplay = document.getElementById('prompt-display');
             if (promptDisplay) promptDisplay.style.display = 'block';
-            
-            updatePrompt();
+
+            // Show appropriate section
+            const wildcardSection = document.getElementById('wildcard-input-section');
+            const standardSection = document.getElementById('standard-prompt-section');
+
+            if (cardNumber === '7') {
+                // Wildcard: show input
+                wildcardSection.style.display = 'block';
+                standardSection.style.display = 'none';
+            } else {
+                // Standard: show prompt immediately
+                wildcardSection.style.display = 'none';
+                standardSection.style.display = 'block';
+                displayPrompt(cardNumber);
+            }
+
+            // Scroll to prompt
+            promptDisplay.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         });
     });
 
-    function updatePrompt() {
-        if (!currentDomain || !currentLens) return;
+    // Generate custom prompt for wildcard
+    document.getElementById('generate-custom-btn')?.addEventListener('click', () => {
+        const input = document.getElementById('wildcard-input') as HTMLTextAreaElement;
+        const userContext = input.value.trim();
 
-        const domainData = domains[currentDomain];
-        const lensData = lenses[currentLens];
-        const promptText = document.getElementById('prompt-text');
-        const contextInput = document.getElementById('context-input') as HTMLTextAreaElement;
-
-        if (promptText) promptText.textContent = lensData.prompt.replace('[DOMAIN]', domainData.context);
-        if (contextInput) {
-            contextInput.placeholder = lensData.placeholder;
-            // Hide context for newcomers as requested previously
-            const container = document.getElementById('context-input-container');
-            if (container) container.style.display = currentLens === 'newcomer' ? 'none' : 'block';
+        if (!userContext) {
+            alert('Please describe your decision context first.');
+            return;
         }
 
-        const display = document.getElementById('prompt-display');
-        if (display) display.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    }
+        // Generate custom prompt
+        const customPrompt = `You are a HAP-compliant decision assistant (Human Agency Protocol v0.1, Jan 2026).
 
-    // Initialize prompt checkbox functionality
-    document.addEventListener('DOMContentLoaded', () => {
-        const promptCheckbox = document.getElementById('prompt-checkbox');
+Context: ${userContext}
+
+Your role: Before providing advice or executing any action, you MUST enforce the six human gates:
+
+1. FRAME - "What decision are we making?" (Define the boundary)
+2. PROBLEM - "Why act now?" (Justify the need)
+3. OBJECTIVE - "What success looks like?" (Define the outcome)
+4. TRADEOFF - "What are we willing to sacrifice?" (Accept the cost)
+5. COMMITMENT - "Are we ready to proceed?" (Make binding choice)
+6. DECISION OWNER - "Who owns this per affected domain?" (Assign accountability)
+
+CRITICAL RULES:
+- STOP if any gate is missing or ambiguous
+- ASK structured questions to resolve each gate
+- CONFIRM explicit answers before proceeding
+- NEVER proceed with unclear direction
+- NEVER assume implicit tradeoffs
+- NEVER accept "everyone's responsible" - require named owners
+
+When you detect missing gates, respond with: "⚠️ STOP: [Gate Name] is missing. I need explicit direction before proceeding." Then ask precise questions to close that gate.
+
+Only after ALL six gates are explicitly closed can you provide options or recommendations.`;
+
+        // Display custom prompt
         const promptText = document.getElementById('prompt-text');
+        const standardSection = document.getElementById('standard-prompt-section');
+        const wildcardSection = document.getElementById('wildcard-input-section');
 
-        if (promptCheckbox && promptText) {
-            // Set initial state
-            promptText.classList.remove('crossed-out');
-
-            promptCheckbox.addEventListener('change', () => {
-                if (promptCheckbox.checked) {
-                    promptText.classList.remove('crossed-out');
-                } else {
-                    promptText.classList.add('crossed-out');
-                }
-            });
-        }
+        if (promptText) promptText.textContent = customPrompt;
+        wildcardSection.style.display = 'none';
+        standardSection.style.display = 'block';
     });
 
-    // Copy function (reusable)
-    async function copyToClipboard(text, button, successMsg, originalText) {
-        let copySucceeded = false;
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            try {
-                await navigator.clipboard.writeText(text);
-                copySucceeded = true;
-            } catch (clipboardErr) {
-                console.log('Clipboard API failed, trying fallback:', clipboardErr);
-            }
-        }
-        if (!copySucceeded) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            textarea.style.position = 'absolute';
-            textarea.style.left = '-9999px';
-            textarea.style.top = '0';
-            textarea.setAttribute('readonly', '');
-            document.body.appendChild(textarea);
-            textarea.select();
-            try {
-                copySucceeded = document.execCommand('copy');
-            } catch (e) {
-                console.error('execCommand failed:', e);
-            }
-            document.body.removeChild(textarea);
-        }
-        if (copySucceeded) {
-            button.textContent = successMsg;
-            setTimeout(() => {
-                if (button) button.textContent = originalText;
-            }, 3000);
+    // Display standard prompt
+    function displayPrompt(cardNumber: string) {
+        const promptText = document.getElementById('prompt-text');
+        if (promptText && prompts[cardNumber]) {
+            promptText.textContent = prompts[cardNumber];
         }
     }
 
@@ -1393,34 +1177,52 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         return contextText;
     }
 
-    // Copy logic
+    // Copy prompt
     document.getElementById('copy-prompt-btn')?.addEventListener('click', async () => {
         const button = document.getElementById('copy-prompt-btn');
         const originalText = button.textContent;
+        const promptText = document.getElementById('prompt-text')?.textContent;
         const context = await fetchContext();
 
-        const promptCheckbox = document.getElementById('prompt-checkbox') as HTMLInputElement;
-        const userContextInput = document.getElementById('context-input') as HTMLTextAreaElement;
+        if (!promptText) return;
 
-        let combinedText = '';
+        const combinedText = `${promptText}\n\n---\n\n${context}`;
 
-        // Include the generated prompt if the checkbox is checked
-        if (promptCheckbox && promptCheckbox.checked) {
-            const domainData = domains[currentDomain];
-            const lensData = lenses[currentLens];
-            const userContext = userContextInput?.value.trim();
+        try {
+            let copySucceeded = false;
 
-            const basePrompt = lensData.prompt.replace('[DOMAIN]', domainData.context);
-            const personaPrompt = userContext
-                ? `${basePrompt}\n\nUSER SPECIFIC CONTEXT:\n${userContext}`
-                : basePrompt;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(combinedText);
+                    copySucceeded = true;
+                } catch (clipboardErr) {
+                    console.log('Clipboard API failed, trying fallback');
+                }
+            }
 
-            combinedText = `${personaPrompt}\n\n---\n\n${context}`;
-        } else {
-            // If prompt is unchecked, only copy the context
-            combinedText = context;
+            if (!copySucceeded) {
+                const textarea = document.createElement('textarea');
+                textarea.value = combinedText;
+                textarea.style.position = 'absolute';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+                copySucceeded = document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+
+            if (copySucceeded) {
+                button.textContent = 'Copied! Paste it in your AI Chat';
+                setTimeout(() => {
+                    if (button) button.textContent = originalText;
+                }, 3000);
+            }
+        } catch (error) {
+            console.error('Copy failed:', error);
+            button.textContent = 'Copy failed. Please try again.';
+            setTimeout(() => {
+                if (button) button.textContent = originalText;
+            }, 3000);
         }
-
-        await copyToClipboard(combinedText, button, 'Copied! Paste it in your AI Chat', originalText);
     });
 </script>
