@@ -1,40 +1,45 @@
 ---
 title: "TypeScript SDK"
-version: "Version 0.2.0"
-date: "November 2025"
+version: "Version 1.0.0"
+date: "January 2026"
 ---
 
-The HAP SDK enforces mandatory human checkpoints in AI applications through a Stop→Ask→Proceed protocol. When AI encounters ambiguity or unclear goals, it must stop and request clarification using question blueprints—structured templates that ensure the right questions are asked at the right time. The SDK tracks question outcomes to optimize blueprint selection over time, improving clarification quality without compromising privacy.
+Gate-based TypeScript SDK for the Human Agency Protocol v0.1. Enforces the six gates (Frame, Problem, Objective, Tradeoff, Commitment, Decision Owner) with attestation-first execution and zero semantic leakage.
 
 ---
 
 ## Overview
 
-**Version:** 0.2.0
+**Version:** 1.0.0
 **Protocol Version:** 0.1
 **Status:** Development
 **GitHub:** [humanagencyprotocol/hap-sdk-typescript](https://github.com/humanagencyprotocol/hap-sdk-typescript)
 
-### Latest Changes (v0.2.0)
+### Core Guarantees
 
-- **LocalHapProvider** - File-based local development without HAP service
-- **Metadata helpers** - Auto-detect patterns, classify domains, estimate complexity
-- **Enhanced blueprints** - Support for LLM prompt context and structural metadata
-- **Provider abstraction** - Unified interface for HapClient and LocalHapProvider
-- Breaking change: `StopGuard` config now uses `provider` instead of `client`
+- **Structural only** - No semantic content leaves the app
+- **Stop → Ask → Confirm → Proceed** - Enforced before any executor call
+- **Attestation required** - Service Provider issues short-lived Ed25519 proof
+- **Decision Owner Scope** - Enforced structurally (domain coverage + required constraints)
+- **Explicit trust** - SP keys are whitelisted; no auto-discovery, no PKI/OAuth
+- **Deterministic signing** - RFC 8785 JSON canonicalization for attestation payloads
+- **Typed errors** - Machine-readable error codes for attestation failures
 
 ---
 
 ## What is HAP?
 
-The Human Agency Protocol enforces mandatory human checkpoints in AI systems. AI cannot proceed, escalate, or interpret ambiguous goals until it receives explicit human meaning and direction.
+The Human Agency Protocol enforces mandatory human checkpoints in AI systems. AI cannot proceed, escalate, or interpret ambiguous goals until it receives explicit human meaning and direction through the six gate framework.
 
 **Core mechanism: Stop → Ask → Proceed**
 
-This SDK provides:
-1. **Protocol compliance** - Integration with HAP Service Providers
-2. **Local development** - File-based blueprint testing without a service (v0.2+)
-3. **Local optimization** - Tools to improve question-asking over time (privacy-preserving)
+The six gates ensure complete direction:
+1. **Frame** - What is the context?
+2. **Problem** - What needs to change?
+3. **Objective** - What outcome do we want?
+4. **Tradeoff** - What are we willing to sacrifice?
+5. **Commitment** - Are we ready to act?
+6. **Decision Owner** - Who authorizes this?
 
 ---
 
@@ -44,178 +49,369 @@ This SDK provides:
 npm install hap-sdk
 ```
 
+**Requirements:**
+- Node.js 18+
+- TypeScript 5.0+ (for development)
+
 ---
 
 ## Quick Start
 
-### Option 1: Production (with HAP Service)
+### Basic Gate Flow
 
 ```typescript
-import { HapClient, StopGuard, StopDetector } from 'hap-sdk';
+import {
+  LocalBlueprintProvider,
+  DirectionStateManager,
+  DirectionGuard,
+  ServiceProviderClient,
+  AttestationValidator,
+} from "hap-sdk";
 
-// 1. Create HAP provider
-const hapProvider = new HapClient({
-  endpoint: process.env.HAP_ENDPOINT!,
-  apiKey: process.env.HAP_API_KEY!,
+// 1. Set up local blueprint provider
+const blueprintProvider = new LocalBlueprintProvider({
+  sourcePath: "./blueprints"
 });
 
-// 2. Implement local QuestionEngine
+// 2. Implement question engine (stays local)
 const questionEngine = {
-  async generateQuestion(context: any, spec: QuestionSpec): Promise<string> {
-    return myLocalLLM.generateQuestion(context, spec);
+  async generateQuestion(_ctx: unknown, blueprint) {
+    return blueprint.render_hint || `Resolve gate: ${blueprint.target_state}`;
   },
 };
 
-// 3. Use StopGuard in your conversation flow
-const stopGuard = new StopGuard({ provider: hapProvider, questionEngine });
-const detector = new StopDetector();
+// 3. Create direction guard
+const guard = new DirectionGuard({ blueprintProvider, questionEngine });
 
-async function handleUserInput(context: any) {
-  const inquiryReq = detector.createRequest({
-    ladderStage: "meaning",
-    agencyMode: "convergent",
-    stopTrigger: detectAmbiguity(context)
-  });
+// 4. Initialize state manager
+const state = DirectionStateManager.empty(
+  ["delivery"], // affected domains
+  "sha256:abc..." // frame hash
+);
 
-  const { clarified, question } = await stopGuard.ensureClarified(context, inquiryReq);
+// 5. Check for missing gates and ask user
+const requiredGates = ["frame", "problem", "objective", "tradeoff", "commitment", "decision_owner"];
+const missing = guard.getMissingGates(state, requiredGates);
 
-  if (!clarified && question) {
-    const answer = await askUser(question);
-    await hapProvider.sendFeedback({
-      blueprintId: clarificationResult.blueprintId!,
-      stopResolved: true,
-    });
-  }
+if (missing.length) {
+  const inquiry = await guard.inquireForGate({}, missing[0]);
+  // Present inquiry.question to user
+  // Capture answer and update state
+  state.setGateResolved(missing[0], { resolved: true });
 }
-```
 
-### Option 2: Local Development (no HAP Service needed)
-
-```typescript
-import {
-  LocalHapProvider,
-  StopGuard,
-  StopDetector,
-  detectAmbiguityPattern,
-  classifyDomain,
-  estimateComplexity,
-  balancedSelector
-} from 'hap-sdk';
-
-// 1. Create local provider with file-based blueprints
-const hapProvider = new LocalHapProvider({
-  blueprintsPath: './blueprints',  // Directory with JSON blueprints
-  selector: balancedSelector,       // Selection strategy
+// 6. Request attestation from Service Provider
+const spClient = new ServiceProviderClient({
+  baseUrl: "https://sp.example.com",
+  apiKey: process.env.HAP_API_KEY
 });
 
-// 2. Use metadata helpers for smart detection
-const detector = new StopDetector();
-const userInput = "Can you update it?";
-
-const pattern = detectAmbiguityPattern(userInput);    // "ambiguous-pronoun"
-const domain = classifyDomain(["code", "function"]);  // "software-development"
-const complexity = estimateComplexity({ hasAmbiguity: true }); // 2
-
-const inquiryReq = detector.createRequestWithMetadata({
-  ladderStage: "meaning",
-  agencyMode: "convergent",
-  stopTrigger: pattern !== null,
-  stopPattern: pattern || undefined,
-  domain,
-  complexitySignal: complexity,
+const attestationReq = state.buildAttestationRequest({
+  blueprintId: "commit-team-v1",
+  decisionOwners: ["did:key:zowner"],
+  decisionOwnerScopes: [{
+    owner_id: "did:key:zowner",
+    domains: ["delivery"],
+    constraints: { budget_limit: "€25k" }
+  }],
+  affectedDomains: ["delivery"],
+  requiredGates,
+  requiredConstraintKeys: ["budget_limit"]
 });
 
-// 3. Same StopGuard flow works with both providers
-const stopGuard = new StopGuard({ provider: hapProvider, questionEngine });
-```
+const attestation = await spClient.requestAttestation(attestationReq);
 
-**Key principle:** HAP never sees your context, questions, or answers. Only structural signals.
+// 7. Executor validates attestation
+const validator = new AttestationValidator({
+  trustedServiceProviderKeys: {
+    "team-deploy": "did:key:zServiceProvider"
+  }
+});
+
+await validator.validate(attestation, "team-deploy");
+validator.assertFrameHashAlignment(
+  { frame_hash: "sha256:abc...", payload: { action: "deploy" } },
+  attestation
+);
+
+// Now safe to execute
+```
 
 ---
 
-## Core Features
+## Core Components
 
-### 1. Dual Provider Support
+### 1. LocalBlueprintProvider
+
+Loads gate-based blueprints from local disk. Each blueprint defines a gate resolution question.
 
 ```typescript
-// Production: Use HAP service for blueprint evolution
-const hapProvider = new HapClient({ endpoint, apiKey });
+const provider = new LocalBlueprintProvider({
+  sourcePath: "./blueprints",
+  selector: (candidates) => candidates[0] // optional selection strategy
+});
 
-// Local: Use file-based blueprints for development
-const hapProvider = new LocalHapProvider({
-  blueprintsPath: './blueprints',
-  selector: balancedSelector
+const blueprint = await provider.getById("frame-minimal-v1");
+const selected = await provider.selectByTarget("frame", {
+  required_domains: ["delivery"],
+  stop_conditions: ["problem"]
 });
 ```
 
-Both providers implement the same `HapProvider` interface, so your code works unchanged.
+**Blueprint Schema:**
+```json
+{
+  "id": "commit-team-v1",
+  "intent": "Clarify team commitment to execute",
+  "target_state": "commitment",
+  "required_domains": ["delivery"],
+  "required_constraints": ["budget_limit"],
+  "stop_conditions": ["frame", "problem", "objective", "tradeoff"],
+  "render_hint": "Are you ready to commit to this action?",
+  "examples": ["Confirm: proceed with deployment"],
+  "version": "1.0.0"
+}
+```
 
-### 2. Metadata Helpers (v0.2+)
+### 2. DirectionStateManager
 
-Automatically detect patterns, classify domains, and estimate complexity:
+Tracks gate resolution and builds attestation requests with structural validation.
 
 ```typescript
-import {
-  StopPatterns,           // Common pattern constants
-  Domains,                // Domain classifications
-  ComplexityLevels,       // Complexity scale (1-5)
-  detectAmbiguityPattern, // Auto-detect from text
-  classifyDomain,         // Classify from keywords
-  estimateComplexity,     // Calculate from signals
-  createSessionContext    // Build session metadata
-} from 'hap-sdk';
+const state = DirectionStateManager.empty(
+  ["delivery", "infrastructure"], // affected domains
+  "sha256:frame-hash"
+);
 
-// Example: Auto-detect ambiguity
-const pattern = detectAmbiguityPattern("Can you update it?");
-// Returns: "ambiguous-pronoun"
+// Mark gates as resolved
+state.setGateResolved("frame", { resolved: true });
+state.setGateResolved("problem", { resolved: true });
 
-// Example: Classify domain
-const domain = classifyDomain(["code", "test", "api"]);
-// Returns: "software-development"
+// Check if gates are met
+const hasFrame = state.hasGate("frame");
+const hasAll = state.hasAllGates(["frame", "problem", "objective"]);
 
-// Example: Estimate complexity
-const complexity = estimateComplexity({
-  numEntities: 5,
-  hasAmbiguity: true,
-  priorStops: 2
+// Build attestation request
+const request = state.buildAttestationRequest({
+  blueprintId: "commit-team-v1",
+  decisionOwners: ["did:key:zowner"],
+  decisionOwnerScopes: [{
+    owner_id: "did:key:zowner",
+    domains: ["delivery"],
+    constraints: { budget_limit: "€25k" }
+  }],
+  affectedDomains: ["delivery"],
+  requiredGates: ["frame", "problem", "objective"],
+  requiredConstraintKeys: ["budget_limit"]
 });
-// Returns: 3 (on scale of 1-5)
 ```
 
-### 3. Blueprint Selection Strategies
+### 3. DirectionGuard
 
-LocalHapProvider supports multiple selection strategies:
+Determines missing gates and generates local questions using the QuestionEngine.
 
 ```typescript
-import {
-  simpleLatestVersionSelector,   // Always pick newest
-  bestPerformanceSelector,        // Pick highest success rate
-  balancedSelector,               // Balance performance & exploration
-  contextAwareSelector,           // Use metadata for smarter selection
-  createEpsilonGreedySelector,    // Configurable exploration
-  createLRUSelector               // Least-recently-used
-} from 'hap-sdk';
+const guard = new DirectionGuard({ blueprintProvider, questionEngine });
+
+// Check missing gates
+const missing = guard.getMissingGates(state, requiredGates);
+
+// Generate question for gate
+const inquiry = await guard.inquireForGate(context, "frame");
+console.log(inquiry.question); // Present to user
 ```
 
-### 4. Privacy-Preserving Architecture
+### 4. ServiceProviderClient
+
+Communicates with external Service Providers for blueprints and attestations.
+
+```typescript
+const client = new ServiceProviderClient({
+  baseUrl: "https://sp.example.com",
+  apiKey: process.env.HAP_API_KEY,
+  blueprintPath: "/v1/blueprints",    // optional
+  attestationPath: "/v1/attest",      // optional
+  feedbackPath: "/v1/feedback",       // optional
+  timeout: 5000,                       // optional
+  retries: 3                           // optional
+});
+
+// Fetch blueprint
+const blueprint = await client.getById("frame-minimal-v1");
+
+// Request attestation
+const attestation = await client.requestAttestation(attestationReq);
+
+// Send feedback (structural only)
+await client.sendFeedback({
+  blueprint_id: "commit-team-v1",
+  context_id: "team-deploy",
+  resolved_states: ["frame", "problem"],
+  missing_states: ["commitment"],
+  execution_allowed: false,
+  stop_resolved: true
+});
+```
+
+### 5. AttestationValidator
+
+Validates attestation signatures, expiry, issuer, and frame hash alignment.
+
+```typescript
+const validator = new AttestationValidator({
+  trustedServiceProviderKeys: {
+    "context-id": "did:key:zServiceProvider"
+  },
+  clock: () => Date.now() / 1000 // optional, for testing
+});
+
+// Validate attestation
+await validator.validate(attestation, "context-id");
+
+// Verify frame hash alignment
+validator.assertFrameHashAlignment(
+  { frame_hash: "sha256:abc...", payload: {} },
+  attestation
+);
+
+// Enforce scope expectations
+validator.enforceScopeExpectation(attestation, blueprint);
+```
+
+**Attestation Structure:**
+```typescript
+{
+  header: {
+    typ: "HAP-attestation",
+    alg: "EdDSA",
+    issuer: "did:key:zServiceProvider"
+  },
+  payload: {
+    frame_hash: "sha256:abc...",
+    blueprint_id: "commit-team-v1",
+    resolved_gates: ["frame", "problem", "objective", "tradeoff", "commitment", "decision_owner"],
+    decision_owners: ["did:key:zowner"],
+    decision_owner_scopes: [{
+      owner_id: "did:key:zowner",
+      domains: ["delivery"],
+      constraints: { budget_limit: "€25k" }
+    }],
+    affected_domains: ["delivery"],
+    issued_at: 1704067200,
+    expires_at: 1704070800
+  },
+  signature: "base64url-encoded-signature"
+}
+```
+
+---
+
+## Privacy-Preserving Architecture
 
 ```
-app / platform
+App / Platform
    │
-   ├── hap-sdk
-   │     ├── providers          (HapClient, LocalHapProvider)
-   │     ├── types              (structural types only)
-   │     ├── question-spec      (blueprint → spec conversion)
-   │     ├── runtime-guards     (stop/ask/proceed enforcement)
-   │     └── metrics            (local optimization)
+   ├── HAP SDK (structural only)
+   │     ├── DirectionStateManager    (track gate closure locally)
+   │     ├── DirectionGuard           (detect missing gates)
+   │     ├── QuestionEngine           (generate questions locally)
+   │     ├── AttestationValidator     (verify SP signatures)
+   │     └── ServiceProviderClient    (fetch blueprints, request attestations)
    │
-   └── local-ai
-         ├── gap-detector       (semantic analysis - local only)
-         ├── question-engine    (your LLM/rules - local only)
-         └── context            (your data - never leaves system)
+   └── Local Components (semantic - never shared)
+         ├── Context & Content        (stays local)
+         ├── User Answers            (stays local)
+         ├── Execution Payloads      (stays local)
+         └── LLM Integration         (local question generation)
 ```
 
-**Zero semantic leakage:** Only structural signals (ladder stage, agency mode, patterns, domains) are shared with providers.
+**Zero Semantic Leakage:**
+- Only structural signals shared with Service Providers (gate states, domains, blueprint IDs)
+- All semantic content (context, questions, answers, payloads) stays local
+- Frame hash binds attestation to payload without revealing content
+
+---
+
+## Executor Proxy Pattern
+
+The executor proxy pattern validates attestations before executing actions:
+
+```typescript
+import { validateAttestationAndPayload } from "hap-sdk";
+
+// Executor endpoint receives attestation + payload
+app.post("/execute", async (req, res) => {
+  const { attestation, payload } = req.body;
+
+  try {
+    // Validate attestation and frame hash alignment
+    await validateAttestationAndPayload(
+      attestation,
+      { "team-deploy": "did:key:zSP" },
+      { frame_hash: payload.frame_hash, payload },
+      "team-deploy",
+      blueprint // optional, for scope validation
+    );
+
+    // Safe to execute
+    const result = await executeAction(payload);
+    res.json({ success: true, result });
+
+  } catch (error) {
+    res.status(403).json({ error: error.message });
+  }
+});
+```
+
+See `examples/executor-proxy-fastify.ts` for a complete implementation.
+
+---
+
+## Starter Blueprints
+
+The SDK includes example blueprints in `blueprints/`:
+
+- **frame-minimal-v1.json** - Basic frame gate
+- **commit-team-v1.json** - Team commitment with scope validation
+- **legal-review-v1.json** - Legal review checkpoint
+- **tradeoff-strategy-v1.json** - Strategic tradeoff analysis
+
+---
+
+## Signal Detection
+
+Load structural signal guides for stop trigger detection:
+
+```typescript
+import { LocalSignalGuideProvider } from "hap-sdk";
+
+const signalProvider = new LocalSignalGuideProvider({
+  sourcePath: "./signal-guides"
+});
+
+const guides = await signalProvider.list();
+// Use guides to detect when to stop and ask
+```
+
+See `docs/SIGNAL_DETECTION.md` for structural stop/feedback guidance.
+
+---
+
+## Trust Model
+
+**Explicit Key Management:**
+- Service Provider keys are whitelisted by context ID
+- Keys use `did:key` format with Ed25519 public keys
+- No PKI, OAuth, or DNS-based trust
+- No auto-discovery - integrator provides keys
+
+**Example Trust Configuration:**
+```typescript
+{
+  "team-deploy": "did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",
+  "legal-review": "did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH"
+}
+```
 
 ---
 
@@ -223,81 +419,91 @@ app / platform
 
 ### SDK Documentation
 
-- **[API Reference](https://github.com/humanagencyprotocol/hap-sdk-typescript/blob/main/docs/API.md)** - Complete API documentation
-- **[Local Development Guide](https://github.com/humanagencyprotocol/hap-sdk-typescript/blob/main/docs/LOCAL_DEVELOPMENT.md)** - Using LocalHapProvider and blueprints
-- **[Migration Guide](https://github.com/humanagencyprotocol/hap-sdk-typescript/blob/main/docs/MIGRATION.md)** - Upgrading from v0.1.x to v0.2.x
+- **[README](https://github.com/humanagencyprotocol/hap-sdk-typescript/blob/main/README.md)** - Quick start and core concepts
+- **[Feedback & Trust](https://github.com/humanagencyprotocol/hap-sdk-typescript/blob/main/docs/FEEDBACK_AND_TRUST.md)** - Feedback schema and trusted key configuration
+- **[Signal Detection](https://github.com/humanagencyprotocol/hap-sdk-typescript/blob/main/docs/SIGNAL_DETECTION.md)** - Structural stop trigger guidance
 
 ### Protocol Specification
 
 - **[Protocol Specification](/protocol)** - HAP v0.1 Protocol
 - **[Integration Overview](/integration)** - SDK architecture and integration patterns
+- **[Service Providers](/service)** - Service Provider requirements
+
+---
+
+## Examples
+
+All examples are in the `examples/` directory:
+
+```typescript
+// Basic gate flow
+examples/basic-gate-flow.ts
+
+// Executor proxy (generic)
+examples/executor-proxy.ts
+
+// Executor proxy (Fastify)
+examples/executor-proxy-fastify.ts
+```
+
+---
+
+## Error Handling
+
+The SDK provides typed errors for different failure scenarios:
+
+```typescript
+import {
+  AttestationError,
+  ScopeMismatchError,
+  ValidationError
+} from "hap-sdk";
+
+try {
+  await validator.validate(attestation, "team-deploy");
+} catch (error) {
+  if (error instanceof AttestationError) {
+    console.error("Attestation failed:", error.code, error.message);
+  } else if (error instanceof ScopeMismatchError) {
+    console.error("Scope mismatch:", error.code, error.message);
+  } else if (error instanceof ValidationError) {
+    console.error("Validation failed:", error.code, error.message);
+  }
+}
+```
+
+**Error Codes:**
+- `ATTESTATION_ERROR` - Signature/expiry/issuer validation failed
+- `SCOPE_MISSING` - Required decision owner scopes missing
+- `SCOPE_UNEXPECTED` - Scopes provided when not required
+- `VALIDATION_ERROR` - Schema or structural validation failed
 
 ---
 
 ## Feature Checklist
 
-- ✅ **Dual providers** - Production (HapClient) + Local (LocalHapProvider)
-- ✅ **Metadata helpers** - Auto-detect patterns, domains, complexity
-- ✅ **Selection strategies** - 6 built-in strategies for blueprint selection
+- ✅ **Gate-based architecture** - Six gates enforced structurally
+- ✅ **Local blueprint provider** - File-based development workflow
+- ✅ **Service Provider client** - Remote blueprint and attestation support
+- ✅ **Attestation validation** - Ed25519 signature verification with did:key
+- ✅ **Frame hash binding** - Payload integrity without semantic leakage
+- ✅ **Decision Owner Scopes** - Structural domain and constraint validation
 - ✅ **Type-safe** - Full TypeScript support with strict types
-- ✅ **Privacy-first** - Zero semantic leakage (only structural signals)
-- ✅ **Protocol enforcement** - Stop→Ask→Proceed guaranteed
-- ✅ **Resilient** - Retry logic, circuit breaker, timeout handling
-- ✅ **Local metrics** - Track performance, optimize over time
-- ✅ **Framework agnostic** - Works with any JS/TS environment
-- ✅ **278 tests** - Comprehensive test coverage (≥85%)
+- ✅ **Privacy-first** - Zero semantic leakage (structural signals only)
+- ✅ **Explicit trust** - User-controlled Service Provider key whitelist
+- ✅ **Deterministic signing** - RFC 8785 JSON canonicalization
+- ✅ **Executor proxy pattern** - Reference implementation included
+- ✅ **Signal detection** - Structural stop trigger guidance
 
 ---
 
-## Version Mapping
+## Version History
 
 | SDK Version | Protocol Version | Status | Key Features |
 |-------------|------------------|--------|--------------|
-| 0.1.x       | 0.1              | Stable | Core protocol, HapClient, StopGuard |
-| 0.2.x       | 0.1              | Development | + LocalHapProvider, metadata helpers, selection strategies |
-| 0.3.x       | 0.1              | Planned | + Stage Progression Enforcement (Q1 2026) |
-
----
-
-## What's Next: Version 0.3
-
-The next major release will introduce **Stage Progression Enforcement** to prevent AI from skipping inquiry ladder stages.
-
-### The Problem
-
-HAP v0.2 validates user input clarity, but doesn't prevent AI from jumping stages in responses:
-
-```
-User: "Help with my project"
-AI: "Which project?" ✓ (checks input clarity)
-User: "The website"
-AI: "I'll redesign the homepage and deploy" ✗ (skipped purpose & intention!)
-```
-
-### The Solution
-
-**Stage Progression Guard:**
-- Detects which ladder stage AI's response targets
-- Blocks responses that skip required stages
-- Forces AI to ask about missing stages first (meaning → purpose → intention → action)
-- Supports both Convergent (linear) and Reflective (cyclical) inquiry modes
-
-**Key Features:**
-- **Structured output** + LLM classification fallback
-- **Privacy-preserving** (all semantic analysis stays local)
-- **Opt-in enforcement** (backward compatible with v0.2)
-- **Learning integration** for improved detection over time
-
-**Target Release:** Q1 2026
-
-See the complete [v0.3 Implementation Plan](https://github.com/humanagencyprotocol/hap-sdk-typescript/blob/main/docs/ROADMAP.md) for technical details.
-
----
-
-## Requirements
-
-- Node.js 18+
-- TypeScript 5.0+ (for development)
+| 1.0.0       | 0.1              | Development | Gate-based architecture, attestation-first execution |
+| 0.2.x       | 0.1              | Deprecated | LocalHapProvider, metadata helpers, selection strategies |
+| 0.1.x       | 0.1              | Deprecated | Core protocol, HapClient, StopGuard |
 
 ---
 
@@ -309,11 +515,11 @@ Contributions are welcome! See the [GitHub repository](https://github.com/humana
 - Security policy
 - Development setup
 
-**Development process:**
+**Development Requirements:**
 1. Follow design specs in main protocol repo
-2. All tests must pass (coverage ≥ 85%)
-3. Security tests must pass (no API key leaks, no semantic content)
-4. Update CHANGELOG.md
+2. All tests must pass
+3. Update CHANGELOG.md
+4. No semantic content in logs or telemetry
 
 ---
 
