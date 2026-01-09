@@ -119,9 +119,67 @@ All fields are optional unless required by a Blueprint.
 Domains: Categories of consequence the owner is authorized to cover (e.g., delivery, financial, legal, reputational, wellbeing). Declared, not inferred.
 Constraints: Optional limits on authority within a domain (e.g., budget cap, impact threshold). Compared structurally against declared decision consequences.
 
+### Constraint Semantics and Validation
+
+Constraints are structural declarations of authority limits within a consequence domain. They do not represent preferences, goals, or semantic conditions—but hard boundaries on what a Decision Owner may authorize.
+
+**Schema**
+```json
+{
+  "domains": ["delivery", "budget"],
+  "constraints": {
+    "max_delay": "2w",
+    "budget_limit": "€50000"
+  }
+}
+```
+
+- domains: list of consequence domains the owner covers (string array, required if constraints are present)
+- constraints: key-value map where:
+  - Keys are context-defined constraint identifiers (e.g., max_delay, brand_risk_threshold)
+  - Values are opaque, string-encoded limits (e.g., "2w", "low")
+
+Critical: Constraint values must never be interpreted semantically by Service Providers or executors. They are compared only by exact string match or Blueprint-defined equivalence rules.
+
+**Blueprint-Defined Constraint Types**
+
+Each Blueprint may declare the expected constraint keys and their validation behavior:
+
+```json
+{
+  "id": "commit-team-v1",
+  "constraint_keys": {
+    "max_delay": { "type": "exclusive" },
+    "communication_preference": { "type": "inclusive" }
+  }
+}
+```
+
+- exclusive: Only one value may exist across all Decision Owner Scopes for this key in a given domain. Multiple values → invalid attestation.
+- inclusive: Multiple values are allowed (e.g., stakeholder preferences).
+
+If a constraint key is not declared in the Blueprint, it defaults to exclusive.
+
+**Validation Rule (Service Provider + Executor Proxy)**
+
+If decision_owner_scopes is present in an attestation request:
+
+- For every constraint key appearing in any scope:
+  - If the key is exclusive (by Blueprint or default), and multiple distinct values are declared for the same domain, the attestation request must be rejected.
+- The union of all declared domains in decision_owner_scopes must cover all affected_domains in the request.
+
+This rule prevents execution under mutually incompatible tradeoffs (e.g., one owner accepts max_delay: "0", another max_delay: "2w" in the same domain).
+
+**Local Enforcement (Application Responsibility)**
+
+Applications must validate constraint consistency before requesting attestation. Relying solely on the Service Provider is insufficient—local gate resolution logic must:
+
+- Prevent submission of structurally conflicting scopes
+- Alert users to divergence with: "Your directions diverge. Initiate a new decision?"
+
 **Protocol Invariant (New)**
 
-A Decision Owner is invalid if the decision's declared consequence scope exceeds the Decision Owner's declared scope.
+A Decision Owner is invalid if the decision's declared consequence scope exceeds the Decision Owner's declared scope or if mutually exclusive constraint values are declared for the same consequence domain across multiple Decision Owner Scopes.
 
 ### Consequence Domains
 Consequences are partitioned by domain. Any actor materially affected in a domain must be a decision owner for that domain.
