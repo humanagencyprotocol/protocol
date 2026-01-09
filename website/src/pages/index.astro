@@ -15,7 +15,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
 
         <div class="cta-group">
-            <button id="ask-ai-btn" class="btn btn-primary">Ask your AI about HAP</button>
+            <button id="ask-ai-btn" class="btn btn-primary">Try HAP in Your AI</button>
             <a href="#why-exists" class="btn btn-secondary">Read more</a>
         </div>
 
@@ -65,12 +65,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                     <h3 class="card-title">I have my own use case</h3>
                     <p class="card-description">Paste your context and get a custom HAP prompt.</p>
                 </button>
+
+                <!-- Or separator -->
+                <div class="or-separator">
+                    <span class="or-text">Or</span>
+                </div>
+
+                <!-- Card 8 - Ask a Question -->
+                <button class="use-case-card" data-card="8">
+                    <h3 class="card-title">Ask a question about HAP</h3>
+                    <p class="card-description">Type your question and get HAP spec context.</p>
+                </button>
             </div>
 
             <!-- Prompt Display -->
             <div id="prompt-display" class="prompt-display" style="display: none;">
                 <div class="prompt-content">
-                    <!-- Wildcard Input (only for card 7) -->
+                    <!-- Wildcard Input (for card 7) -->
                     <div id="wildcard-input-section" style="display: none;">
                         <label class="wildcard-label">Describe your decision context:</label>
                         <textarea
@@ -78,7 +89,20 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                             class="wildcard-input"
                             placeholder="e.g., team, product, relationship, city project..."
                         ></textarea>
-                        <button id="generate-custom-btn" class="btn btn-secondary">Generate Prompt</button>
+                        <button id="generate-custom-btn" class="btn btn-primary">Copy Prompt</button>
+                    </div>
+
+                    <!-- Question Input (for card 8) -->
+                    <div id="question-input-section" style="display: none;">
+                        <label class="wildcard-label">Ask your question about HAP:</label>
+                        <textarea
+                            id="question-input"
+                            class="wildcard-input"
+                            placeholder="e.g., How does HAP handle multi-stakeholder decisions? What are the six human gates? How does attestation work?..."
+                        ></textarea>
+                        <div class="prompt-actions">
+                            <button id="generate-question-btn" class="btn btn-primary">Copy HAP Prompt</button>
+                        </div>
                     </div>
 
                     <!-- Standard Prompt Display -->
@@ -87,12 +111,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                         <div class="prompt-box">
                             <pre id="prompt-text" class="prompt-text"></pre>
                         </div>
+                        <p class="prompt-note prominent-note">
+                            <strong>Note:</strong> This simulates HAP in chat. For real enforcement—in code, in production, under audit—integrate the <a href="/integration/sdk">HAP TypeScript SDK</a> to cryptographically bind human direction to every AI action.
+                        </p>
                         <div class="prompt-actions">
                             <button id="copy-prompt-btn" class="btn btn-primary">Copy Prompt</button>
                         </div>
-                        <p class="prompt-note">
-                            <strong>Note:</strong> This simulates HAP in chat. For real enforcement—in code, in production, under audit—integrate the <a href="/integration/sdk">HAP TypeScript SDK</a> to cryptographically bind human direction to every AI action.
-                        </p>
                     </div>
                 </div>
             </div>
@@ -483,6 +507,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         gap: 1.5rem;
         margin-bottom: 2rem;
+        justify-content: center;
+        align-items: stretch;
+        width: 100%;
+        max-width: 1200px; /* Limit overall width */
+        margin-left: auto;
+        margin-right: auto;
     }
 
     .use-case-card {
@@ -494,6 +524,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         cursor: pointer;
         transition: all 0.2s ease;
         position: relative;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        justify-self: center; /* Actually center the item within its grid cell */
     }
 
     .use-case-card:hover {
@@ -509,6 +543,30 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 
     .wildcard-card {
         border-style: dashed;
+    }
+
+    /* Or Separator */
+    .or-separator {
+        grid-column: 1 / -1;
+        display: flex;
+        align-items: center;
+        margin: 2rem 0;
+        text-align: center;
+    }
+
+    .or-separator::before,
+    .or-separator::after {
+        content: '';
+        flex: 1;
+        border-top: 1px solid var(--border);
+    }
+
+    .or-text {
+        background: var(--bg);
+        padding: 0 1rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+        white-space: nowrap;
     }
 
     .card-title {
@@ -596,6 +654,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         text-align: center;
         line-height: 1.6;
         margin: 0;
+    }
+
+    .prominent-note {
+        background: var(--bg-elevated);
+        border: 2px solid var(--accent);
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1.5rem 0;
+        font-weight: 500;
+        color: var(--text-primary);
+        font-size: clamp(1.05rem, 2vw, 1.2rem);
+        line-height: 1.6;
+    }
+
+    .prominent-note a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    .prominent-note a:hover {
+        text-decoration: underline;
     }
 
     .prompt-note a {
@@ -1341,15 +1420,23 @@ User's context: [describe your AI system and actions to gate]`
 
             // Show appropriate section
             const wildcardSection = document.getElementById('wildcard-input-section');
+            const questionSection = document.getElementById('question-input-section');
             const standardSection = document.getElementById('standard-prompt-section');
 
             if (cardNumber === '7') {
                 // Wildcard: show input
                 wildcardSection.style.display = 'block';
+                questionSection.style.display = 'none';
+                standardSection.style.display = 'none';
+            } else if (cardNumber === '8') {
+                // Question: show question input
+                questionSection.style.display = 'block';
+                wildcardSection.style.display = 'none';
                 standardSection.style.display = 'none';
             } else {
                 // Standard: show prompt immediately
                 wildcardSection.style.display = 'none';
+                questionSection.style.display = 'none';
                 standardSection.style.display = 'block';
                 displayPrompt(cardNumber);
             }
@@ -1403,6 +1490,83 @@ Only after ALL six gates are explicitly closed can you provide options or recomm
         if (promptText) promptText.textContent = customPrompt;
         wildcardSection.style.display = 'none';
         standardSection.style.display = 'block';
+    });
+
+    // Generate and copy HAP prompt for question (card 7)
+    document.getElementById('generate-question-btn')?.addEventListener('click', async () => {
+        const input = document.getElementById('question-input');
+        const question = input.value.trim();
+
+        if (!question) {
+            alert('Please enter your question about HAP first.');
+            return;
+        }
+
+        // Show loading state
+        const button = document.getElementById('generate-question-btn');
+        const originalText = button.textContent;
+        button.textContent = 'Copying...';
+        button.disabled = true;
+
+        try {
+            // Fetch the complete HAP context
+            const context = await fetchContext();
+
+            // Create the question-specific content with full spec
+            const questionPrompt = `You are an expert on the Human Agency Protocol (HAP) v0.1.
+
+User Question: "${question}"
+
+Please provide a detailed answer based on the following HAP specification context:
+
+${context}
+
+Focus your response on answering the specific question while referencing relevant parts of the HAP specification.`;
+
+            // Copy the prompt to clipboard
+            let copySucceeded = false;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(questionPrompt);
+                    copySucceeded = true;
+                } catch (clipboardErr) {
+                    console.log('Clipboard API failed, trying fallback');
+                }
+            }
+
+            if (!copySucceeded) {
+                const textarea = document.createElement('textarea');
+                textarea.value = questionPrompt;
+                textarea.style.position = 'absolute';
+                textarea.style.left = '-9999px';
+                document.body.appendChild(textarea);
+                textarea.select();
+                copySucceeded = document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+
+            if (copySucceeded) {
+                button.textContent = 'Copied! Paste it in your AI Chat';
+
+                // Reset button text after 3 seconds
+                setTimeout(() => {
+                    if (button) button.textContent = originalText;
+                    button.disabled = false;
+                }, 3000);
+            } else {
+                throw new Error('Copy failed');
+            }
+        } catch (error) {
+            console.error('Copy failed:', error);
+            button.textContent = 'Copy failed. Try again.';
+
+            // Reset button text after 3 seconds
+            setTimeout(() => {
+                if (button) button.textContent = originalText;
+                button.disabled = false;
+            }, 3000);
+        }
     });
 
     // Display standard prompt
