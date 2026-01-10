@@ -268,6 +268,14 @@ Blueprint fields:
     "frame_must_include": ["public_location"],
     "tradeoff_must_address": ["time_cost", "energy_cost"]
   },
+  "execution_paths": {
+    // Optional: pre-vetted action templates for Commitment
+    "path_id": {
+      "label": "string",           // for local UI only
+      "consequence_domains": ["string"],
+      "required_constraint_keys": { "domain": ["key"] }
+    }
+  },
   "render_hint": "string",
   "examples": ["string"]
 }
@@ -280,6 +288,19 @@ Any HAP-compliant system must:
 - Enforce constraints during local gate resolution
 
 Local AIs generate surface language privately; the protocol governs timing and necessity.
+
+### Execution Path Enforcement
+
+If a Blueprint defines an execution_paths object, then:
+
+Any attestation referencing that Blueprint MUST include an execution_path field in its payload.
+The value of execution_path MUST exactly match one of the keys in the Blueprint's execution_paths object.
+Executors and Service Providers MUST reject attestations that violate (1) or (2).
+If a Blueprint does not define execution_paths, then:
+
+The execution_path field MUST NOT appear in attestations.
+Commitment is validated as a simple boolean closure (i.e., "commitment" is present in resolved_gates).
+This ensures that execution paths are only used when pre-vetted, consequence-aware action templates exist—and never as free-form or ad-hoc declarations.
 
 ---
 
