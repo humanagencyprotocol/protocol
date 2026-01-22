@@ -1,13 +1,15 @@
 ---
 import '../styles/global.css';
+import { siteConfig } from '../config';
 
 interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = "A global protocol for strengthening human agency in AI-native systems, without sharing content." } = Astro.props;
+const { title, description = siteConfig.description } = Astro.props;
 const currentPath = Astro.url.pathname;
+const version = siteConfig.version;
 ---
 
 <!DOCTYPE html>
@@ -21,7 +23,10 @@ const currentPath = Astro.url.pathname;
 <body>
     <nav>
         <div class="container">
-            <a href="/" class="logo">Human Agency Protocol (Draft)</a>
+            <div class="logo-group">
+                <a href="/" class="logo">Human Agency Protocol</a>
+                <span class="version-badge">v{version}</span>
+            </div>
             <button class="burger" id="burger-menu" aria-label="Toggle menu">
                 <span></span>
                 <span></span>
@@ -44,17 +49,16 @@ const currentPath = Astro.url.pathname;
                 <h4>Protocol</h4>
                 <ul>
                     <li><a href="/protocol">Overview</a></li>
-                    <li><a href="/protocol#inquiry-ladder">Inquiry Ladder</a></li>
-                    <li><a href="/protocol#blueprints">Blueprints</a></li>
-                    <li><a href="/protocol#signals">Signal Guides</a></li>
+                    <li><a href="/protocol#profiles">Profiles</a></li>
+                    <li><a href="/deploy-gate-profile">Deploy Gate Profile</a></li>
+                    <li><a href="/changelog">Changelog</a></li>
                 </ul>
             </div>
 
             <div class="footer-section">
                 <h4>Integration</h4>
                 <ul>
-                    <li><a href="/integration">SDK Overview</a></li>
-                    <li><a href="/integration/sdk">TypeScript SDK</a></li>
+                    <li><a href="/integration">Overview</a></li>
                     <li><a href="/integration#core-modules">Core Modules</a></li>
                     <li><a href="/integration#example-integration-flow">Example Flow</a></li>
                 </ul>

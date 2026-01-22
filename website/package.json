@@ -1,9 +1,9 @@
 {
   "name": "website",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.2",
   "scripts": {
-    "sync": "cp ../content/0.1/*.md src/content/docs/ 2>/dev/null || true && cp ../sdk/README.md ../sdk/docs/API.md ../sdk/docs/LOCAL_DEVELOPMENT.md ../sdk/docs/ROADMAP.md src/sdk-docs/ 2>/dev/null || true",
+    "sync": "node scripts/sync-content.js",
     "dev": "npm run sync && astro dev",
     "build": "npm run sync && astro build",
     "preview": "astro preview",

@@ -1,22 +1,23 @@
-import { getCollection } from 'astro:content';
 import fs from 'fs';
 import path from 'path';
+import { siteConfig } from '../config';
 
 export async function GET() {
-  // Get all docs from content collection
-  const docs = await getCollection('docs');
+  // Get version from config (sourced from package.json)
+  const version = siteConfig.version;
 
-  // Read the raw markdown files
-  const protocolContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/protocol.md'), 'utf-8');
-  const serviceContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/service.md'), 'utf-8');
-  const integrationContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/integration.md'), 'utf-8');
-  const governanceContent = fs.readFileSync(path.join(process.cwd(), '../content/0.1/governance.md'), 'utf-8');
+  // Read the raw markdown files from the current version
+  const contentPath = path.join(process.cwd(), `../content/${version}`);
+  const protocolContent = fs.readFileSync(path.join(contentPath, 'protocol.md'), 'utf-8');
+  const serviceContent = fs.readFileSync(path.join(contentPath, 'service.md'), 'utf-8');
+  const integrationContent = fs.readFileSync(path.join(contentPath, 'integration.md'), 'utf-8');
+  const governanceContent = fs.readFileSync(path.join(contentPath, 'governance.md'), 'utf-8');
 
   // Combine all content
   const combinedContent = `
 # Human Agency Protocol - Complete Context
 
-**Version 0.1 — January 2026**
+**Version ${version} — January 2026**
 
 ---
 
