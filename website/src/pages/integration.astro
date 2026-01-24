@@ -12,5 +12,25 @@ const { Content } = await entry.render();
     date={entry.data.date}
     nextPage={{ url: '/service', label: 'Service Providers' }}
 >
+    <div class="demo-callout">
+        <strong>See it in action:</strong> The <a href="/demo">Deploy Gate Demo</a> shows HAP integration for GitHub PRs with multi-person approval and AI-assisted review.
+    </div>
     <Content />
 </ContentLayout>
+
+<style>
+    .demo-callout {
+        background: var(--bg-elevated);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent);
+        padding: 1rem 1.25rem;
+        margin-bottom: 2rem;
+        border-radius: 4px;
+        font-size: 0.95rem;
+    }
+
+    .demo-callout a {
+        color: var(--accent);
+        font-weight: 500;
+    }
+</style>

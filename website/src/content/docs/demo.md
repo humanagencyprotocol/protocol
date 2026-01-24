@@ -1,0 +1,240 @@
+---
+title: "Deploy Gate Demo"
+version: "Version 0.2"
+date: "January 2026"
+---
+
+As AI becomes capable of writing and shipping code autonomously, we need guardrails that keep humans in the loop — not as a formality, but as genuine decision-makers. This demo shows how: a checkpoint that forces reviewers to engage with changes before signing a cryptographic attestation. The attestation proves not just that someone clicked approve, but that they confirmed understanding of the problem, objective, and tradeoffs.
+
+The full protocol goes further: domain-specific gates tailored to context, verified identity, integration with deployment systems and AI-assisted review that helps humans understand complex changes — not bypass them. The goal is twofold: prevent gradual loss of direction as systems scale, and provide clear, attributable authorization in high-risk or regulated environments where decisions must be explicit and defensible. 
+
+## How It Works
+
+This demo implements a **human checkpoint for code deployment**. Before any PR can be merged, a human must review the changes and create a cryptographic attestation proving they made an informed decision.
+
+### The Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  1. DEVELOPER creates PR                                                │
+│     └─→ GitHub Action runs → ❌ Blocks merge (no attestation)          │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  2. REVIEWER opens attestation UI                                       │
+│     • Loads PR details (title, description, changed files)              │
+│     • Selects execution path: Canary (1 approval) or Full (2 approvals) │
+│     • Reviews actual code changes                                       │
+│     • Confirms understanding via checkboxes:                            │
+│       ☑ I understand the problem being solved                          │
+│       ☑ I understand the objective                                     │
+│       ☑ I accept the tradeoffs                                         │
+│     • Selects their role (Engineering / Release Management)             │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  3. SERVICE PROVIDER signs attestation                                  │
+│     • Computes frame hash (repo + SHA + env + path)                     │
+│     • Records which gates were passed                                   │
+│     • Signs with Ed25519 key                                            │
+│     • Returns cryptographic blob with 1-hour TTL                        │
+└─────────────────────────────────────────────────────────────────────────┘
+                                    ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  4. REVIEWER posts attestation as PR comment                            │
+│     └─→ GitHub Action re-runs → Verifies signature → ✅ Allows merge   │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### What Gets Verified
+
+The GitHub Action checks:
+- ✓ Attestation exists for the current commit SHA
+- ✓ Cryptographic signature is valid
+- ✓ Attestation hasn't expired
+- ✓ All required roles have attested (Engineering for Canary, Engineering + Release Management for Full)
+
+## Trusted AI Assistant (Advisory Boundary)
+
+This demo includes a trusted AI assistant to help reviewers understand changes before approving. The AI can answer questions, summarize diffs, and surface potential issues — but it has no authority in the decision process.
+
+### What AI Can Do
+
+- Answer questions about the changes
+- Summarize diffs and highlight affected areas
+- Point out potential risks or contradictions
+- Help reviewers think through tradeoffs
+
+### What AI Cannot Do
+
+- Write or modify decision fields
+- Select tradeoffs or execution paths
+- Close gates or trigger attestations
+- Influence what gets executed
+
+### The Boundary
+
+All AI output remains local and is never included in the signed attestation. The system records **what was approved** — not the AI's reasoning or the reviewer's intent.
+
+> **Approval is always a human act, based on explicit structural commitments.**
+
+AI configuration is optional and can be set at the start of the review process. You can use a trusted provider, configure your own endpoint, or disable AI entirely.
+
+## Structure
+
+```
+demo/
+├── apps/
+│   ├── ui/           # Attestation UI (Next.js, localhost:3000)
+│   └── server/       # Service Provider (Next.js, localhost:3001)
+├── packages/
+│   └── hap-core/     # Shared canonicalization and verification logic
+└── .github/
+    └── workflows/
+        └── hap-check.yml  # GitHub Actions attestation verification
+```
+
+## Quick Start
+
+### Option A: Use the Public Server (Recommended)
+
+A public Service Provider is available at **https://service.humanagencyprotocol.org** — no server setup required.
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build shared package
+pnpm --filter @hap-demo/core build
+
+# Start UI only
+pnpm dev:ui
+```
+
+Create `apps/ui/.env.local`:
+```
+GITHUB_TOKEN=<your personal access token with repo scope>
+NEXT_PUBLIC_SP_URL=https://service.humanagencyprotocol.org
+```
+
+### Option B: Run Your Own Server
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build shared package
+pnpm --filter @hap-demo/core build
+
+# Start server (SP)
+pnpm dev:server
+
+# Start UI (separate terminal)
+pnpm dev:ui
+```
+
+Create `apps/ui/.env.local`:
+```
+GITHUB_TOKEN=<your personal access token with repo scope>
+NEXT_PUBLIC_SP_URL=http://localhost:3001
+```
+
+## GitHub Setup
+
+### Enable Branch Protection (Required for Merge Gate)
+
+To block merges without valid attestations, you need to set up a branch ruleset:
+
+1. Go to **Settings → Rules → Rulesets → New ruleset → New branch ruleset**
+2. Configure the ruleset:
+   - **Ruleset name:** `HAP Protection`
+   - **Enforcement status:** `Active`
+3. Under **Target branches**, click **Add target** → **Include by pattern**:
+   - Enter: `main`
+4. Under **Branch rules**, enable:
+   - **Require status checks to pass**
+     - Click **Add checks** and search for: `Verify HAP Attestation`
+   - **Require a pull request before merging** (recommended)
+   - **Block force pushes** (recommended)
+5. Click **Create**
+
+Without this setup, the workflow will report status but won't block merges.
+
+> **Note:** The GitHub Action automatically uses `https://service.humanagencyprotocol.org` for attestation verification. No additional configuration is needed.
+
+## Demo Flow
+
+### Single Approval (Canary Path)
+
+1. Create a PR to the `main` branch
+2. Run `pnpm dev:server` and `pnpm dev:ui`
+3. Open http://localhost:3000
+4. Enter the PR URL and click "Load PR"
+5. Select **Canary (gradual rollout)** execution path
+6. Review changes and check the confirmation boxes
+7. Select **Engineering** role
+8. Click "Request Attestation"
+9. Click "Post Attestation to PR" to add it as a PR comment
+10. The GitHub Action will verify the attestation and allow merge
+
+### Multi-Person Approval (Full Path)
+
+For production deployments requiring multiple approvals:
+
+1. Create a PR and select **Full (immediate deployment)** path
+2. **Engineer** goes through the UI:
+   - Select role: **Engineering**
+   - Complete attestation and post to PR
+3. **Release Manager** goes through the UI separately:
+   - Select role: **Release Management**
+   - Complete attestation and post as another PR comment
+4. GitHub Action verifies both attestations are present and valid
+5. Merge is allowed only when all required roles have attested
+
+| Execution Path | Required Approvals |
+|---------------|-------------------|
+| Canary | Engineering only |
+| Full | Engineering + Release Management |
+
+## Endpoints
+
+### Service Provider (SP)
+
+- `GET /api/sp/pubkey` - Get SP public key
+- `POST /api/sp/attest` - Request attestation
+- `POST /api/sp/verify` - Verify attestation signature
+
+### Attestation UI
+
+- `GET /` - Attestation wizard
+- `POST /api/attest` - Request attestation (proxies to SP)
+- `POST /api/comment` - Post attestation to PR
+- `GET /api/comments` - Fetch PR comments
+
+## Environment Variables
+
+### Server
+
+```
+SP_PRIVATE_KEY=<hex>     # Ed25519 private key (optional, generates ephemeral if not set)
+SP_PUBLIC_KEY=<hex>      # Ed25519 public key
+```
+
+### UI
+
+```
+GITHUB_TOKEN=<token>     # For posting/reading PR comments
+NEXT_PUBLIC_SP_URL=http://localhost:3001
+```
+
+## Protocol Compliance
+
+This demo implements:
+
+- **Deploy Gate Profile v0.2** - Frame canonicalization, Decision Owner scopes
+- **Attestation format** - Ed25519 signatures, TTL enforcement
+- **Multi-person approval** - Role-based attestations aggregated by workflow
+- **Cryptographic verification** - Signature verification via deployed service
+- **Error codes** - INVALID_SIGNATURE, EXPIRED, FRAME_MISMATCH, etc.
+
+See [Human Agency Protocol](https://humanagencyprotocol.org) for full specification.
