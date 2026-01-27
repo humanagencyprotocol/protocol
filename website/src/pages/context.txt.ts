@@ -24,10 +24,10 @@ export async function GET() {
 ## Homepage
 
 ### AI executes. Humans decide.
-### HAP is the protocol for human-authored direction. It ensures AI never executes without a Decision Owner.
+### HAP is the protocol for human-authored direction. No execution without a Decision Owner.
 
-AI makes execution effortless — producing, optimizing, and handling tasks faster than humans ever could.
-But AI cannot define why the work matters or which path is worth the cost.
+AI executes the how.
+Humans decide the why.
 
 **HAP ensures humans define the frame, accept the tradeoffs, and own the consequences.**
 
