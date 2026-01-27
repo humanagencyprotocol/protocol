@@ -505,9 +505,9 @@ Tradeoff and Commitment recorded → **Proceed**
 
 In an automated world:
 
-- Execution is cheap
+- AI is a powerful engine
 - Options are infinite
-- **Direction is scarce**
+- **But only humans can set the direction**
 
 HAP protects the human role in defining direction by enforcing:
 

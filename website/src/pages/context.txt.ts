@@ -23,7 +23,7 @@ export async function GET() {
 
 ## Homepage
 
-### Execution is cheap. Direction is scarce.
+### AI as your Engine, not your Pilot.
 ### HAP is the protocol for human-authored direction. It ensures AI never executes without a Decision Owner.
 
 AI makes execution effortless — producing, optimizing, and handling tasks faster than humans ever could.
