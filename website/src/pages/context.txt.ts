@@ -13,6 +13,13 @@ export async function GET() {
   const integrationContent = fs.readFileSync(path.join(contentPath, 'integration.md'), 'utf-8');
   const governanceContent = fs.readFileSync(path.join(contentPath, 'governance.md'), 'utf-8');
 
+  // Read demo documentation (not versioned, lives in website content)
+  const demoContent = fs.readFileSync(path.join(process.cwd(), 'src/content/docs/demo.md'), 'utf-8');
+
+  // Read v0.3 review/proposal document (conditional - only if it exists)
+  const reviewPath = path.join(contentPath, 'review.md');
+  const reviewContent = fs.existsSync(reviewPath) ? fs.readFileSync(reviewPath, 'utf-8') : null;
+
   // Combine all content
   const combinedContent = `
 # Human Agency Protocol - Complete Context
@@ -24,7 +31,7 @@ export async function GET() {
 ## Homepage
 
 ### AI executes. Humans decide.
-### HAP is the protocol for human-authored direction. No execution without a Decision Owner.
+### HAP enforces human-authored direction. Execution is impossible without a Decision Owner.
 
 AI executes the how.
 Humans decide the why.
@@ -108,15 +115,15 @@ Authorship and Ownership are unified. No action is taken without an identifiable
 
 ---
 
-### Compliant by Architecture
+### Governance Enforced, Not Documented
 
-Aligning with the EU AI Act—the global benchmark for AI governance.
+Most AI governance frameworks share the same core requirement: humans must remain in control of consequential AI decisions. The EU AI Act mandates it. ISO 42001 requires it. NIST AI RMF recommends it. But none of them say **how**.
 
-The **EU AI Act** mandates that high-risk AI systems must be subject to effective human oversight (**Article 14**). HAP transforms this legal requirement from a policy checkbox into enforceable protocol behavior.
+HAP is the how. It enforces human oversight at the protocol level — not through policies that can be ignored, but through cryptographic gates that cannot be bypassed.
 
-- **Verifiable Oversight** — Directly satisfies regulatory mandates by ensuring AI never acts without an explicit "gate" opened by a human.
-- **Liability Protection** — Closes the legal vacuum of "unowned" AI execution by cryptographically linking every action to a human Decision Owner.
-- **Audit-Ready Infrastructure** — Provides a structural, tamper-proof trail of authorship, tradeoffs, and commitments for every consequence domain.
+- **Enforceable by Design** — Every AI action requires a human Decision Owner who has articulated the problem, objective, and tradeoffs. No attestation, no execution.
+- **EU AI Act Ready** — Article 14 mandates effective human oversight for high-risk AI. HAP satisfies this structurally — oversight is not a checkbox, it's the architecture.
+- **Audit-Ready Infrastructure** — Every decision produces a cryptographic trail of authorship, tradeoffs, and commitments — tamper-proof and verifiable.
 
 ---
 
@@ -125,44 +132,19 @@ The **EU AI Act** mandates that high-risk AI systems must be subject to effectiv
 As AI accelerates, execution becomes free.
 Abundance becomes default.
 
-The real scarcity becomes **human direction** — decisions that cost something, commit someone, and shape a trajectory.
+The real scarcity becomes **human direction** — decisions that commit someone and shape a trajectory.
 
-This is the last human value.
+If humans stop making the hard calls, machines will make them by default — quietly, through convenience.
 
-If humans stop making the hard calls, machines will make them by default.
-And once AI defines direction, human agency dissolves — quietly, through convenience.
-
-HAP is the boundary that preserves human authorship in an automated world.
-
----
-
-### What HAP Enables
-
-**Individuals**
-You stop drifting through AI-generated options and start defining what matters.
-
-**Teams**
-Alignment becomes real — because decisions require explicit, domain-scoped commitment from all affected decision owners.
-
-**Organizations**
-Strategy becomes human-led again. Authorship and ownership are unified across every consequence domain.
-
-**Society**
-We preserve the one thing automation cannot replace:
-**the human ability to choose a direction worth living for.**
-
-HAP assumes all execution bodies are untrusted.
-No human direction may be exposed to any executor (AGI, server, or human) until a valid attestation proves all six gates were closed under a recognized Blueprint.
-
-The Executor Proxy—not the executor—validates attestations.
-Executors receive only minimal, non-semantic instructions derived from pre-ratified decisions.
+HAP is the infrastructure that keeps direction human.
 
 ---
 
 ### Build With HAP
 
 - **Protocol** — How direction is described, measured, and enforced
-- **SDK** — Tools for integrating direction checkpoints
+- **Integration** — How to integrate HAP into your systems
+- **Demo** — See HAP enforcement in action
 - **Service Providers** — Verified infrastructure enforcing compliance
 - **Governance** — Transparent, federated oversight
 
@@ -184,6 +166,14 @@ ${serviceContent}
 
 ${governanceContent}
 
+---
+
+${demoContent}
+${reviewContent ? `
+---
+
+${reviewContent}
+` : ''}
 ---
 
 Repository: https://github.com/schadauer/human-agency-protocol

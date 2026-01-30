@@ -2,7 +2,13 @@
 import { getEntry } from 'astro:content';
 import ContentLayout from '../layouts/ContentLayout.astro';
 
-const entry = await getEntry('docs', 'governance');
+const entry = await getEntry('docs', 'review');
+
+// Only render if the review document exists
+if (!entry) {
+    return Astro.redirect('/protocol');
+}
+
 const { Content } = await entry.render();
 ---
 
@@ -10,7 +16,7 @@ const { Content } = await entry.render();
     title={entry.data.title}
     version={entry.data.version}
     date={entry.data.date}
-    nextPage={{ url: '/review', label: 'v0.3 Proposal' }}
+    prevPage={{ url: '/governance', label: 'Governance' }}
 >
     <Content />
 </ContentLayout>
