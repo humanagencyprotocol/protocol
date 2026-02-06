@@ -1,39 +1,57 @@
 # Human Agency Protocol
 
-**Version 0.1 — November 2025**
+**Current: v0.2 — January 2026 | Proposal: v0.3**
 
-> When AI does everything, build for human agency.
+> AI executes. Humans decide.
 
-A global protocol that helps AI systems create human value where automation can't — without ever sharing your content.
+A protocol that forces AI to ask humans for meaning and direction before acting.
 
 ## What is HAP?
 
-The Human Agency Protocol is a **global inquiry protocol** that AI-native, privacy-first systems can call to strengthen human and collective agency—without ever sharing user content.
+The Human Agency Protocol ensures humans remain in control of high-stakes AI-assisted decisions. It defines **gates** — checkpoints where automation pauses until a human explicitly authorizes the next step.
 
-It doesn't produce answers or actions. It improves the *quality, timing, and structure of questions* that local systems ask—so humans remain in authorship of meaning and direction.
+HAP doesn't evaluate the quality of human decisions. It guarantees that decisions were made by humans, with full disclosure, and creates a verifiable record of who decided what.
 
 ## Core Principles
 
-### Inquiry Keeps Agency
-HAP inserts structured questions at the critical junctures so people—not models—decide meaning, purpose, and action. Automation pauses until humans respond.
+### Human-First Direction
+AI may surface information, but humans supply intent. Every commitment — problem statements, objectives, tradeoffs — must originate from human action.
 
-### Privacy-First Architecture
-No transcripts. No personal data. No content storage. Only structural signals that measure recognition and alignment—while your context stays sealed.
+### Verifiable Accountability
+Attestations bind human identity to specific decisions. Gate content is hashed at signing time, making published decisions tamper-evident and auditable.
 
-### Open Governance
-A shared protocol maintained by stewards, not owners. Transparent blueprints. Participatory evolution. Infrastructure for collective autonomy.
+### Privacy by Design
+Semantic content stays local. Only structural signals and hashes leave the local environment. The protocol guarantees verifiability without requiring disclosure.
 
 ## Documentation
 
-- **[Protocol](content/0.1/protocol.md)** — The foundational specification defining how agency can be described, measured, and exchanged in AI-native systems
-- **[Service Layer](content/0.1/service.md)** — Technical specification for the HAP Service infrastructure
-- **[Governance Proposal](content/0.1/governance.md)** — Regional adoption assessment and enforcement mechanisms
+### Current Specification (v0.2)
+- **[Protocol](content/0.2/protocol.md)** — Core specification: frames, gates, attestations, profiles
+- **[Deploy Gate Profile](content/0.2/deploy-gate-profile.md)** — Reference profile for deployment authorization
+- **[Integration](content/0.2/integration.md)** — How to integrate HAP into existing workflows
+- **[Service Providers](content/0.2/service.md)** — Service layer specification
+- **[Governance](content/0.2/governance.md)** — Protocol governance and evolution
+
+### v0.3 Proposal
+- **[v0.3 Review](content/0.2/review.md)** — Multi-domain ownership, gate content verifiability, AI constraints
+
+### Foundation (v0.1)
+- **[Original Protocol](content/0.1/protocol.md)** — Foundational concepts and motivation
+
+## Demo
+
+The **Deploy Gate Demo** shows HAP in action for GitHub PR approvals:
+- 6-gate flow: Decision Owner → Frame → Problem → Objective → Tradeoffs → Commitment
+- Multi-person approval with domain-scoped attestations
+- Cryptographic binding of human decisions to code changes
+
+Visit [humanagencyprotocol.org/demo](https://humanagencyprotocol.org/demo) for the live demo.
 
 ## Website
 
-Visit [humanagencyprotocol.org](https://humanagencyprotocol.org) for the complete specification and interactive documentation.
+Visit [humanagencyprotocol.org](https://humanagencyprotocol.org) for the complete specification.
 
-To run the website locally:
+To run locally:
 
 ```bash
 cd website
@@ -43,44 +61,40 @@ npm run dev
 
 ## Why HAP Exists
 
-The age of intelligent automation creates a paradox: **intelligence becomes abundant, but human agency becomes scarce**.
+AI systems are increasingly capable of autonomous action. The question is no longer "can AI do this?" but "should AI do this without asking?"
 
-Frontier AI is optimized for automation—take a request, reason over it, and produce an answer. As more work becomes automatable, the marginal value of execution drops toward zero.
+HAP answers: **No.** For high-stakes decisions, AI must pause and ask. Humans must explicitly authorize. And that authorization must be verifiable.
 
-What doesn't drop is the value of human agency—the capacity to choose, to set purpose, to act from context. In a world where everything can be done, the scarce thing becomes: **knowing what's worth doing, why it matters—and turning that knowing into action that carries human value**.
-
-HAP is infrastructure for that world.
-
-## First Adopter
-
-- **Nearmydear** — collective clarity and shared action in groups
+This isn't about slowing down AI. It's about ensuring that when AI acts, it acts with human authorization — and that authorization is provable.
 
 ## Repository Structure
 
 ```
 .
-├── content/0.1/           # Protocol specification v0.1
-│   ├── protocol.md
-│   ├── service.md
-│   └── governance.md
+├── content/
+│   ├── 0.1/               # Foundation specification
+│   │   ├── protocol.md
+│   │   ├── service.md
+│   │   └── governance.md
+│   └── 0.2/               # Current specification
+│       ├── protocol.md
+│       ├── deploy-gate-profile.md
+│       ├── integration.md
+│       ├── service.md
+│       ├── governance.md
+│       └── review.md      # v0.3 proposal
 ├── website/               # humanagencyprotocol.org
-│   ├── src/
-│   │   ├── pages/
-│   │   ├── layouts/
-│   │   └── content/
-│   └── dist/
-├── claude/                # Design demonstrations
-└── README.md             # This file
+└── README.md
 ```
 
 ## Contributing
 
-The Human Agency Protocol is open infrastructure. We welcome contributions from:
+HAP is open infrastructure. Contributions welcome from:
 
-- Platform developers building agency-first tools
-- Researchers studying human-AI interaction
-- Policy makers shaping AI governance frameworks
-- Anyone concerned about preserving human autonomy in automated systems
+- Developers integrating HAP into AI systems
+- Researchers studying human-AI decision making
+- Policy makers working on AI governance
+- Organizations needing accountable AI workflows
 
 ## License
 
