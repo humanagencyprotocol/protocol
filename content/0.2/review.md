@@ -737,7 +737,223 @@ See [v0.3 AI Constraints Proposal](/doc/v0.3-ai-constraints.md) for full details
 
 ---
 
-## 17. Next Steps
+## 17. Decision Streams
+
+### 17.1 Motivation
+
+Individual attestations are snapshots. They prove "someone decided X" but don't show how a project evolved through decisions. For public accountability and project history, we need to link attestations into a verifiable chain.
+
+### 17.2 Stream Structure
+
+Each attestation can optionally belong to a decision stream:
+
+```json
+{
+  "stream": {
+    "project_id": "hap-protocol",
+    "sequence": 12,
+    "previous_attestation_hash": "sha256:..."
+  }
+}
+```
+
+| Field | Purpose |
+|-------|---------|
+| `project_id` | Groups attestations into a project |
+| `sequence` | Order within the stream (starts at 1) |
+| `previous_attestation_hash` | Links to prior attestation (null for first) |
+
+### 17.3 SP-Provided Timestamps
+
+Timestamps come from the Service Provider, not the signer. This prevents backdating.
+
+**Signer submits:** Attestation with no timestamp
+
+**SP registers and returns:**
+
+```json
+{
+  "attestation": { ... },
+  "registered_at": 1735888005,
+  "sp_signature": "..."
+}
+```
+
+The SP certifies when it received the attestation. The signer cannot control this.
+
+### 17.4 Ordering
+
+Two ordering mechanisms:
+
+1. **Sequence** — Logical order within a stream. Decision 3 came after decision 2.
+2. **registered_at** — Wall-clock time from SP. When the attestation was actually registered.
+
+Sequence is authoritative for chain order. Timestamp is authoritative for real-world time.
+
+### 17.5 Normative Rules
+
+1. `project_id` MUST be consistent across all attestations in a stream.
+2. `sequence` MUST increment by 1 for each attestation in a stream.
+3. `previous_attestation_hash` MUST reference the immediately prior attestation (or null for sequence 1).
+4. The SP MUST set `registered_at` when receiving an attestation.
+5. The SP MUST sign the registration to certify the timestamp.
+6. Signers MUST NOT set timestamps — only the SP provides authoritative time.
+
+### 17.6 Chain Verification
+
+Anyone can verify a decision stream:
+
+1. Fetch all attestations for a `project_id`
+2. Order by `sequence`
+3. Verify each `previous_attestation_hash` matches the prior attestation's hash
+4. Verify SP signatures on registrations
+5. If all checks pass → chain is valid and unbroken
+
+### 17.7 Genesis Attestation
+
+The first attestation in a stream:
+
+- `sequence`: 1
+- `previous_attestation_hash`: null
+
+This is the genesis. All subsequent attestations link back to it.
+
+---
+
+## 18. SP Registration Requirements
+
+### 18.1 SP Registries
+
+The Service Provider MUST maintain:
+
+**Profile Registry**
+- Valid profiles and their versions
+- Execution paths per profile
+- Required domains per execution path
+- Disclosure schemas per domain
+
+**Domain Authority Registry**
+- Organizations registered with the SP
+- Domain owners per organization (DID → domain mapping)
+- Environment scopes per domain owner
+- Authority grant/revoke timestamps
+
+### 18.2 Organization Onboarding
+
+Before any attestation can be issued, an organization MUST:
+
+1. Register with at least one SP
+2. Declare which profiles they will use
+3. Register domain owners with their authorized domains and environments
+
+### 18.3 SP Validation Rules
+
+The SP MUST reject attestation requests when:
+
+- Profile is not registered
+- Requesting DID has no authority for claimed domain
+- Domain is not required by the execution path
+- Organization is not registered
+
+### 18.4 Domain Authority Lifecycle
+
+| Event | Action |
+|-------|--------|
+| New domain owner | Organization registers DID + domain + env with SP |
+| Role change | Organization updates domain mapping |
+| Departure | Organization revokes authority |
+| Audit | SP provides authority history per DID |
+
+---
+
+## 19. Governance
+
+### 19.1 SP Governance
+
+Service Providers are trusted parties. Their governance must be explicit:
+
+**SP Operators**
+- Who operates the SP?
+- What jurisdiction?
+- What liability?
+
+**SP Accountability**
+- SPs MUST publish their signing public key
+- SPs MUST log all attestations issued
+- SPs SHOULD publish attestation counts and statistics
+- SPs MUST NOT issue attestations without verifying domain authority
+
+**SP Misbehavior**
+- Issuing attestations for unauthorized DIDs → SP trust revocation
+- Backdating timestamps → SP trust revocation
+- Refusing valid requests → escalation path required
+
+### 19.2 Multi-SP Ecosystem
+
+The protocol supports multiple SPs:
+
+- Organizations choose which SP(s) to use
+- Verifiers can trust multiple SPs
+- Attestations reference which SP signed them
+- No single SP has monopoly on trust
+
+**Interoperability:**
+- SPs SHOULD use compatible attestation formats
+- SPs MAY federate domain authority (SP-A trusts SP-B's authority registry)
+- Cross-SP verification MUST be possible if both SPs are trusted
+
+### 19.3 Profile Governance
+
+**Profile Creation**
+- Anyone can propose a profile
+- Profiles SHOULD be reviewed before adoption
+- Organizations decide which profiles to trust
+
+**Profile Versioning**
+- Breaking changes MUST bump major version
+- SPs MUST support profile version negotiation
+- Deprecated profiles SHOULD have sunset timeline
+
+### 19.4 Domain Authority Governance
+
+**Within Organizations:**
+- Organization defines who grants domain authority
+- Authority grants SHOULD require approval from existing authority holder
+- Authority SHOULD have expiration (annual renewal)
+
+**Audit Trail:**
+- All authority grants/revocations MUST be logged
+- Logs MUST include: who granted, to whom, which domain, when, expiration
+
+### 19.5 Dispute Resolution
+
+When attestation validity is disputed:
+
+1. Verify cryptographic validity (signature, hashes)
+2. Verify domain authority at time of attestation
+3. Verify SP was trusted at time of attestation
+4. If all valid → attestation stands
+5. If authority was invalid → attestation is void, SP may be at fault
+
+---
+
+## 20. Open Questions
+
+1. **Domain inheritance** — Can a domain "include" another domain's required fields?
+
+2. **Attestation aggregation** — Should there be a way to combine multiple domain attestations into one signed bundle?
+
+3. **Decision file validation** — Should the Local App validate the decision file against a JSON schema before allowing attestation?
+
+4. **SP federation** — How do multiple SPs coordinate? Should there be a root trust anchor?
+
+5. **Authority delegation** — Can a domain owner delegate authority temporarily? (e.g., vacation coverage)
+
+6. **Cross-organization decisions** — How do multi-org projects handle domain authority?
+
+---
+
+## 21. Next Steps
 
 1. Review this proposal
 2. Implement in demo (deploy-gate profile)
