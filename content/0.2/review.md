@@ -592,7 +592,142 @@ With per-domain hashes:
 
 ---
 
-## 14. Open Questions
+## 14. Gate Content Verifiability
+
+### 14.1 Problem
+
+The protocol requires human articulation at gates 3-5 (Problem, Objective, Tradeoffs). But if that content is never hashed or published, the requirement is unenforceable after the fact. The attestation says "I decided" but not "here's what I considered."
+
+### 14.2 Principle
+
+> The protocol guarantees verifiability, not publication.
+> The decision to publish is the owner's.
+
+Gate content is private by default. But if the owner chooses to publish, anyone can verify it is the authentic content that was attested to.
+
+### 14.3 Gate Content Hashes in Attestation
+
+At attestation time, the content of each gate is hashed and included in the attestation:
+
+```json
+{
+  "attestation_id": "uuid",
+  "version": "0.3",
+  "profile_id": "deploy-gate@0.3",
+  "frame_hash": "sha256:...",
+  "resolved_domains": [
+    {
+      "domain": "engineering",
+      "did": "did:key:...",
+      "env": "prod",
+      "disclosure_hash": "sha256:..."
+    }
+  ],
+  "gate_content_hashes": {
+    "problem": "sha256:...",
+    "objective": "sha256:...",
+    "tradeoffs": "sha256:..."
+  },
+  "issued_at": 1735888000,
+  "expires_at": 1735891600
+}
+```
+
+This happens automatically at attestation time. The owner does not need to opt in — the hashes are always computed and included.
+
+### 14.4 Publication is Optional
+
+After attestation, the owner may choose to publish the actual gate content:
+
+- As a PR comment
+- In a decision log
+- In an internal wiki or audit trail
+- Not at all
+
+The protocol does not require publication. The hashes in the attestation are sufficient to prove that content existed and was committed to.
+
+### 14.5 Verification Flow
+
+If gate content is published, anyone can verify it:
+
+1. Hash the published content for each gate
+2. Compare against `gate_content_hashes` in the attestation
+3. Match = verified authentic content
+4. Mismatch = content was tampered with after attestation
+
+### 14.6 Properties
+
+| Property | Guarantee |
+|----------|-----------|
+| **Private by default** | Gate content stays with the owner unless they choose to share |
+| **Verifiable on demand** | If published, hashes prove authenticity |
+| **Tamper-evident** | Cannot publish different content than what was hashed |
+| **Non-repudiable** | Owner cannot deny what they wrote — the hash is in their signed attestation |
+
+### 14.7 Normative Rules
+
+1. The Local App MUST compute `gate_content_hashes` at attestation time.
+2. The hash for each gate MUST be computed from the exact text the owner entered.
+3. `gate_content_hashes` MUST be included in the signed attestation payload.
+4. The protocol MUST NOT require publication of gate content.
+5. If gate content is published, verifiers MUST be able to independently compute the hash and compare.
+
+---
+
+## 15. AI Constraints & Gate Resolution
+
+### 15.1 Drop In-Protocol AI Assistant
+
+v0.3 removes the entire in-protocol AI assistant subsystem. The protocol enforces accountability, not thought purity. Users will consult external AI regardless — restricting in-protocol AI creates friction without preventing the behavior.
+
+**Removed:**
+
+- AI provider integrations (Ollama, OpenAI, Groq, Together)
+- AI-driven alignment checking on gate closure
+- AI-generated questions and follow-ups
+- AI warning acknowledgment in commitment gate
+- All `gate/*` SDGs (entry and follow-up questions)
+
+### 15.2 Enforceable Constraints
+
+The protocol enforces only what it can guarantee:
+
+1. **No prefill / no autogenerate** — The protocol MUST NOT populate gate fields. Text enters through human action only (typing, speaking, or pasting).
+2. **Gates close through human action** — A human must explicitly close each gate.
+3. **Gate resolution = presence only** — A gate closes when its field is non-empty. The protocol does not evaluate adequacy, quality, completeness, or correctness.
+
+### 15.3 Gate Questions in Profile
+
+Predefined gate questions move from SDGs to the Profile:
+
+```json
+{
+  "gateQuestions": {
+    "problem": { "question": "What problem are you solving?", "required": true },
+    "objective": { "question": "What outcome do you want?", "required": true },
+    "tradeoffs": { "question": "What are you willing to sacrifice?", "required": true }
+  }
+}
+```
+
+Questions are used as textarea placeholders — guidance, not enforcement.
+
+### 15.4 Simplified SDGs
+
+SDGs are reduced to structural checks only:
+
+- `deploy/missing_decision_owner@1.0` — Hard stop
+- `deploy/commitment_mismatch@1.0` — Hard stop
+- `deploy/tradeoff_execution_mismatch@1.0` — Hard stop
+- `deploy/objective_diff_mismatch@1.0` — Warning only
+
+No SDG evaluates free-form text for correctness. Semantic rules (`always`, `semantic_mismatch`) are removed.
+
+See [v0.3 AI Constraints Proposal](/doc/v0.3-ai-constraints.md) for full details.
+
+---
+
+## 16. Open Questions
 
 1. **Domain inheritance** — Can a domain "include" another domain's required fields?
 
@@ -602,7 +737,7 @@ With per-domain hashes:
 
 ---
 
-## 15. Next Steps
+## 17. Next Steps
 
 1. Review this proposal
 2. Implement in demo (deploy-gate profile)
