@@ -1103,7 +1103,7 @@ Organizations in regulated industries (healthcare, finance, safety-critical) sho
 
 HAP provides accountability infrastructure. Compliance requires additional organizational controls.
 
-### 21.4 Future Considerations (v0.4+)
+### 21.5 Future Considerations (v0.4+)
 
 | Topic | Description |
 |-------|-------------|
