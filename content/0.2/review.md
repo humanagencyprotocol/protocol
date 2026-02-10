@@ -82,6 +82,21 @@ Execution context represents the structured constraints binding an executor. It 
 
 Any semantic content used to reach a decision (AI analysis, deliberation, reasoning) remains local and out of protocol scope.
 
+### 3.4 Terminology: Action vs. Execution
+
+The protocol uses two related but distinct terms:
+
+| Term | Meaning | Examples |
+|------|---------|----------|
+| **Action** | WHAT is being authorized | `action template`, `action params` |
+| **Execution** | HOW it is carried out, under what constraints | `execution path`, `execution context` |
+
+**Action** is the thing being authorized — deploy SHA X to environment Y. It defines the intent.
+
+**Execution** is the carrying out of that action under specific constraints — which governance path, what domains must approve, what context each domain commits to.
+
+The Executor Proxy receives an **action** (what to do) and validates that proper **execution** constraints were met (who committed, under what context).
+
 ---
 
 ## 4. Profile Extensions
