@@ -10,7 +10,7 @@ A protocol that forces AI to ask humans for meaning and direction before acting.
 
 The Human Agency Protocol ensures humans remain in control of high-stakes AI-assisted decisions. It defines **gates** — checkpoints where automation pauses until a human explicitly authorizes the next step.
 
-HAP doesn't evaluate the quality of human decisions. It guarantees that decisions were made by humans, with full disclosure, and creates a verifiable record of who decided what.
+HAP doesn't evaluate the quality of human decisions. It guarantees that decisions were made by humans, under committed constraints, and creates a verifiable record of who decided what.
 
 ## Core Principles
 
@@ -33,7 +33,7 @@ Semantic content stays local. Only structural signals and hashes leave the local
 - **[Governance](content/0.2/governance.md)** — Protocol governance and evolution
 
 ### v0.3 Proposal
-- **[v0.3 Review](content/0.2/review.md)** — Multi-domain ownership, gate content verifiability, AI constraints
+- **[v0.3 Review](content/0.2/review.md)** — Multi-domain ownership, execution context binding, agent workflows
 
 ### Foundation (v0.1)
 - **[Original Protocol](content/0.1/protocol.md)** — Foundational concepts and motivation
