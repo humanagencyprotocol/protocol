@@ -113,10 +113,9 @@ HAP governs any context where humans authorize actions:
 - Code deployment (git repositories)
 - Document approval (markdown files, wikis)
 - Infrastructure changes (Terraform, Ansible)
+- AI agent workflows (human attests to bounds, agent executes within)
 - Policy decisions
 - Contract signing
-
-*Future consideration:* AI agent actions (real-time, delegated authority) — see Section 22.
 
 The protocol must remain abstract. Context-specific bindings belong in profiles.
 
@@ -1032,27 +1031,55 @@ When attestation validity is disputed:
 
 ---
 
-## 21. Limitations and Future Work
+## 21. Scope, Agents, and Future Work
 
-### 21.1 What v0.3 Is
+### 21.1 The Core Principle
 
-v0.3 is a **human-centric, deliberative decision governance protocol**. It assumes:
+> Bounds flow down, never up. The root is always human.
 
-- Humans make decisions at human speed
-- There is time to propose, review, and attest
-- Domain owners are individuals who can sign
+HAP governs **human-defined bounds**. Agents execute within those bounds. The chain of authority always traces back to human attestation.
 
-This covers the majority of enterprise governance needs: code deployment, infrastructure changes, document approval, policy decisions.
+```
+Human attests to bounds
+    └── Agent executes within bounds
+            └── Sub-agent executes within narrower sub-bounds
+                    └── ...
+```
 
-### 21.2 What v0.3 Is Not
+Agents can narrow bounds (delegate with tighter constraints). Agents cannot widen bounds (grant themselves more authority).
 
-v0.3 does **not** address:
+### 21.2 Agent Workflows in v0.3
 
-**AI Agent Governance**
-- Real-time autonomous decisions
-- Delegated authority (human pre-authorizes AI to act)
-- Machine attestation without human in the loop
-- High-frequency decision batching
+HAP already supports agent workflows:
+
+| Component | Role |
+|-----------|------|
+| **Human** | Attests to execution context (the bounds) |
+| **Agent** | Executes within those committed bounds |
+| **Attestation** | Proves what bounds were authorized |
+
+The execution context IS the pre-authorization. The agent is bound by what the human committed to.
+
+**Example:**
+```
+Human attests:
+  "For this deployment:
+   - rollback if error rate > 1%
+   - canary to 10% first
+   - alert on anomaly"
+
+Agent executes:
+  Deploys, monitors, rolls back — all within attested bounds.
+
+Audit shows:
+  Human authorized these specific constraints.
+```
+
+### 21.3 What v0.3 Does Not Address
+
+**High-frequency re-attestation**
+- Real-time constraint updates at machine speed
+- Batch attestation for thousands of micro-decisions
 
 **Regulated Industry Requirements**
 - Mandatory retention periods
@@ -1065,9 +1092,7 @@ v0.3 does **not** address:
 - Cross-SP conflict resolution
 - Decentralized trust models
 
-These are acknowledged as future work, not v0.3 scope.
-
-### 21.3 Guidance for Regulated Industries
+### 21.4 Guidance for Regulated Industries
 
 Organizations in regulated industries (healthcare, finance, safety-critical) should layer additional controls on top of HAP:
 
