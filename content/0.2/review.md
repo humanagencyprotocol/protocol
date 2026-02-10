@@ -7,10 +7,10 @@ status: "Proposal"
 
 # Human Agency Protocol — v0.3 Proposal
 
-## Multi-Domain Ownership & Role-Scoped Disclosure
+## Multi-Domain Ownership & Execution Context Binding
 
 **Status:** Draft / Under Review
-**Goal:** Ensure the *right* humans decide, with domain-appropriate information, without breaking privacy or auditability.
+**Goal:** Ensure the *right* humans commit, to domain-specific execution constraints, without breaking privacy or auditability.
 
 ---
 
@@ -18,15 +18,15 @@ status: "Proposal"
 
 ### What v0.2 guarantees
 
-- A human decided
+- A human committed
 - Gates were closed
 - Ownership exists
-- Disclosure was reviewed (single hash)
+- Execution context was committed to (single hash)
 
 ### What v0.2 does not guarantee
 
-- The *right* humans decided (domain accountability)
-- Each owner reviewed *relevant* information (not everything, not nothing)
+- The *right* humans committed (domain accountability)
+- Each owner committed to *relevant* execution constraints (scoped, not global)
 - Independent auditability per domain
 
 ### The gap
@@ -34,8 +34,8 @@ status: "Proposal"
 An engineer approving a marketing-impacting change without marketing involvement is a governance failure that v0.2 permits. v0.3 closes this gap by:
 
 1. Making domain requirements explicit per execution path
-2. Ensuring each domain sees only relevant information
-3. Binding each domain's attestation to what they actually reviewed
+2. Scoping execution constraints per domain
+3. Binding each domain's attestation to the constraints they committed to
 
 ---
 
@@ -47,11 +47,48 @@ An engineer approving a marketing-impacting change without marketing involvement
 
 ---
 
-## 3. Profile Extensions
+## 3. Protocol Scope
+
+### 3.1 What the Protocol Verifies
+
+The protocol verifies:
+
+- A human committed (cryptographic signature)
+- To a specific action (frame hash)
+- Under specific constraints (execution context hash)
+- At a specific time (SP timestamp)
+- With declared authority (domain ownership)
+
+### 3.2 What the Protocol Does NOT Verify
+
+The protocol does NOT verify:
+
+- Understanding
+- Informed consent
+- Quality of reasoning
+- Whether the human read anything
+- Whether AI contributed to the decision
+
+**The protocol verifies commitment, not comprehension.**
+
+### 3.3 Execution Context, Not Disclosure
+
+Execution context represents the structured constraints binding an executor. It is NOT:
+
+- Evidence of understanding
+- Proof of review quality
+- Record of what was "seen"
+- Informed consent documentation
+
+Any semantic content used to reach a decision (AI analysis, deliberation, reasoning) remains local and out of protocol scope.
+
+---
+
+## 4. Profile Extensions
 
 v0.3 extends the Profile with one new section and modifies execution paths.
 
-### 3.1 Execution Paths with Required Domains
+### 4.1 Execution Paths with Required Domains
 
 Required domains are defined per execution path — not through conditions.
 
@@ -85,13 +122,13 @@ Required domains are defined per execution path — not through conditions.
 3. Choosing a less restrictive path for a change that warrants more oversight is auditable misbehavior.
 4. No conditions, no magic — explicit human choice of governance scope.
 
-### 3.2 Domain Disclosure Schema
+### 4.2 Domain Execution Context Schema
 
-Defines what each domain owner must be shown to validly close their gate.
+Defines the execution constraints each domain owner commits to.
 
 ```json
 {
-  "disclosureSchema": {
+  "executionContextSchema": {
     "domains": {
       "engineering": {
         "required_fields": ["diff_summary", "changed_paths", "test_status", "rollback_strategy"]
@@ -112,26 +149,26 @@ Defines what each domain owner must be shown to validly close their gate.
 
 **Normative rules:**
 
-1. Local App MUST NOT allow gate closure unless all required fields for that domain are present.
-2. Each domain sees only its required fields — not other domains' disclosures.
+1. Local App MUST NOT allow gate closure unless all required execution context fields for that domain are present.
+2. Each domain commits only to its execution context — not other domains' constraints.
 3. No semantic content leaves local custody.
 
 ---
 
-## 4. Decision File
+## 5. Decision File
 
-### 4.1 Developer Proposal in Commit
+### 5.1 Developer Proposal in Commit
 
 The developer proposing a change creates a `.hap/decision.json` file in the commit. This file contains:
 
 1. **Execution path** — the proposed governance level
-2. **Disclosure** — all information each required domain needs to review
+2. **Execution context** — structured constraints each domain commits to
 
 ```json
 {
   "profile": "deploy-gate@0.3",
   "execution_path": "deploy-prod-full",
-  "disclosure": {
+  "execution_context": {
     "engineering": {
       "diff_summary": "Refactored auth flow to use JWT tokens",
       "changed_paths": ["src/api/auth.ts", "src/ui/login.tsx"],
@@ -152,31 +189,31 @@ The developer proposing a change creates a `.hap/decision.json` file in the comm
 }
 ```
 
-### 4.2 Why in the Commit?
+### 5.2 Why in the Commit?
 
 **Immutable** — The decision file is part of the commit SHA. It cannot be changed without creating a new commit.
 
-**Verifiable** — Anyone can read the file and verify what was proposed. Domain owners see the exact proposal in the PR diff.
+**Verifiable** — Anyone can read the file and verify what execution constraints were proposed.
 
 **Accountable** — The developer who creates the commit is accountable for:
 - Choosing the appropriate execution path
-- Providing accurate disclosure information for each domain
+- Defining accurate execution constraints for each domain
 
-### 4.3 Proposal Flow
+### 5.3 Proposal Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  1. DEVELOPER creates commit with .hap/decision.json                    │
 │     • Proposes execution path (e.g., deploy-prod-full)                  │
-│     • Provides disclosure for each required domain                      │
+│     • Defines execution context for each required domain                │
 │     • Opens PR                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  2. DOMAIN OWNERS review the proposal                                   │
-│     • See execution path and their domain's disclosure in PR diff       │
+│     • See execution path and their domain's constraints in PR diff      │
 │     • Validate: Is this the right governance level?                     │
-│     • Validate: Is the disclosure accurate and complete?                │
+│     • Validate: Are the execution constraints accurate?                 │
 │     • If they agree → attest                                            │
 │     • If they disagree → don't attest, request changes                  │
 └─────────────────────────────────────────────────────────────────────────┘
@@ -185,11 +222,11 @@ The developer proposing a change creates a `.hap/decision.json` file in the comm
 │  3. ALL REQUIRED DOMAINS attest to the same frame                       │
 │     • Frame derived from commit (includes decision.json via SHA)        │
 │     • All attestations share same frame_hash                            │
-│     • Each attestation includes domain-specific disclosure_hash         │
+│     • Each attestation includes domain-specific execution_context_hash  │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### 4.4 Disagreement Handling
+### 5.4 Disagreement Handling
 
 If a domain owner disagrees with the proposal:
 
@@ -198,23 +235,23 @@ If a domain owner disagrees with the proposal:
    - Developer must amend: new commit with corrected path
    - New SHA, new frame, new attestation cycle
 
-2. **Incomplete disclosure** — "Missing rollback strategy"
+2. **Incomplete execution context** — "Missing rollback strategy"
    - Domain owner refuses to attest
-   - Developer must amend: new commit with complete disclosure
+   - Developer must amend: new commit with complete constraints
    - New SHA, new frame, new attestation cycle
 
-3. **Inaccurate disclosure** — "Test status says passing but CI shows failures"
+3. **Inaccurate execution context** — "Test status says passing but CI shows failures"
    - Domain owner refuses to attest
-   - Developer must fix tests and update disclosure
+   - Developer must fix tests and update constraints
    - New SHA, new frame, new attestation cycle
 
 **No one can unilaterally override** — All required domains must attest to the same frame.
 
 ---
 
-## 5. Frame Changes
+## 6. Frame Changes
 
-### 5.1 Frame Derivation
+### 6.1 Frame Derivation
 
 The frame is derived from the commit and deployment context:
 
@@ -238,13 +275,13 @@ path=deploy-prod-user-facing
 
 The `profile` and `path` are read from `.hap/decision.json` but verified via the SHA — if the file changes, the SHA changes, creating a new frame.
 
-### 5.2 Remove `disclosure_hash` from Frame
+### 6.2 Remove `execution_context_hash` from Frame
 
-**Rationale:** If the frame contains a single combined disclosure_hash, individual domain owners cannot independently prove what they reviewed without access to all domains' disclosures. This breaks domain-scoped auditability.
+**Rationale:** If the frame contains a single combined execution_context_hash, individual domain owners cannot independently prove what constraints they committed to without access to all domains' contexts. This breaks domain-scoped auditability.
 
-Disclosure binding moves to the attestation (per-domain).
+Execution context binding moves to the attestation (per-domain).
 
-### 5.3 No Condition Fields
+### 6.3 No Condition Fields
 
 v0.3 does **not** add condition fields to the frame.
 
@@ -254,11 +291,11 @@ Instead, required domains are determined by **execution path** in `.hap/decision
 
 ---
 
-## 6. Attestation Changes
+## 7. Attestation Changes
 
-### 6.1 Per-Domain Disclosure Binding
+### 7.1 Per-Domain Execution Context Binding
 
-Each attestation includes the disclosure hash for the domain(s) it covers.
+Each attestation includes the execution context hash for the domain(s) it covers.
 
 ```json
 {
@@ -271,7 +308,7 @@ Each attestation includes the disclosure hash for the domain(s) it covers.
       "domain": "engineering",
       "did": "did:key:...",
       "env": "prod",
-      "disclosure_hash": "sha256:..."
+      "execution_context_hash": "sha256:..."
     }
   ],
   "issued_at": 1735888000,
@@ -281,24 +318,24 @@ Each attestation includes the disclosure hash for the domain(s) it covers.
 
 **Normative rules:**
 
-1. For every domain this attestation covers, include: `domain`, `did`, `env`, `disclosure_hash`.
-2. The `disclosure_hash` is computed from the domain-specific disclosure view.
+1. For every domain this attestation covers, include: `domain`, `did`, `env`, `execution_context_hash`.
+2. The `execution_context_hash` is computed from the domain-specific execution context.
 3. One attestation typically covers one domain (one person, one scope).
 4. Multi-domain decisions require multiple attestations from different owners.
 
-### 6.2 Auditability Guarantee
+### 7.2 Auditability Guarantee
 
 Each domain owner can independently prove:
 
 - "I attested to frame X" → `frame_hash` in attestation
-- "I reviewed Y before attesting" → domain's `disclosure_hash`
-- Without needing any other domain's disclosure
+- "I committed to constraints Y" → domain's `execution_context_hash`
+- Without needing any other domain's execution context
 
 ---
 
-## 7. Executor Proxy Flow
+## 8. Executor Proxy Flow
 
-### 7.1 Execution Request
+### 8.1 Execution Request
 
 The client submits an execution request with all required attestations:
 
@@ -321,7 +358,7 @@ The client submits an execution request with all required attestations:
 }
 ```
 
-### 7.2 Validation Steps
+### 8.2 Validation Steps
 
 Executor Proxy performs:
 
@@ -339,7 +376,7 @@ Executor Proxy performs:
 6. **If any required domain missing or invalid** → reject with structured error
 7. **If all valid** → authorize execution
 
-### 7.3 SP Consultation
+### 8.3 SP Consultation
 
 The Executor Proxy consults the Service Provider only to fetch the public key for signature verification:
 
@@ -349,7 +386,7 @@ GET /api/sp/pubkey → { "public_key": "hex..." }
 
 All validation logic runs locally. The SP is not a runtime dependency for validation — only for key retrieval (which can be cached).
 
-### 7.4 Stateless Design
+### 8.4 Stateless Design
 
 The Executor Proxy:
 
@@ -362,17 +399,17 @@ Where attestations are stored (PR comments, database, registry) is an integratio
 
 ---
 
-## 8. Disclosure View Generation
+## 9. Execution Context Generation
 
-### 8.1 Source: Decision File in Commit
+### 9.1 Source: Decision File in Commit
 
-The disclosure lives in `.hap/decision.json` within the commit:
+The execution context lives in `.hap/decision.json` within the commit:
 
 ```json
 {
   "profile": "deploy-gate@0.3",
   "execution_path": "deploy-prod-user-facing",
-  "disclosure": {
+  "execution_context": {
     "engineering": {
       "diff_summary": "Refactored auth flow to use JWT",
       "changed_paths": ["src/api/auth.ts", "src/ui/login.tsx"],
@@ -388,39 +425,39 @@ The disclosure lives in `.hap/decision.json` within the commit:
 }
 ```
 
-The Local App reads this file from the commit to display domain-specific views.
+The Local App reads this file from the commit to display domain-specific contexts.
 
-### 8.2 Domain View Extraction
+### 9.2 Domain Context Extraction
 
-The Local App extracts domain-specific views for each domain owner:
+The Local App extracts domain-specific contexts for each domain owner:
 
 ```typescript
-function extractDomainView(decision: DecisionFile, domain: string): DomainView {
-  return decision.disclosure[domain];
+function extractDomainContext(decision: DecisionFile, domain: string): DomainContext {
+  return decision.execution_context[domain];
 }
 ```
 
-Each domain owner sees **only their domain's disclosure** — not other domains' information.
+Each domain owner commits to **only their domain's execution context** — not other domains' constraints.
 
-### 8.3 Domain Disclosure Hash
+### 9.3 Domain Execution Context Hash
 
-Each domain's `disclosure_hash` is computed from its view:
+Each domain's `execution_context_hash` is computed from its context:
 
 ```typescript
-const engineeringView = decision.disclosure.engineering;
-const engineeringDisclosureHash = sha256(canonicalize(engineeringView));
+const engineeringContext = decision.execution_context.engineering;
+const engineeringContextHash = sha256(canonicalize(engineeringContext));
 ```
 
 This ensures:
 
-- Engineering's hash only covers engineering-relevant content
-- Marketing's hash only covers marketing-relevant content
-- Neither can see or verify the other's disclosure
-- Each domain owner can independently prove what they reviewed
+- Engineering's hash only covers engineering-relevant constraints
+- Marketing's hash only covers marketing-relevant constraints
+- Neither can see or verify the other's context
+- Each domain owner can independently prove what constraints they committed to
 
 ---
 
-## 9. Error Codes
+## 10. Error Codes
 
 New error codes for v0.3:
 
@@ -428,20 +465,20 @@ New error codes for v0.3:
 |------|-------------|
 | `MISSING_REQUIRED_DOMAIN` | A required domain has no valid attestation |
 | `DOMAIN_SCOPE_MISMATCH` | Attestation domain/env doesn't match requirement |
-| `DISCLOSURE_SCHEMA_VIOLATION` | Domain disclosure missing required fields |
+| `EXECUTION_CONTEXT_VIOLATION` | Domain execution context missing required fields |
 | `DECISION_FILE_MISSING` | Commit does not contain .hap/decision.json |
 | `DECISION_FILE_INVALID` | Decision file malformed or missing required fields |
 
 ---
 
-## 10. Backward Compatibility
+## 11. Backward Compatibility
 
 ### What changes
 
-- Frame no longer includes `disclosure_hash`
-- Attestations include `resolved_domains` with per-domain `disclosure_hash`
+- Frame no longer includes `execution_context_hash`
+- Attestations include `resolved_domains` with per-domain `execution_context_hash`
 - Execution paths explicitly define `requiredDomains`
-- Execution path and disclosure now in `.hap/decision.json` in commit
+- Execution path and execution context now in `.hap/decision.json` in commit
 
 ### Migration path
 
@@ -452,7 +489,7 @@ New error codes for v0.3:
 
 ---
 
-## 11. Demo Implementation Plan
+## 12. Demo Implementation Plan
 
 ### Step 1: Update Profile with execution paths
 
@@ -467,7 +504,7 @@ Update Profile with paths that require different domains:
 Update Local App to:
 
 1. Fetch `.hap/decision.json` from the commit via GitHub API
-2. Parse execution path and disclosure
+2. Parse execution path and execution context
 3. Validate against profile schema (all required fields present)
 4. Display error if decision file missing or invalid
 
@@ -480,20 +517,20 @@ Gate 1 now reads from the decision file instead of user input:
 - Show: "This path requires: Engineering, Marketing"
 - Domain owner validates the proposal
 
-### Step 4: Split disclosure UI by domain
+### Step 4: Split execution context UI by domain
 
-Each domain owner sees only their domain's disclosure from the decision file:
+Each domain owner sees only their domain's execution context from the decision file:
 
 - Engineering sees: diff_summary, changed_paths, test_status, rollback_strategy
 - Marketing sees: behavior_change_summary, demo_url, rollout_plan
 - No cross-domain visibility
 
-### Step 5: Generate per-domain disclosure hashes
+### Step 5: Generate per-domain execution context hashes
 
 When attesting:
 
-1. Extract domain view from decision file
-2. Compute domain-specific `disclosure_hash`
+1. Extract domain context from decision file
+2. Compute domain-specific `execution_context_hash`
 3. Include in attestation's `resolved_domains`
 
 ### Step 6: Update Executor Proxy validation
@@ -504,7 +541,7 @@ Verify:
 2. Look up `requiredDomains` from execution path
 3. All required domains have attestations
 4. Each attestation has valid signature, TTL, frame_hash
-5. Each attestation includes `disclosure_hash` for its domain
+5. Each attestation includes `execution_context_hash` for its domain
 
 ### Step 7: Update GitHub Action
 
@@ -518,21 +555,21 @@ Check:
 
 ---
 
-## 12. Summary
+## 13. Summary
 
 | Aspect | v0.2 | v0.3 |
 |--------|------|------|
 | Execution path selection | First attestor chooses | Developer proposes in commit |
-| Disclosure source | Entered in UI | In commit (`.hap/decision.json`) |
-| Disclosure hash | Single, in frame | Per-domain, in attestation |
-| Domain-specific views | Not enforced | Schema-enforced |
+| Execution context source | Entered in UI | In commit (`.hap/decision.json`) |
+| Execution context hash | Single, in frame | Per-domain, in attestation |
+| Domain-specific constraints | Not enforced | Schema-enforced |
 | Condition evaluation | N/A | None (explicit path choice) |
-| Auditability | "Someone approved" | "Right person approved after seeing right info" |
+| Auditability | "Someone approved" | "Right person committed to scoped constraints" |
 | Accountability | First attestor | Developer proposes, domains validate |
 
 ---
 
-## 13. Design Decisions
+## 14. Design Decisions
 
 ### Why proposal in commit?
 
@@ -549,20 +586,20 @@ With proposal in commit:
 - Clear accountability: developer proposes, domains validate
 - Immutable: proposal is part of the SHA
 
-### Why all disclosure in commit?
+### Why execution context in commit?
 
-Dynamic disclosure (fetched from CI, previews, etc.) creates problems:
+Dynamic execution context (fetched from CI, etc.) creates problems:
 
-- Disclosure can change between attestation and audit
-- Harder to verify what was actually reviewed
+- Constraints can change between attestation and execution
+- Harder to verify what was actually committed to
 - External dependencies for validation
 
-With disclosure in commit:
+With execution context in commit:
 
 - Fully immutable and verifiable
-- Developer accountable for accurate disclosure
+- Developer accountable for accurate constraint definition
 - No external dependencies for validation
-- Domain owners can verify disclosure in PR diff
+- Executor can trust the committed constraints
 
 ### Why no conditional domains?
 
@@ -577,35 +614,46 @@ Instead, governance scope is determined by **execution path** in the decision fi
 - Validated by domain owners
 - Clear accountability for choosing the wrong path
 
-### Why per-domain disclosure hashes?
+### Why per-domain execution context hashes?
 
-With a single disclosure hash:
+With a single execution context hash:
 
-- Domain owners cannot independently prove what they reviewed
-- Auditing requires reconstructing the full disclosure (which domains shouldn't see)
+- Domain owners cannot independently prove what constraints they committed to
+- Auditing requires reconstructing the full context (which domains shouldn't see)
 
 With per-domain hashes:
 
-- Each owner can prove: "I attested to frame X after reviewing disclosure Y"
-- No cross-domain disclosure exposure
+- Each owner can prove: "I attested to frame X with constraints Y"
+- No cross-domain context exposure
 - Full auditability without privacy violation
 
 ---
 
-## 14. Gate Content Verifiability
+## 15. Gate Content Verifiability
 
-### 14.1 Problem
+### 15.1 Problem
 
-The protocol requires human articulation at gates 3-5 (Problem, Objective, Tradeoffs). But if that content is never hashed or published, the requirement is unenforceable after the fact. The attestation says "I decided" but not "here's what I considered."
+The protocol requires human articulation at gates 3-5 (Problem, Objective, Tradeoffs). But if that content is never hashed or published, the requirement is unenforceable after the fact. The attestation says "I committed" but not "here's what I committed to."
 
-### 14.2 Principle
+### 15.2 Principle
 
 > The protocol guarantees verifiability, not publication.
 > The decision to publish is the owner's.
 
 Gate content is private by default. But if the owner chooses to publish, anyone can verify it is the authentic content that was attested to.
 
-### 14.3 Gate Content Hashes in Attestation
+### 15.3 Gate Content Is Commitment, Not Comprehension
+
+Gate content (problem, objective, tradeoffs) represents what the human committed to articulating. It does NOT prove:
+
+- They understood the implications
+- They thought carefully
+- They wrote it themselves (vs. AI-assisted)
+- The content is correct or complete
+
+The protocol hashes what was committed. Publication makes that commitment visible. Neither guarantees quality of thought.
+
+### 15.4 Gate Content Hashes in Attestation
 
 At attestation time, the content of each gate is hashed and included in the attestation:
 
@@ -620,7 +668,7 @@ At attestation time, the content of each gate is hashed and included in the atte
       "domain": "engineering",
       "did": "did:key:...",
       "env": "prod",
-      "disclosure_hash": "sha256:..."
+      "execution_context_hash": "sha256:..."
     }
   ],
   "gate_content_hashes": {
@@ -635,7 +683,7 @@ At attestation time, the content of each gate is hashed and included in the atte
 
 This happens automatically at attestation time. The owner does not need to opt in — the hashes are always computed and included.
 
-### 14.4 Publication is Optional
+### 15.5 Publication is Optional
 
 After attestation, the owner may choose to publish the actual gate content:
 
@@ -646,7 +694,7 @@ After attestation, the owner may choose to publish the actual gate content:
 
 The protocol does not require publication. The hashes in the attestation are sufficient to prove that content existed and was committed to.
 
-### 14.5 Verification Flow
+### 15.6 Verification Flow
 
 If gate content is published, anyone can verify it:
 
@@ -655,7 +703,7 @@ If gate content is published, anyone can verify it:
 3. Match = verified authentic content
 4. Mismatch = content was tampered with after attestation
 
-### 14.6 Properties
+### 15.7 Properties
 
 | Property | Guarantee |
 |----------|-----------|
@@ -664,7 +712,7 @@ If gate content is published, anyone can verify it:
 | **Tamper-evident** | Cannot publish different content than what was hashed |
 | **Non-repudiable** | Owner cannot deny what they wrote — the hash is in their signed attestation |
 
-### 14.7 Normative Rules
+### 15.8 Normative Rules
 
 1. The Local App MUST compute `gate_content_hashes` at attestation time.
 2. The hash for each gate MUST be computed from the exact text the owner entered.
@@ -674,9 +722,9 @@ If gate content is published, anyone can verify it:
 
 ---
 
-## 15. AI Constraints & Gate Resolution
+## 16. AI Constraints & Gate Resolution
 
-### 15.1 Drop In-Protocol AI Assistant
+### 16.1 Drop In-Protocol AI Assistant
 
 v0.3 removes the entire in-protocol AI assistant subsystem. The protocol enforces accountability, not thought purity. Users will consult external AI regardless — restricting in-protocol AI creates friction without preventing the behavior.
 
@@ -688,7 +736,7 @@ v0.3 removes the entire in-protocol AI assistant subsystem. The protocol enforce
 - AI warning acknowledgment in commitment gate
 - All `gate/*` SDGs (entry and follow-up questions)
 
-### 15.2 Enforceable Constraints
+### 16.2 Enforceable Constraints
 
 The protocol enforces only what it can guarantee:
 
@@ -696,7 +744,7 @@ The protocol enforces only what it can guarantee:
 2. **Gates close through human action** — A human must explicitly close each gate.
 3. **Gate resolution = presence only** — A gate closes when its field is non-empty. The protocol does not evaluate adequacy, quality, completeness, or correctness.
 
-### 15.3 Gate Questions in Profile
+### 16.3 Gate Questions in Profile
 
 Predefined gate questions move from SDGs to the Profile:
 
@@ -712,7 +760,7 @@ Predefined gate questions move from SDGs to the Profile:
 
 Questions are used as textarea placeholders — guidance, not enforcement.
 
-### 15.4 Simplified SDGs
+### 16.4 Simplified SDGs
 
 SDGs are reduced to structural checks only:
 
@@ -727,23 +775,13 @@ See [v0.3 AI Constraints Proposal](/doc/v0.3-ai-constraints.md) for full details
 
 ---
 
-## 16. Open Questions
-
-1. **Domain inheritance** — Can a domain "include" another domain's required fields?
-
-2. **Attestation aggregation** — Should there be a way to combine multiple domain attestations into one signed bundle?
-
-3. **Decision file validation** — Should the Local App validate the decision file against a JSON schema before allowing attestation?
-
----
-
 ## 17. Decision Streams
 
-### 17.1 Motivation
+### 18.1 Motivation
 
 Individual attestations are snapshots. They prove "someone decided X" but don't show how a project evolved through decisions. For public accountability and project history, we need to link attestations into a verifiable chain.
 
-### 17.2 Stream Structure
+### 18.2 Stream Structure
 
 Each attestation can optionally belong to a decision stream:
 
@@ -763,7 +801,7 @@ Each attestation can optionally belong to a decision stream:
 | `sequence` | Order within the stream (starts at 1) |
 | `previous_attestation_hash` | Links to prior attestation (null for first) |
 
-### 17.3 SP-Provided Timestamps
+### 18.3 SP-Provided Timestamps
 
 Timestamps come from the Service Provider, not the signer. This prevents backdating.
 
@@ -781,7 +819,7 @@ Timestamps come from the Service Provider, not the signer. This prevents backdat
 
 The SP certifies when it received the attestation. The signer cannot control this.
 
-### 17.4 Ordering
+### 18.4 Ordering
 
 Two ordering mechanisms:
 
@@ -790,7 +828,7 @@ Two ordering mechanisms:
 
 Sequence is authoritative for chain order. Timestamp is authoritative for real-world time.
 
-### 17.5 Normative Rules
+### 18.5 Normative Rules
 
 1. `project_id` MUST be consistent across all attestations in a stream.
 2. `sequence` MUST increment by 1 for each attestation in a stream.
@@ -799,7 +837,7 @@ Sequence is authoritative for chain order. Timestamp is authoritative for real-w
 5. The SP MUST sign the registration to certify the timestamp.
 6. Signers MUST NOT set timestamps — only the SP provides authoritative time.
 
-### 17.6 Chain Verification
+### 18.6 Chain Verification
 
 Anyone can verify a decision stream:
 
@@ -809,7 +847,7 @@ Anyone can verify a decision stream:
 4. Verify SP signatures on registrations
 5. If all checks pass → chain is valid and unbroken
 
-### 17.7 Genesis Attestation
+### 18.7 Genesis Attestation
 
 The first attestation in a stream:
 
@@ -830,7 +868,7 @@ The Service Provider MUST maintain:
 - Valid profiles and their versions
 - Execution paths per profile
 - Required domains per execution path
-- Disclosure schemas per domain
+- Execution context schemas per domain
 
 **Domain Authority Registry**
 - Organizations registered with the SP
