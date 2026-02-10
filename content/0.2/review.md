@@ -774,9 +774,15 @@ v0.3 removes the entire in-protocol AI assistant subsystem. The protocol enforce
 
 The protocol enforces only what it can guarantee:
 
-1. **No prefill / no autogenerate** — The protocol MUST NOT populate gate fields. Text enters through human action only (typing, speaking, or pasting).
-2. **Gates close through human action** — A human must explicitly close each gate.
-3. **Gate resolution = presence only** — A gate closes when its field is non-empty. The protocol does not evaluate adequacy, quality, completeness, or correctness.
+1. **Protocol does not supply content** — The Local App MUST NOT auto-generate or prefill gate fields. What the user brings from outside (including AI-assisted content) is their responsibility.
+
+2. **Commitment requires explicit action** — A human must explicitly trigger gate closure and attestation. No automation.
+
+3. **Gate resolution = presence only** — A gate closes when its field is non-empty. The protocol does not evaluate origin, adequacy, or correctness.
+
+**What the protocol guarantees:** A human took responsibility by signing.
+
+**What the protocol does not guarantee:** How they arrived at the content.
 
 ### 16.3 Gate Questions in Profile
 
