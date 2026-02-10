@@ -113,9 +113,10 @@ HAP governs any context where humans authorize actions:
 - Code deployment (git repositories)
 - Document approval (markdown files, wikis)
 - Infrastructure changes (Terraform, Ansible)
-- AI agent actions (real-time, no repository)
 - Policy decisions
 - Contract signing
+
+*Future consideration:* AI agent actions (real-time, delegated authority) — see Section 22.
 
 The protocol must remain abstract. Context-specific bindings belong in profiles.
 
@@ -1031,7 +1032,66 @@ When attestation validity is disputed:
 
 ---
 
-## 21. Next Steps
+## 21. Limitations and Future Work
+
+### 21.1 What v0.3 Is
+
+v0.3 is a **human-centric, deliberative decision governance protocol**. It assumes:
+
+- Humans make decisions at human speed
+- There is time to propose, review, and attest
+- Domain owners are individuals who can sign
+
+This covers the majority of enterprise governance needs: code deployment, infrastructure changes, document approval, policy decisions.
+
+### 21.2 What v0.3 Is Not
+
+v0.3 does **not** address:
+
+**AI Agent Governance**
+- Real-time autonomous decisions
+- Delegated authority (human pre-authorizes AI to act)
+- Machine attestation without human in the loop
+- High-frequency decision batching
+
+**Regulated Industry Requirements**
+- Mandatory retention periods
+- Informed consent verification
+- Jurisdiction and data residency
+- Industry-specific audit formats
+
+**Advanced Multi-SP Scenarios**
+- SP federation and trust anchors
+- Cross-SP conflict resolution
+- Decentralized trust models
+
+These are acknowledged as future work, not v0.3 scope.
+
+### 21.3 Guidance for Regulated Industries
+
+Organizations in regulated industries (healthcare, finance, safety-critical) should layer additional controls on top of HAP:
+
+- **Retention:** Retain attestations for required periods (often 7+ years)
+- **Disclosure:** If mandatory disclosure is required, do not rely on optional publication
+- **Training:** Document that signers received appropriate training (outside HAP scope)
+- **AI disclosure:** If regulations require AI involvement disclosure, track this separately
+
+HAP provides accountability infrastructure. Compliance requires additional organizational controls.
+
+### 21.4 Future Considerations (v0.4+)
+
+| Topic | Description |
+|-------|-------------|
+| **Delegation model** | Human pre-authorizes AI/agent to act within bounds |
+| **Batch attestation** | Attest to a class of actions, not each individual action |
+| **Machine-readable schemas** | Formal JSON Schema for execution context validation |
+| **Standing authority** | Long-lived attestations for repeated decision types |
+| **SP federation** | Multiple SPs coordinating trust and authority |
+| **Cross-org decisions** | Multi-organization projects with shared domains |
+
+---
+
+## 22. Next Steps
 
 1. Review this proposal
 2. Implement in demo (deploy-gate profile)
