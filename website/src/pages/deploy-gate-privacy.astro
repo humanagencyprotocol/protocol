@@ -1,0 +1,77 @@
+---
+import ContentLayout from '../layouts/ContentLayout.astro';
+---
+
+<ContentLayout title="Deploy Gate Privacy Policy">
+    <p><em>Last updated: February 2025</em></p>
+
+    <h2>Overview</h2>
+    <p>
+        The HAP Deploy Gate service is a merge-blocking check that enables cryptographic attestations for GitHub Pull Requests. This privacy policy explains what data we collect, how we use it, and your rights.
+    </p>
+
+    <h2>Data We Collect</h2>
+    <p>When you use the HAP Deploy Gate GitHub App, we collect and store:</p>
+    <ul>
+        <li><strong>Repository information:</strong> Owner name, repository name</li>
+        <li><strong>Pull Request metadata:</strong> PR number, commit SHA</li>
+        <li><strong>Attestation data:</strong> Domain (role), frame hash, execution context hash, timestamps</li>
+        <li><strong>Cryptographic signatures:</strong> Ed25519 signatures of attestation payloads</li>
+    </ul>
+
+    <h2>Data We Do NOT Collect</h2>
+    <ul>
+        <li>Source code or diff content</li>
+        <li>Personal information beyond GitHub usernames visible in repository metadata</li>
+        <li>Problem, objective, or tradeoff text you enter (this stays in your browser and is hashed)</li>
+        <li>Browsing behavior or analytics</li>
+    </ul>
+
+    <h2>How We Use Your Data</h2>
+    <p>Attestation data is used solely to:</p>
+    <ul>
+        <li>Verify that required attestations exist for a given commit</li>
+        <li>Update GitHub PR check statuses</li>
+        <li>Determine if all required domains have attested</li>
+    </ul>
+
+    <h2>Data Retention</h2>
+    <p>
+        Attestation data is stored with a Time-To-Live (TTL) of 1 hour from creation. After this period, attestations expire and are no longer valid. Expired data may be retained for audit purposes but is not used for verification.
+    </p>
+
+    <h2>Data Storage</h2>
+    <p>
+        Attestation data is stored on Vercel KV (Redis), a managed database service. Data is stored in data centers located in the United States. We do not share attestation data with third parties except as required to operate the service (Vercel infrastructure).
+    </p>
+
+    <h2>Your Rights</h2>
+    <p>Under GDPR and similar regulations, you have the right to:</p>
+    <ul>
+        <li>Request access to your data</li>
+        <li>Request deletion of your data</li>
+        <li>Uninstall the GitHub App at any time to stop future data collection</li>
+    </ul>
+
+    <h2>GitHub Permissions</h2>
+    <p>The GitHub App requests these permissions:</p>
+    <ul>
+        <li><strong>Checks (read/write):</strong> To create and update PR check statuses</li>
+        <li><strong>Contents (read):</strong> To read the .hap/decision.json file</li>
+        <li><strong>Pull requests (read):</strong> To receive webhook events when PRs are opened/updated</li>
+        <li><strong>Metadata (read):</strong> Required for basic repository access</li>
+    </ul>
+
+    <h2>Open Source</h2>
+    <p>
+        The HAP Deploy Gate is open source. You can review exactly what data is collected and how it's processed in the <a href="https://github.com/humanagencyprotocol/hap-deploy-gate-demo">source code</a>.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+        For privacy inquiries, contact: <a href="mailto:andreas.schadauer@gmail.com">andreas.schadauer@gmail.com</a>
+    </p>
+
+    <hr>
+    <p><a href="/impress">Impressum / Legal Notice</a></p>
+</ContentLayout>

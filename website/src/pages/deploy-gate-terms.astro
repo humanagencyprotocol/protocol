@@ -1,0 +1,78 @@
+---
+import ContentLayout from '../layouts/ContentLayout.astro';
+---
+
+<ContentLayout title="Deploy Gate Terms of Service">
+    <p><em>Last updated: February 2025</em></p>
+
+    <h2>Acceptance of Terms</h2>
+    <p>
+        By installing and using the HAP Deploy Gate GitHub App, you agree to these terms of service.
+    </p>
+
+    <h2>Service Description</h2>
+    <p>
+        HAP Deploy Gate is a merge-blocking check for GitHub Pull Requests. It enables required reviewers to create cryptographic attestations before code can be merged. The service:
+    </p>
+    <ul>
+        <li>Receives webhook events from GitHub when PRs are created or updated</li>
+        <li>Stores attestation data temporarily (1-hour TTL)</li>
+        <li>Updates GitHub check statuses based on attestation state</li>
+    </ul>
+
+    <h2>Free Service</h2>
+    <p>
+        This service is provided free of charge for the purposes of demonstrating the Human Agency Protocol. There are no usage fees or premium tiers.
+    </p>
+
+    <h2>No Warranty</h2>
+    <p>
+        THE SERVICE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND. We do not guarantee:
+    </p>
+    <ul>
+        <li>Continuous, uninterrupted availability</li>
+        <li>That the service will meet your specific requirements</li>
+        <li>That defects will be corrected</li>
+    </ul>
+
+    <h2>Limitation of Liability</h2>
+    <p>
+        To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of or inability to use the service.
+    </p>
+
+    <h2>Your Responsibilities</h2>
+    <p>You are responsible for:</p>
+    <ul>
+        <li>Ensuring you have authority to install the app on repositories you manage</li>
+        <li>Complying with GitHub's Terms of Service</li>
+        <li>The accuracy and legitimacy of attestations you create</li>
+    </ul>
+
+    <h2>Service Modifications</h2>
+    <p>
+        We reserve the right to modify, suspend, or discontinue the service at any time without notice. We may also update these terms; continued use constitutes acceptance of updated terms.
+    </p>
+
+    <h2>Termination</h2>
+    <p>
+        You may stop using the service at any time by uninstalling the GitHub App. We may suspend or terminate your access if you violate these terms or abuse the service.
+    </p>
+
+    <h2>Governing Law</h2>
+    <p>
+        These terms are governed by the laws of Austria. Any disputes shall be resolved in the courts of Vienna, Austria.
+    </p>
+
+    <h2>Open Source</h2>
+    <p>
+        The HAP Deploy Gate software is licensed under the MIT License. The <a href="https://github.com/humanagencyprotocol/hap-deploy-gate-demo">source code</a> is available for review.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+        For questions about these terms, contact: <a href="mailto:andreas.schadauer@gmail.com">andreas.schadauer@gmail.com</a>
+    </p>
+
+    <hr>
+    <p><a href="/deploy-gate-privacy">Privacy Policy</a> | <a href="/impress">Impressum / Legal Notice</a></p>
+</ContentLayout>
