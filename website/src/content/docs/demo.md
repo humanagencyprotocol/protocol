@@ -4,9 +4,9 @@ version: "Version 0.2"
 date: "January 2026"
 ---
 
-As AI becomes capable of writing and shipping code autonomously, we need guardrails that keep humans in the loop — not as a formality, but as genuine decision-makers. This demo shows how: a checkpoint that forces reviewers to engage with changes before signing a cryptographic attestation. The attestation proves not just that someone clicked approve, but that they confirmed understanding of the problem, objective, and tradeoffs.
+A merge-blocking check that prevents deployment surprises, built with the Human Agency Protocol (HAP).
 
-The full protocol goes further: domain-specific gates tailored to context, verified identity, integration with deployment systems and AI-assisted review that helps humans understand complex changes — not bypass them. The goal is twofold: prevent gradual loss of direction as systems scale, and provide clear, attributable authorization in high-risk or regulated environments where decisions must be explicit and defensible.
+Before code ships, each required owner reviews what's changing in their area and explicitly commits to how the change will be deployed and what constraints apply. No rubber stamps — just cryptographic proof that the right people bound themselves to the deployment.
 
 **Live Demo:** [demo.humanagencyprotocol.org](https://demo.humanagencyprotocol.org/)
 
@@ -14,7 +14,7 @@ The full protocol goes further: domain-specific gates tailored to context, verif
 
 ## How It Works
 
-This demo implements a **human checkpoint for code deployment**. Before any PR can be merged, a human must review the changes and create a cryptographic attestation proving they made an informed decision.
+This demo implements a **merge-blocking gate**. Before any PR can be merged, each required domain owner must review the execution context for their area and sign a cryptographic attestation confirming they've bound themselves to the deployment.
 
 ### The Flow
 
@@ -56,8 +56,9 @@ This demo implements a **human checkpoint for code deployment**. Before any PR c
 └─────────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  4. REVIEWER posts attestation as PR comment                            │
-│     └─→ GitHub Action re-runs → Verifies signature → ✅ Allows merge   │
+│  4. REVIEWER clicks "Publish Attestation"                               │
+│     └─→ Server stores attestation → GitHub App updates PR check        │
+│     └─→ When all required domains attested → ✅ Check passes           │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -71,11 +72,11 @@ Gates can be revisited and edited after completion. Changes are held in draft st
 
 ### What Gets Verified
 
-The GitHub Action checks:
+The GitHub App (or Action) checks:
 - ✓ Attestation exists for the current commit SHA
 - ✓ Cryptographic signature is valid
 - ✓ Attestation hasn't expired
-- ✓ All required roles have attested (Engineering for Canary, Engineering + Release Management for Full)
+- ✓ All required domains have attested (based on execution path in decision file)
 
 ## AI Assistant (Advisory Boundary)
 
@@ -172,6 +173,62 @@ NEXT_PUBLIC_SP_URL=http://localhost:3001
 
 ## GitHub Setup
 
+### Option 1: GitHub App Integration (Recommended)
+
+The GitHub App provides automatic PR check updates when attestations are published. No copy-paste required.
+
+#### Step 1: Register a GitHub App
+
+1. Go to https://github.com/settings/apps/new
+2. Fill in the basic information:
+   - **GitHub App name:** `HAP Deploy Gate` (or your preferred name)
+   - **Homepage URL:** `https://humanagencyprotocol.org`
+   - **Webhook URL:** `https://YOUR_SERVER_DOMAIN/api/github/webhook`
+   - **Webhook secret:** Generate with `openssl rand -hex 32`
+
+3. Set repository permissions:
+   | Permission | Access |
+   |------------|--------|
+   | Checks | Read & write |
+   | Contents | Read-only |
+   | Pull requests | Read-only |
+   | Metadata | Read-only |
+
+4. Subscribe to events:
+   - [x] Pull request
+
+5. Click **Create GitHub App**
+
+#### Step 2: Generate Private Key
+
+1. After creation, scroll to "Private keys"
+2. Click "Generate a private key"
+3. A `.pem` file will download
+
+Convert for environment variable:
+```bash
+cat your-app.private-key.pem | awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}'
+```
+
+#### Step 3: Install the App
+
+1. Go to your app's settings page
+2. Click "Install App" in the left sidebar
+3. Select the repository where you want to use it
+
+#### Step 4: Configure Environment
+
+Create `apps/server/.env.local`:
+```bash
+GITHUB_APP_ID=123456
+GITHUB_APP_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----\n"
+GITHUB_APP_WEBHOOK_SECRET=your_webhook_secret
+```
+
+### Option 2: GitHub Action Only (Legacy)
+
+If you don't want to set up the GitHub App, you can still use the copy-paste workflow with GitHub Actions.
+
 ### Enable Branch Protection (Required for Merge Gate)
 
 To block merges without valid attestations, you need to set up a branch ruleset:
@@ -207,8 +264,8 @@ Without this setup, the workflow will report status but won't block merges.
 8. **Gate 4 - Objective:** Write what outcome you're approving (20-240 chars), close gate
 9. **Gate 5 - Tradeoffs:** Write what risks you accept as Engineering under Canary, close gate
 10. **Gate 6 - Commitment:** Review summary and click "Sign Attestation"
-11. Click "Post to PR Comment" to add the attestation to the PR
-12. The GitHub Action will verify the attestation and allow merge
+11. Click "Publish Attestation" to publish to the server
+12. The GitHub App automatically updates the PR check status
 
 ### Multi-Person Approval (Full Path)
 
@@ -218,12 +275,12 @@ For production deployments requiring multiple approvals:
 2. **Engineer** goes through all 6 gates:
    - Gate 2: Select role **Engineering**
    - Gates 3-5: Articulate problem, objective, and tradeoffs
-   - Gate 6: Sign and post attestation to PR
+   - Gate 6: Sign and publish attestation
 3. **Release Manager** goes through the UI separately:
    - Gate 2: Select role **Release Management**
    - Gates 3-5: Articulate from their perspective
-   - Gate 6: Sign and post as another PR comment
-4. GitHub Action verifies both attestations are present and valid
+   - Gate 6: Sign and publish attestation
+4. GitHub App tracks attestations and updates PR check
 5. Merge is allowed only when all required roles have attested
 
 | Execution Path | Required Approvals |
@@ -238,6 +295,9 @@ For production deployments requiring multiple approvals:
 - `GET /api/sp/pubkey` - Get SP public key
 - `POST /api/sp/attest` - Request attestation
 - `POST /api/sp/verify` - Verify attestation signature
+- `POST /api/attestations` - Publish attestation (for GitHub App integration)
+- `GET /api/attestations` - Get attestation status for a PR
+- `POST /api/github/webhook` - GitHub webhook handler
 
 ### Attestation UI
 
@@ -253,6 +313,15 @@ For production deployments requiring multiple approvals:
 ```
 SP_PRIVATE_KEY=<hex>     # Ed25519 private key (optional, generates ephemeral if not set)
 SP_PUBLIC_KEY=<hex>      # Ed25519 public key
+
+# GitHub App (for automatic PR check updates)
+GITHUB_APP_ID=<number>              # App ID from GitHub App settings
+GITHUB_APP_PRIVATE_KEY=<pem>        # Private key (newlines as \n)
+GITHUB_APP_WEBHOOK_SECRET=<string>  # Webhook secret for signature verification
+
+# Storage (production)
+KV_REST_API_URL=<url>    # Vercel KV URL (optional, uses in-memory for local dev)
+KV_REST_API_TOKEN=<token>
 ```
 
 ### UI

@@ -103,8 +103,8 @@ The protocol defines abstract concepts. Profiles define concrete implementations
 
 | Layer | Defines | Example |
 |-------|---------|---------|
-| **Protocol** | Decision record structure, frame binding, attestation format | "A decision record must be immutably bound to the action" |
-| **Profile** | How binding works in a specific context | "For GitHub PRs, the decision record is `.hap/decision.json` in the commit" |
+| **Protocol** | Execution context structure, frame binding, attestation format | "Execution context must be immutably bound to the action" |
+| **Profile** | How binding works in a specific context | "For GitHub PRs, declared fields live in `.hap/decision.json` in the commit" |
 
 **Why this matters:**
 
@@ -159,101 +159,147 @@ Required domains are defined per execution path — not through conditions.
 3. Choosing a less restrictive path for a change that warrants more oversight is auditable misbehavior.
 4. No conditions, no magic — explicit human choice of governance scope.
 
-### 4.2 Domain Execution Context Schema
+### 4.2 Execution Context Schema
 
-Defines the execution constraints each domain owner commits to.
+The **profile defines the execution context schema**. Each profile specifies:
+- What fields exist in the execution context
+- How each field is resolved (declared vs computed)
+- Which fields are required
 
 ```json
 {
   "executionContextSchema": {
-    "domains": {
-      "engineering": {
-        "required_fields": ["diff_summary", "changed_paths", "test_status", "rollback_strategy"]
+    "fields": {
+      "execution_path": {
+        "source": "declared",
+        "description": "Governance level chosen by developer",
+        "required": true
       },
-      "marketing": {
-        "required_fields": ["behavior_change_summary", "demo_url", "rollout_plan"]
+      "repo": {
+        "source": "action",
+        "description": "Repository identifier",
+        "required": true
       },
-      "security": {
-        "required_fields": ["affected_surfaces", "threat_category", "mitigation_path"]
+      "sha": {
+        "source": "action",
+        "description": "Commit SHA being authorized",
+        "required": true
       },
-      "release_management": {
-        "required_fields": ["deployment_window", "rollback_plan", "monitoring_dashboards"]
+      "changed_paths": {
+        "source": "computed",
+        "method": "git_diff",
+        "description": "Files changed in this action"
+      },
+      "diff_url": {
+        "source": "computed",
+        "method": "constructed",
+        "description": "Persistent link to the diff"
       }
     }
   }
 }
 ```
 
+**Field sources:**
+
+| Source | Meaning | Example |
+|--------|---------|---------|
+| `declared` | Developer specifies in committed file | `execution_path` |
+| `action` | Derived from the action being authorized | `repo`, `sha` |
+| `computed` | System computes from deterministic sources | `changed_paths`, `diff_url` |
+
 **Normative rules:**
 
-1. Local App MUST NOT allow gate closure unless all required execution context fields for that domain are present.
-2. Each domain commits only to its execution context — not other domains' constraints.
-3. No semantic content leaves local custody.
+1. Execution context MUST consist of deterministic, verifiable, and persistent values — either as direct content or as references to persistent sources.
+2. All domain owners see the same execution context.
+3. The execution context is hashed and included in the attestation.
+4. Semantic content (problem, objective, tradeoffs) is entered by humans in gates, not in the execution context.
+5. The `profile` field bootstraps everything — it determines which schema applies.
 
 ---
 
-## 5. Decision Record
+## 5. Execution Context
 
 ### 5.1 Definition
 
-A **decision record** is a structured document that captures:
+The **execution context** captures everything needed to authorize an action:
 
-1. **Profile** — which profile governs this decision
-2. **Execution path** — the proposed governance level
-3. **Execution context** — structured constraints each domain commits to
+- **Governance choices** — declared by the developer (profile, execution_path)
+- **Action facts** — derived from the action itself (repo, sha, changed_paths, diff_url)
+
+The `profile` field is the bootstrap — it determines which schema defines the rest.
 
 ```json
 {
   "profile": "deploy-gate@0.3",
-  "execution_path": "deploy-prod-full",
-  "execution_context": {
-    "engineering": {
-      "diff_summary": "Refactored auth flow to use JWT tokens",
-      "test_status": "All 142 tests passing",
-      "rollback_strategy": "Revert or disable via feature flag"
-    },
-    "marketing": {
-      "behavior_change_summary": "Login button moved to header",
-      "rollout_plan": "10% canary, then full rollout"
-    }
-  }
+  "execution_path": "deploy-prod-canary",
+
+  "repo": "owner/repo",
+  "sha": "abc123def456...",
+  "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"],
+  "diff_url": "https://github.com/owner/repo/compare/base...head"
 }
 ```
 
+### 5.1.1 Two Parts, One Context
+
+| Part | Source | Example Fields |
+|------|--------|----------------|
+| **Governance choices** | Declared in committed file | `profile`, `execution_path` |
+| **Action facts** | Resolved by system | `repo`, `sha`, `changed_paths`, `diff_url` |
+
+Both parts are deterministic, verifiable, and persistent. Together they form the complete execution context that gets hashed and attested to.
+
+### 5.1.2 Why This Structure?
+
+**Problem with semantic content in files:**
+- Developers forget to update it → stale content
+- Descriptions are unverifiable → trust issues
+
+**Solution:**
+- Declared fields = governance choices only (profile, execution_path)
+- Resolved fields = computed from deterministic sources (git, action)
+- Attestation captures the complete execution context (auditable record)
+
 ### 5.2 Binding Requirements
 
-The decision record MUST be:
+The execution context MUST be:
 
-**Immutable** — Once created, it cannot be changed. Modifications require a new decision record.
+**Immutable** — The declared fields are committed with the action. The resolved fields are deterministic for a given action state.
 
-**Bound to action** — The decision record must be cryptographically bound to the action being authorized. How this binding works is profile-specific.
+**Bound to action** — How binding works is profile-specific. For deploy-gate, declared fields live in `.hap/decision.json` in the commit.
 
-**Verifiable** — Anyone with appropriate access can verify what execution constraints were proposed.
+**Verifiable** — Anyone can re-resolve the execution context and compare to the attested hash.
 
 ### 5.3 Proposal Flow
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  1. PROPOSER creates decision record                                    │
-│     • Proposes execution path (governance level)                        │
-│     • Defines execution context for each required domain                │
+│  1. PROPOSER declares governance choices                                │
+│     • Commits file with profile + execution_path                        │
 │     • Binds to action (profile-specific mechanism)                      │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  2. DOMAIN OWNERS review the proposal                                   │
-│     • See execution path and their domain's constraints                 │
+│  2. SYSTEM resolves execution context                                   │
+│     • Reads declared fields from committed file                         │
+│     • Computes resolved fields from action (repo, sha, diff, etc.)      │
+│     • Presents complete execution context to domain owners              │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  3. DOMAIN OWNERS review execution context                              │
+│     • See complete context (governance choices + action facts)          │
 │     • Validate: Is this the right governance level?                     │
-│     • Validate: Are the execution constraints accurate?                 │
 │     • If they agree → attest                                            │
 │     • If they disagree → don't attest, request changes                  │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  3. ALL REQUIRED DOMAINS attest to the same frame                       │
-│     • Frame derived from action + decision record                       │
+│  4. ALL REQUIRED DOMAINS attest to the same frame                       │
+│     • Frame derived from action + execution context                     │
 │     • All attestations share same frame_hash                            │
-│     • Each attestation includes domain-specific execution_context_hash  │
+│     • Attestation includes execution_context_hash                       │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -261,11 +307,11 @@ The decision record MUST be:
 
 If a domain owner disagrees with the proposal:
 
-1. **Wrong execution path** — Domain owner refuses to attest. Proposer must create new decision record with corrected path. New frame, new attestation cycle.
+1. **Wrong execution path** — Domain owner refuses to attest. Proposer must update the declared execution context with the corrected path. New frame, new attestation cycle.
 
-2. **Incomplete execution context** — Domain owner refuses to attest. Proposer must create new decision record with complete constraints.
+2. **Incomplete execution context** — Domain owner refuses to attest. Proposer must update the declared execution context with complete constraints.
 
-3. **Inaccurate execution context** — Domain owner refuses to attest. Proposer must fix the issue and create new decision record.
+3. **Inaccurate execution context** — Domain owner refuses to attest. Proposer must fix the issue and update the declared fields.
 
 **No one can unilaterally override** — All required domains must attest to the same frame.
 
@@ -275,13 +321,13 @@ If a domain owner disagrees with the proposal:
 
 ### 6.1 Frame Derivation
 
-A frame uniquely identifies an action and its decision record. The frame contains:
+A frame uniquely identifies an action and its execution context. The frame contains:
 
 | Field | Source |
 |-------|--------|
 | `action_id` | Profile-specific action identifier |
-| `profile` | From decision record |
-| `path` | From decision record |
+| `profile` | From execution context |
+| `path` | From execution context |
 | `env` | From action context (optional) |
 
 **v0.3 Frame structure (abstract):**
@@ -293,7 +339,7 @@ path=<execution-path>
 env=<environment>
 ```
 
-The frame MUST be deterministically derivable from the action and decision record. If the decision record changes, the frame changes.
+The frame MUST be deterministically derivable from the action and execution context. If the declared execution context changes, the frame changes.
 
 ### 6.2 Remove `execution_context_hash` from Frame
 
@@ -307,7 +353,7 @@ v0.3 does **not** add condition fields to the frame.
 
 **Rationale:** Self-declared conditions (e.g., "is this security-relevant?") are meaningless — the person who might want to skip oversight decides whether oversight is required. This is circular.
 
-Instead, required domains are determined by **execution path** in the decision record — an explicit proposal validated by domain owners.
+Instead, required domains are determined by **execution path** in the execution context — an explicit proposal validated by domain owners.
 
 ---
 
@@ -420,61 +466,98 @@ Where attestations are stored (PR comments, database, registry) is an integratio
 
 ---
 
-## 9. Execution Context Generation
+## 9. Execution Context Resolution
 
-### 9.1 Source: Decision Record
+### 9.1 Resolution Flow
 
-The execution context lives in the decision record. How the decision record is stored and retrieved is profile-specific.
+The execution context is **computed at processing time**, not stored in the decision file. This ensures determinism and traceability.
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  1. DEVELOPER commits decision.json (minimal)                           │
+│     • profile: "deploy-gate@0.3"                                        │
+│     • execution_path: "deploy-prod-canary"                              │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  2. GITHUB APP receives webhook (PR created/updated)                    │
+│     • Knows: owner, repo, base_sha, head_sha, PR number                 │
+│     • Computes deterministic values from git                            │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  3. SYSTEM resolves execution context                                   │
+│     • changed_paths: computed from git diff                             │
+│     • diff_url: https://github.com/{owner}/{repo}/compare/{base}...{head}│
+│     • sha: head commit                                                  │
+│     • repo: from webhook context                                        │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  4. ATTESTATION captures resolved values                                │
+│     • frame_hash: commits to repo, sha, profile, path                   │
+│     • execution_context_hash: commits to resolved context               │
+│     • This IS the auditable record                                      │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### 9.2 What Gets Resolved
+
+| Field | Source | Deterministic? |
+|-------|--------|----------------|
+| `repo` | Webhook context | ✓ Yes |
+| `sha` | Head commit | ✓ Yes |
+| `changed_paths` | `git diff --name-only base...head` | ✓ Yes |
+| `diff_url` | Constructed from owner/repo/base/head | ✓ Yes |
+| `profile` | From decision.json | ✓ Yes |
+| `execution_path` | From decision.json | ✓ Yes |
+
+All resolved values are deterministic — given the same PR state, the system always computes the same values.
+
+### 9.3 Resolved Execution Context Structure
 
 ```json
 {
+  "repo": "owner/repo",
+  "sha": "abc123def456...",
+  "diff_url": "https://github.com/owner/repo/compare/base123...head456",
+  "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"],
   "profile": "deploy-gate@0.3",
-  "execution_path": "deploy-prod-user-facing",
-  "execution_context": {
-    "engineering": {
-      "diff_summary": "Refactored auth flow to use JWT",
-      "changed_paths": ["src/api/auth.ts", "src/ui/login.tsx"],
-      "test_status": "All 142 tests passing",
-      "rollback_strategy": "Revert commit"
-    },
-    "marketing": {
-      "behavior_change_summary": "Login button moved to header",
-      "demo_url": "https://preview-abc123.example.com",
-      "rollout_plan": "10% canary, then full"
-    }
-  }
+  "execution_path": "deploy-prod-canary"
 }
 ```
 
-The Local App reads the decision record to display domain-specific contexts.
+This resolved context is:
+- Shown to domain owners in the UI (the Frame gate)
+- Hashed and included in the attestation
+- Fully verifiable by anyone with access to the repository
 
-### 9.2 Domain Context Extraction
+### 9.4 Execution Context Hash
 
-The Local App extracts domain-specific contexts for each domain owner:
-
-```typescript
-function extractDomainContext(decision: DecisionRecord, domain: string): DomainContext {
-  return decision.execution_context[domain];
-}
-```
-
-Each domain owner commits to **only their domain's execution context** — not other domains' constraints.
-
-### 9.3 Domain Execution Context Hash
-
-Each domain's `execution_context_hash` is computed from its context:
+The `execution_context_hash` in the attestation commits to the resolved context:
 
 ```typescript
-const engineeringContext = decision.execution_context.engineering;
-const engineeringContextHash = sha256(canonicalize(engineeringContext));
+const resolvedContext = {
+  repo: "owner/repo",
+  sha: "abc123...",
+  diff_url: "https://...",
+  changed_paths: ["src/api/auth.ts", ...],
+  profile: "deploy-gate@0.3",
+  execution_path: "deploy-prod-canary"
+};
+
+const executionContextHash = sha256(canonicalize(resolvedContext));
 ```
 
-This ensures:
+### 9.5 Traceability
 
-- Engineering's hash only covers engineering-relevant constraints
-- Marketing's hash only covers marketing-relevant constraints
-- Neither can see or verify the other's context
-- Each domain owner can independently prove what constraints they committed to
+The attestation IS the audit record. It contains:
+
+- `frame_hash` → commits to what action was authorized
+- `execution_context_hash` → commits to what context was shown/resolved
+- `gate_content_hashes` → commits to what the human articulated (problem/objective/tradeoffs)
+
+Anyone can verify: "This attestation commits to this exact context, derived from this exact PR state."
 
 ---
 
@@ -487,8 +570,8 @@ New error codes for v0.3:
 | `MISSING_REQUIRED_DOMAIN` | A required domain has no valid attestation |
 | `DOMAIN_SCOPE_MISMATCH` | Attestation domain/env doesn't match requirement |
 | `EXECUTION_CONTEXT_VIOLATION` | Domain execution context missing required fields |
-| `DECISION_RECORD_MISSING` | Action has no bound decision record |
-| `DECISION_RECORD_INVALID` | Decision record malformed or missing required fields |
+| `DECISION_RECORD_MISSING` | Action has no bound execution context declaration |
+| `DECISION_RECORD_INVALID` | Declared execution context malformed or missing required fields |
 
 ---
 
@@ -499,14 +582,14 @@ New error codes for v0.3:
 - Frame no longer includes `execution_context_hash`
 - Attestations include `resolved_domains` with per-domain `execution_context_hash`
 - Execution paths explicitly define `requiredDomains`
-- Execution path and execution context now in decision record (binding is profile-specific)
+- Execution context declared in committed file, resolved by system (binding is profile-specific)
 
 ### Migration path
 
 - v0.2 attestations remain valid for v0.2 profiles
 - v0.3 profiles require v0.3 attestations
 - Executor Proxy checks `version` field and applies appropriate validation
-- v0.3 requires decision record bound to action
+- v0.3 requires declared execution context bound to action
 
 ---
 
@@ -514,15 +597,37 @@ New error codes for v0.3:
 
 This section defines how the deploy-gate profile binds abstract protocol concepts to git-based workflows.
 
-### 12.1 Decision Record Binding
+### 12.1 Execution Context Binding
 
-For deploy-gate, the decision record is stored as `.hap/decision.json` in the commit:
+For deploy-gate, the declared execution context is stored as `.hap/decision.json` in the commit:
 
 - **Location:** `.hap/decision.json` in repository root
+- **Content:** Governance choices only (profile + execution_path)
 - **Binding:** Included in commit SHA (immutable)
 - **Retrieval:** Via git or GitHub API
 
-### 12.2 Frame Binding
+```json
+{
+  "profile": "deploy-gate@0.3",
+  "execution_path": "deploy-prod-canary"
+}
+```
+
+### 12.2 Context Resolution by GitHub App
+
+The GitHub App resolves all deterministic values when processing the PR:
+
+| Value | Resolution Method |
+|-------|-------------------|
+| `repo` | From webhook payload (`repository.full_name`) |
+| `sha` | From webhook payload (`pull_request.head.sha`) |
+| `base_sha` | From webhook payload (`pull_request.base.sha`) |
+| `changed_paths` | GitHub API: `GET /repos/{owner}/{repo}/pulls/{number}/files` |
+| `diff_url` | Constructed: `https://github.com/{owner}/{repo}/compare/{base}...{head}` |
+| `profile` | From `.hap/decision.json` in commit |
+| `execution_path` | From `.hap/decision.json` in commit |
+
+### 12.3 Frame Binding
 
 For deploy-gate, the frame maps to git concepts:
 
@@ -542,7 +647,7 @@ profile=deploy-gate@0.3
 path=deploy-prod-user-facing
 ```
 
-### 12.3 Demo Implementation Steps
+### 12.4 Demo Implementation Steps
 
 **Step 1: Update Profile with execution paths**
 
@@ -550,42 +655,45 @@ path=deploy-prod-user-facing
 - `deploy-prod-full` → engineering + release_management
 - `deploy-prod-user-facing` → engineering + marketing
 
-**Step 2: Read decision record from commit**
+**Step 2: Declare execution context**
 
-1. Fetch `.hap/decision.json` from commit via GitHub API
-2. Parse execution path and execution context
-3. Validate against profile schema
-4. Display error if missing or invalid
+Developer adds `.hap/decision.json` to their commit with governance choices:
+```json
+{
+  "profile": "deploy-gate@0.3",
+  "execution_path": "deploy-prod-canary"
+}
+```
 
-**Step 3: Update Gate 1 (Frame) UI**
+**Step 3: System resolves execution context**
 
-- Load PR → fetch `.hap/decision.json` from commit
-- Display proposed execution path (read-only)
-- Show: "This path requires: Engineering, Marketing"
+On PR webhook:
+1. Read declared fields from `.hap/decision.json`
+2. Compute `changed_paths` from PR diff
+3. Construct `diff_url` from base/head SHAs
+4. Build complete execution context (declared + resolved)
+5. Present to domain owners for attestation
 
-**Step 4: Split execution context UI by domain**
+**Step 4: Update Frame Gate UI**
 
-- Engineering sees: diff_summary, changed_paths, test_status, rollback_strategy
-- Marketing sees: behavior_change_summary, demo_url, rollout_plan
-- No cross-domain visibility
+- Show resolved execution context (computed by system)
+- Display: changed files, diff link, execution path
+- Show: "This path requires: Engineering" (from profile)
+- Domain owners see the same information
 
-**Step 5: Generate per-domain execution context hashes**
+**Step 5: Attestation captures resolved values**
 
-1. Extract domain context from decision record
-2. Compute domain-specific `execution_context_hash`
-3. Include in attestation's `resolved_domains`
+1. Hash the resolved execution context
+2. Include `execution_context_hash` in attestation
+3. Attestation becomes the auditable record
 
-**Step 6: Update Executor Proxy validation**
+**Step 6: Verification**
 
-1. Fetch `.hap/decision.json` from commit
-2. Look up `requiredDomains` from execution path
-3. Verify all required domain attestations exist and are valid
-
-**Step 7: Update GitHub Action**
-
-- Verify `.hap/decision.json` exists
-- Verify all required domain attestations exist
-- Verify all signatures, TTLs, and frame_hashes
+Anyone can verify:
+1. Fetch `.hap/decision.json` from the commit
+2. Re-compute the resolved context from git
+3. Hash and compare to `execution_context_hash` in attestation
+4. Match = attestation is valid for this exact PR state
 
 ---
 
@@ -593,19 +701,19 @@ path=deploy-prod-user-facing
 
 | Aspect | v0.2 | v0.3 |
 |--------|------|------|
-| Execution path selection | First attestor chooses | Proposer declares in decision record |
-| Execution context source | Entered in UI | In decision record (binding is profile-specific) |
-| Execution context hash | Single, in frame | Per-domain, in attestation |
-| Domain-specific constraints | Not enforced | Schema-enforced |
+| Declared content | Execution context with semantic fields | Governance choices only (profile + execution_path) |
+| Execution context source | Entered in UI | Declared + system-resolved from action |
+| Execution path selection | First attestor chooses | Proposer declares in committed file |
+| Execution context hash | Single, in frame | Complete resolved context hash in attestation |
 | Condition evaluation | N/A | None (explicit path choice) |
-| Auditability | "Someone approved" | "Right person committed to scoped constraints" |
+| Auditability | "Someone approved" | Attestation = auditable record with resolved context |
 | Accountability | First attestor | Proposer declares, domains validate |
 
 ---
 
 ## 14. Design Decisions
 
-### Why proposer declares in decision record?
+### Why proposer declares in committed file?
 
 If the first attestor chooses the execution path:
 
@@ -620,20 +728,22 @@ With proposer declaration:
 - Clear accountability: proposer declares, domains validate
 - Immutable binding to action
 
-### Why execution context in decision record?
+### Why system-resolved execution context?
 
-Dynamic execution context (fetched at runtime) creates problems:
+Semantic content in declared files creates problems:
 
-- Constraints can change between attestation and execution
-- Harder to verify what was actually committed to
-- External dependencies for validation
+- Developers forget to update it → stale content
+- Semantic descriptions are unverifiable → trust issues
+- Content duplicates what's already in the PR → redundancy
 
-With execution context in decision record:
+With system-resolved execution context:
 
-- Fully immutable and verifiable
-- Proposer accountable for accurate constraint definition
-- No external dependencies for validation
-- Executor can trust the committed constraints
+- Always deterministic — computed from action at processing time
+- Always accurate — derived from the actual action state
+- Fully verifiable — anyone can re-compute and compare
+- Attestation captures the resolved values → immutable audit record
+
+The declared file stays minimal (profile + execution_path). The system resolves all deterministic values. The attestation commits to the complete resolved context.
 
 ### Why no conditional domains?
 
@@ -642,24 +752,26 @@ Self-declared conditions (e.g., `security_relevant: true/false`) are meaningless
 - The person who might want to skip oversight decides whether oversight is required
 - This is circular and easily gamed
 
-Instead, governance scope is determined by **execution path** in the decision record:
+Instead, governance scope is determined by **execution path** in the execution context:
 
 - Explicit proposer declaration
 - Validated by domain owners
 - Clear accountability for choosing the wrong path
 
-### Why per-domain execution context hashes?
+### Why shared execution context (all domains see the same)?
 
-With a single execution context hash:
+With per-domain execution context:
 
-- Domain owners cannot independently prove what constraints they committed to
-- Auditing requires reconstructing the full context (which domains shouldn't see)
+- Who decides what each domain sees? → governance problem
+- Different views of the same change → confusion
+- Content filtering is a form of interpretation → unverifiable
 
-With per-domain hashes:
+With shared, resolved execution context:
 
-- Each owner can prove: "I attested to frame X with constraints Y"
-- No cross-domain context exposure
-- Full auditability without privacy violation
+- All domain owners see the same deterministic data
+- No content filtering or domain-specific views
+- Each domain owner attests to the same frame + execution context
+- Their gate content (problem/objective/tradeoffs) is domain-specific, but the context is shared
 
 ---
 
@@ -758,19 +870,7 @@ If gate content is published, anyone can verify it:
 
 ## 16. AI Constraints & Gate Resolution
 
-### 16.1 Drop In-Protocol AI Assistant
-
-v0.3 removes the entire in-protocol AI assistant subsystem. The protocol enforces accountability, not thought purity. Users will consult external AI regardless — restricting in-protocol AI creates friction without preventing the behavior.
-
-**Removed:**
-
-- AI provider integrations (Ollama, OpenAI, Groq, Together)
-- AI-driven alignment checking on gate closure
-- AI-generated questions and follow-ups
-- AI warning acknowledgment in commitment gate
-- All `gate/*` SDGs (entry and follow-up questions)
-
-### 16.2 Enforceable Constraints
+### 16.1 Enforceable Constraints
 
 The protocol enforces only what it can guarantee:
 
@@ -784,7 +884,7 @@ The protocol enforces only what it can guarantee:
 
 **What the protocol does not guarantee:** How they arrived at the content.
 
-### 16.3 Gate Questions in Profile
+### 16.2 Gate Questions in Profile
 
 Predefined gate questions move from SDGs to the Profile:
 
@@ -800,7 +900,7 @@ Predefined gate questions move from SDGs to the Profile:
 
 Questions are used as textarea placeholders — guidance, not enforcement.
 
-### 16.4 Simplified SDGs
+### 16.3 Simplified SDGs
 
 SDGs are reduced to structural checks only:
 
