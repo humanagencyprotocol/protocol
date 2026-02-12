@@ -10,7 +10,7 @@ status: "Proposal"
 ## Multi-Domain Ownership & Execution Context Binding
 
 **Status:** Draft / Under Review
-**Goal:** Ensure the *right* humans commit, to domain-specific execution constraints, without breaking privacy or auditability.
+**Goal:** Ensure the *right* humans commit, to a shared and verifiable execution context, without breaking privacy or auditability.
 
 ---
 
@@ -34,8 +34,8 @@ status: "Proposal"
 An engineer approving a marketing-impacting change without marketing involvement is a governance failure that v0.2 permits. v0.3 closes this gap by:
 
 1. Making domain requirements explicit per execution path
-2. Scoping execution constraints per domain
-3. Binding each domain's attestation to the constraints they committed to
+2. Requiring the right domain owners to attest
+3. Binding each domain's attestation to the same shared execution context
 
 ---
 
@@ -229,6 +229,10 @@ The **execution context** captures everything needed to authorize an action:
 
 The `profile` field is the bootstrap — it determines which schema defines the rest.
 
+The specific fields depend on the profile's execution context schema. Governance choices are common to all profiles; action facts are profile-specific.
+
+**Example (deploy-gate profile for git-based workflows):**
+
 ```json
 {
   "profile": "deploy-gate@0.3",
@@ -245,8 +249,8 @@ The `profile` field is the bootstrap — it determines which schema defines the 
 
 | Part | Source | Example Fields |
 |------|--------|----------------|
-| **Governance choices** | Declared in committed file | `profile`, `execution_path` |
-| **Action facts** | Resolved by system | `repo`, `sha`, `changed_paths`, `diff_url` |
+| **Governance choices** | Declared by proposer (profile-specific mechanism) | `profile`, `execution_path` |
+| **Action facts** | Resolved by system | Profile-specific (e.g., `repo`, `sha`, `changed_paths`) |
 
 Both parts are deterministic, verifiable, and persistent. Together they form the complete execution context that gets hashed and attested to.
 
@@ -276,14 +280,14 @@ The execution context MUST be:
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  1. PROPOSER declares governance choices                                │
-│     • Commits file with profile + execution_path                        │
-│     • Binds to action (profile-specific mechanism)                      │
+│     • Declares profile + execution_path                                 │
+│     • Binds to action through profile-specific mechanism                │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  2. SYSTEM resolves execution context                                   │
-│     • Reads declared fields from committed file                         │
-│     • Computes resolved fields from action (repo, sha, diff, etc.)      │
+│     • Reads declared fields from bound declaration                      │
+│     • Computes action facts from deterministic sources                  │
 │     • Presents complete execution context to domain owners              │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
@@ -343,9 +347,9 @@ The frame MUST be deterministically derivable from the action and execution cont
 
 ### 6.2 Remove `execution_context_hash` from Frame
 
-**Rationale:** If the frame contains a single combined execution_context_hash, individual domain owners cannot independently prove what constraints they committed to without access to all domains' contexts. This breaks domain-scoped auditability.
+**Rationale:** The frame identifies the action. The execution context captures what was shown and resolved. Separating them keeps the frame stable (it only changes when the action changes) while the execution context hash captures the full deterministic context.
 
-Execution context binding moves to the attestation (per-domain).
+`execution_context_hash` moves to the attestation as a top-level field. All domain owners attest to the same shared context.
 
 ### 6.3 No Condition Fields
 
@@ -359,9 +363,9 @@ Instead, required domains are determined by **execution path** in the execution 
 
 ## 7. Attestation Changes
 
-### 7.1 Per-Domain Execution Context Binding
+### 7.1 Attestation Structure
 
-Each attestation includes the execution context hash for the domain(s) it covers.
+Each attestation includes the shared execution context hash and the domains it covers.
 
 ```json
 {
@@ -369,12 +373,12 @@ Each attestation includes the execution context hash for the domain(s) it covers
   "version": "0.3",
   "profile_id": "deploy-gate@0.3",
   "frame_hash": "sha256:...",
+  "execution_context_hash": "sha256:...",
   "resolved_domains": [
     {
       "domain": "engineering",
       "did": "did:key:...",
-      "env": "prod",
-      "execution_context_hash": "sha256:..."
+      "env": "prod"
     }
   ],
   "issued_at": 1735888000,
@@ -384,8 +388,8 @@ Each attestation includes the execution context hash for the domain(s) it covers
 
 **Normative rules:**
 
-1. For every domain this attestation covers, include: `domain`, `did`, `env`, `execution_context_hash`.
-2. The `execution_context_hash` is computed from the domain-specific execution context.
+1. The `execution_context_hash` is computed from the shared execution context (all domains see the same context).
+2. For every domain this attestation covers, include: `domain`, `did`, `env`.
 3. One attestation typically covers one domain (one person, one scope).
 4. Multi-domain decisions require multiple attestations from different owners.
 
@@ -394,8 +398,9 @@ Each attestation includes the execution context hash for the domain(s) it covers
 Each domain owner can independently prove:
 
 - "I attested to frame X" → `frame_hash` in attestation
-- "I committed to constraints Y" → domain's `execution_context_hash`
-- Without needing any other domain's execution context
+- "I committed to context Y" → `execution_context_hash` in attestation
+- "I articulated my reasoning" → `gate_content_hashes` in attestation
+- "For domain Z" → `resolved_domains` in attestation
 
 ---
 
@@ -470,32 +475,30 @@ Where attestations are stored (PR comments, database, registry) is an integratio
 
 ### 9.1 Resolution Flow
 
-The execution context is **computed at processing time**, not stored in the decision file. This ensures determinism and traceability.
+The execution context is **computed at processing time**, not stored in the declaration. This ensures determinism and traceability.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  1. DEVELOPER commits decision.json (minimal)                           │
-│     • profile: "deploy-gate@0.3"                                        │
-│     • execution_path: "deploy-prod-canary"                              │
+│  1. PROPOSER declares governance choices (minimal)                      │
+│     • profile + execution_path                                          │
+│     • Bound to action through profile-specific mechanism                │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  2. GITHUB APP receives webhook (PR created/updated)                    │
-│     • Knows: owner, repo, base_sha, head_sha, PR number                 │
-│     • Computes deterministic values from git                            │
+│  2. SYSTEM receives action event                                        │
+│     • Reads declared fields from bound declaration                      │
+│     • Computes action facts from deterministic sources                  │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  3. SYSTEM resolves execution context                                   │
-│     • changed_paths: computed from git diff                             │
-│     • diff_url: https://github.com/{owner}/{repo}/compare/{base}...{head}│
-│     • sha: head commit                                                  │
-│     • repo: from webhook context                                        │
+│  3. SYSTEM presents complete execution context to domain owners         │
+│     • Governance choices + action facts = complete context              │
+│     • All domain owners see the same context                            │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  4. ATTESTATION captures resolved values                                │
-│     • frame_hash: commits to repo, sha, profile, path                   │
+│     • frame_hash: commits to action identity                            │
 │     • execution_context_hash: commits to resolved context               │
 │     • This IS the auditable record                                      │
 └─────────────────────────────────────────────────────────────────────────┘
@@ -503,51 +506,48 @@ The execution context is **computed at processing time**, not stored in the deci
 
 ### 9.2 What Gets Resolved
 
-| Field | Source | Deterministic? |
-|-------|--------|----------------|
-| `repo` | Webhook context | ✓ Yes |
-| `sha` | Head commit | ✓ Yes |
-| `changed_paths` | `git diff --name-only base...head` | ✓ Yes |
-| `diff_url` | Constructed from owner/repo/base/head | ✓ Yes |
-| `profile` | From decision.json | ✓ Yes |
-| `execution_path` | From decision.json | ✓ Yes |
+Each field in the execution context has a source type:
 
-All resolved values are deterministic — given the same PR state, the system always computes the same values.
+| Source | Resolved By | Deterministic? | Example |
+|--------|-------------|----------------|---------|
+| `declared` | Proposer (bound to action) | ✓ Yes | `profile`, `execution_path` |
+| `action` | Derived from the action itself | ✓ Yes | Action identifier, environment |
+| `computed` | System computes from deterministic inputs | ✓ Yes | Derived data, constructed references |
+
+All resolved values MUST be deterministic — given the same action state, the system always computes the same values. The specific fields and resolution methods are defined by the profile's execution context schema (see section 4.2).
 
 ### 9.3 Resolved Execution Context Structure
 
+The resolved execution context contains all declared and computed fields. The specific fields are profile-dependent.
+
+**Example (deploy-gate profile):**
+
 ```json
 {
+  "profile": "deploy-gate@0.3",
+  "execution_path": "deploy-prod-canary",
   "repo": "owner/repo",
   "sha": "abc123def456...",
-  "diff_url": "https://github.com/owner/repo/compare/base123...head456",
-  "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"],
-  "profile": "deploy-gate@0.3",
-  "execution_path": "deploy-prod-canary"
+  "base_sha": "def456abc123...",
+  "diff_url": "https://github.com/owner/repo/compare/def456...abc123",
+  "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"]
 }
 ```
 
 This resolved context is:
-- Shown to domain owners in the UI (the Frame gate)
+- Presented to domain owners (all see the same context)
 - Hashed and included in the attestation
-- Fully verifiable by anyone with access to the repository
+- Fully re-derivable: given the same action state, anyone can recompute the resolved context
 
 ### 9.4 Execution Context Hash
 
 The `execution_context_hash` in the attestation commits to the resolved context:
 
-```typescript
-const resolvedContext = {
-  repo: "owner/repo",
-  sha: "abc123...",
-  diff_url: "https://...",
-  changed_paths: ["src/api/auth.ts", ...],
-  profile: "deploy-gate@0.3",
-  execution_path: "deploy-prod-canary"
-};
-
-const executionContextHash = sha256(canonicalize(resolvedContext));
 ```
+execution_context_hash = sha256(canonicalize(resolved_context))
+```
+
+The canonicalization ensures consistent hashing regardless of field ordering.
 
 ### 9.5 Traceability
 
@@ -557,11 +557,93 @@ The attestation IS the audit record. It contains:
 - `execution_context_hash` → commits to what context was shown/resolved
 - `gate_content_hashes` → commits to what the human articulated (problem/objective/tradeoffs)
 
-Anyone can verify: "This attestation commits to this exact context, derived from this exact PR state."
+Anyone can verify: "This attestation commits to this exact context, derived from this exact action state."
 
 ---
 
-## 10. Error Codes
+## 10. Identity & Authorization
+
+### 10.1 Principle
+
+> Profiles define what authority is required. Authorization sources define who holds that authority. The SP verifies both before signing.
+
+The protocol separates three concerns:
+
+| Concern | Defines | Example |
+|---------|---------|---------|
+| **Profile** | What domains are required | `engineering`, `release_management` |
+| **Authorization source** | Who can attest for each domain | `did:github:alice` → `engineering` |
+| **SP** | Verifies identity and authorization before signing | Checks token, checks mapping, signs or rejects |
+
+### 10.2 Authentication
+
+Consistent with v0.2, **authentication is out of HAP Core scope**. Implementations MUST establish identity through external mechanisms (e.g., OAuth, WebAuthn, hardware tokens, passkeys).
+
+The protocol uses **Decentralized Identifiers (DIDs)** for platform-agnostic identity:
+
+- `did:github:alice` — GitHub identity
+- `did:gitlab:bob` — GitLab identity
+- `did:okta:carol` — Okta identity
+- `did:email:dave@company.com` — Email-based identity
+
+The verified DID is included in the attestation's `did` field. The SP MUST NOT issue attestations without verifying the attester's identity through a trusted authentication channel.
+
+### 10.3 Authorization Mapping
+
+The **authorization mapping** defines who is authorized to attest for each domain. The format is:
+
+```json
+{
+  "domains": {
+    "engineering": ["did:github:alice", "did:github:bob"],
+    "release_management": ["did:okta:carol"]
+  }
+}
+```
+
+The profile defines WHAT domains are required for an execution path. The authorization mapping defines WHO can fulfill each domain. These are separate concerns:
+
+- Changing the profile (adding a domain) is a **governance structure change**
+- Changing the authorization mapping (adding a person) is a **personnel change**
+
+### 10.4 Immutability Rule
+
+> The authorization source MUST NOT be modifiable by the attester as part of the same action being attested.
+
+This is the key security property. Without it, an attester could add themselves to the authorized list and approve their own action in a single step.
+
+How immutability is enforced depends on the environment:
+
+| Environment | Authorization Source | Immutability Guarantee |
+|---|---|---|
+| Version-controlled repo | Config file on target/base branch | Cannot modify target branch without going through attestation |
+| Planning / no repo | Org-level registry (API, database) | Only admins can modify |
+| Enterprise | External identity system (Okta groups, LDAP, AD) | Managed by IT, not by the attester |
+| Small team | SP configuration | SP admin controls it |
+
+The protocol does not prescribe where the authorization source lives — only that it cannot be self-modified by the attester in the same action.
+
+### 10.5 SP Authorization Responsibilities
+
+Before signing an attestation, the SP MUST:
+
+1. **Verify identity** — Validate the attester's authentication token against the identity provider. Resolve to a verified DID.
+2. **Resolve authorization** — Fetch the domain→owners mapping from the configured authorization source.
+3. **Check membership** — Verify that the authenticated DID is in the authorized list for the claimed domain.
+4. **Reject or sign** — Only sign the attestation if both identity and authorization checks pass.
+
+### 10.6 Normative Rules
+
+1. The SP MUST verify attester identity before signing an attestation.
+2. The SP MUST verify the attester is authorized for the claimed domain before signing.
+3. The authorization source MUST NOT be modifiable by the attester as part of the same action being attested.
+4. Changes to the authorization source MUST themselves be subject to governance (e.g., existing authorized owners must approve changes to the owner list).
+5. The authorization source SHOULD be auditable — it must be possible to determine who was authorized at a given point in time.
+6. The verified DID MUST be included in the attestation's `did` field.
+
+---
+
+## 11. Error Codes
 
 New error codes for v0.3:
 
@@ -569,18 +651,19 @@ New error codes for v0.3:
 |------|-------------|
 | `MISSING_REQUIRED_DOMAIN` | A required domain has no valid attestation |
 | `DOMAIN_SCOPE_MISMATCH` | Attestation domain/env doesn't match requirement |
-| `EXECUTION_CONTEXT_VIOLATION` | Domain execution context missing required fields |
+| `EXECUTION_CONTEXT_VIOLATION` | Execution context missing required fields |
 | `DECISION_RECORD_MISSING` | Action has no bound execution context declaration |
 | `DECISION_RECORD_INVALID` | Declared execution context malformed or missing required fields |
 
 ---
 
-## 11. Backward Compatibility
+## 12. Backward Compatibility
 
 ### What changes
 
 - Frame no longer includes `execution_context_hash`
-- Attestations include `resolved_domains` with per-domain `execution_context_hash`
+- Attestations include `execution_context_hash` at top level (shared context, not per-domain)
+- Attestations include `resolved_domains` for domain authority (domain, did, env)
 - Execution paths explicitly define `requiredDomains`
 - Execution context declared in committed file, resolved by system (binding is profile-specific)
 
@@ -593,11 +676,11 @@ New error codes for v0.3:
 
 ---
 
-## 12. Deploy-Gate Profile Binding
+## 13. Deploy-Gate Profile Binding
 
 This section defines how the deploy-gate profile binds abstract protocol concepts to git-based workflows.
 
-### 12.1 Execution Context Binding
+### 13.1 Execution Context Binding
 
 For deploy-gate, the declared execution context is stored as `.hap/decision.json` in the commit:
 
@@ -613,7 +696,7 @@ For deploy-gate, the declared execution context is stored as `.hap/decision.json
 }
 ```
 
-### 12.2 Context Resolution by GitHub App
+### 13.2 Context Resolution by GitHub App
 
 The GitHub App resolves all deterministic values when processing the PR:
 
@@ -627,7 +710,7 @@ The GitHub App resolves all deterministic values when processing the PR:
 | `profile` | From `.hap/decision.json` in commit |
 | `execution_path` | From `.hap/decision.json` in commit |
 
-### 12.3 Frame Binding
+### 13.3 Frame Binding
 
 For deploy-gate, the frame maps to git concepts:
 
@@ -647,7 +730,7 @@ profile=deploy-gate@0.3
 path=deploy-prod-user-facing
 ```
 
-### 12.4 Demo Implementation Steps
+### 13.4 Demo Implementation Steps
 
 **Step 1: Update Profile with execution paths**
 
@@ -695,9 +778,80 @@ Anyone can verify:
 3. Hash and compare to `execution_context_hash` in attestation
 4. Match = attestation is valid for this exact PR state
 
+### 13.5 Authorization Binding
+
+For deploy-gate, the authorization source (see section 10) is a file in the repository:
+
+- **Location:** `.hap/owners.json` in repository root
+- **Read from:** The **base branch** (target branch), NOT the PR branch
+- **Format:** Matches the protocol-level authorization mapping
+
+```json
+{
+  "domains": {
+    "engineering": ["did:github:alice", "did:github:bob"],
+    "release_management": ["did:github:carol"]
+  }
+}
+```
+
+**Why base branch?** This enforces the immutability rule (section 10.4). The PR cannot modify the authorization rules that apply to itself. To change who can attest, a separate PR must first be merged — subject to attestation by existing authorized owners.
+
+**Lifecycle:**
+- Adding a new authorized owner requires a PR that modifies `.hap/owners.json`, attested by existing owners
+- Removing an owner follows the same process
+- The file is version-controlled, providing full audit history of authorization changes
+
+### 13.6 Git-Specific Context Resolution
+
+The abstract resolution flow (section 9.1) maps to git as follows:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  1. DEVELOPER commits .hap/decision.json (minimal)                      │
+│     • profile: "deploy-gate@0.3"                                        │
+│     • execution_path: "deploy-prod-canary"                              │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  2. GITHUB APP receives webhook (PR created/updated)                    │
+│     • Knows: owner, repo, base_sha, head_sha, PR number                │
+│     • Reads .hap/owners.json from base branch                           │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  3. SYSTEM resolves execution context                                   │
+│     • changed_paths: computed from git diff                             │
+│     • diff_url: constructed from base/head SHAs                         │
+│     • sha: head commit                                                  │
+│     • repo: from webhook context                                        │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  4. ATTESTATION with identity & authorization check                     │
+│     • SP verifies attester identity (GitHub OAuth)                      │
+│     • SP checks attester DID against .hap/owners.json (base branch)     │
+│     • If authorized → sign attestation                                  │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+**Field resolution methods:**
+
+| Field | Resolution Method |
+|-------|-------------------|
+| `repo` | From webhook payload (`repository.full_name`) |
+| `sha` | From webhook payload (`pull_request.head.sha`) |
+| `base_sha` | From webhook payload (`pull_request.base.sha`) |
+| `changed_paths` | GitHub API: `GET /repos/{owner}/{repo}/pulls/{number}/files` |
+| `diff_url` | Constructed: `https://github.com/{owner}/{repo}/compare/{base}...{head}` |
+| `profile` | From `.hap/decision.json` in commit |
+| `execution_path` | From `.hap/decision.json` in commit |
+
+All resolved values are deterministic — given the same PR state, the system always computes the same values.
+
 ---
 
-## 13. Summary
+## 14. Summary
 
 | Aspect | v0.2 | v0.3 |
 |--------|------|------|
@@ -711,7 +865,7 @@ Anyone can verify:
 
 ---
 
-## 14. Design Decisions
+## 15. Design Decisions
 
 ### Why proposer declares in committed file?
 
@@ -775,20 +929,20 @@ With shared, resolved execution context:
 
 ---
 
-## 15. Gate Content Verifiability
+## 16. Gate Content Verifiability
 
-### 15.1 Problem
+### 16.1 Problem
 
 The protocol requires human articulation at gates 3-5 (Problem, Objective, Tradeoffs). But if that content is never hashed or published, the requirement is unenforceable after the fact. The attestation says "I committed" but not "here's what I committed to."
 
-### 15.2 Principle
+### 16.2 Principle
 
 > The protocol guarantees verifiability, not publication.
 > The decision to publish is the owner's.
 
 Gate content is private by default. But if the owner chooses to publish, anyone can verify it is the authentic content that was attested to.
 
-### 15.3 Gate Content Is Commitment, Not Comprehension
+### 16.3 Gate Content Is Commitment, Not Comprehension
 
 Gate content (problem, objective, tradeoffs) represents what the human committed to articulating. It does NOT prove:
 
@@ -799,7 +953,7 @@ Gate content (problem, objective, tradeoffs) represents what the human committed
 
 The protocol hashes what was committed. Publication makes that commitment visible. Neither guarantees quality of thought.
 
-### 15.4 Gate Content Hashes in Attestation
+### 16.4 Gate Content Hashes in Attestation
 
 At attestation time, the content of each gate is hashed and included in the attestation:
 
@@ -809,12 +963,12 @@ At attestation time, the content of each gate is hashed and included in the atte
   "version": "0.3",
   "profile_id": "deploy-gate@0.3",
   "frame_hash": "sha256:...",
+  "execution_context_hash": "sha256:...",
   "resolved_domains": [
     {
       "domain": "engineering",
       "did": "did:key:...",
-      "env": "prod",
-      "execution_context_hash": "sha256:..."
+      "env": "prod"
     }
   ],
   "gate_content_hashes": {
@@ -829,7 +983,7 @@ At attestation time, the content of each gate is hashed and included in the atte
 
 This happens automatically at attestation time. The owner does not need to opt in — the hashes are always computed and included.
 
-### 15.5 Publication is Optional
+### 16.5 Publication is Optional
 
 After attestation, the owner may choose to publish the actual gate content:
 
@@ -840,7 +994,7 @@ After attestation, the owner may choose to publish the actual gate content:
 
 The protocol does not require publication. The hashes in the attestation are sufficient to prove that content existed and was committed to.
 
-### 15.6 Verification Flow
+### 16.6 Verification Flow
 
 If gate content is published, anyone can verify it:
 
@@ -849,7 +1003,7 @@ If gate content is published, anyone can verify it:
 3. Match = verified authentic content
 4. Mismatch = content was tampered with after attestation
 
-### 15.7 Properties
+### 16.7 Properties
 
 | Property | Guarantee |
 |----------|-----------|
@@ -858,7 +1012,7 @@ If gate content is published, anyone can verify it:
 | **Tamper-evident** | Cannot publish different content than what was hashed |
 | **Non-repudiable** | Owner cannot deny what they wrote — the hash is in their signed attestation |
 
-### 15.8 Normative Rules
+### 16.8 Normative Rules
 
 1. The Local App MUST compute `gate_content_hashes` at attestation time.
 2. The hash for each gate MUST be computed from the exact text the owner entered.
@@ -868,9 +1022,9 @@ If gate content is published, anyone can verify it:
 
 ---
 
-## 16. AI Constraints & Gate Resolution
+## 17. AI Constraints & Gate Resolution
 
-### 16.1 Enforceable Constraints
+### 17.1 Enforceable Constraints
 
 The protocol enforces only what it can guarantee:
 
@@ -884,7 +1038,7 @@ The protocol enforces only what it can guarantee:
 
 **What the protocol does not guarantee:** How they arrived at the content.
 
-### 16.2 Gate Questions in Profile
+### 17.2 Gate Questions in Profile
 
 Predefined gate questions move from SDGs to the Profile:
 
@@ -900,7 +1054,7 @@ Predefined gate questions move from SDGs to the Profile:
 
 Questions are used as textarea placeholders — guidance, not enforcement.
 
-### 16.3 Simplified SDGs
+### 17.3 Simplified SDGs
 
 SDGs are reduced to structural checks only:
 
@@ -915,7 +1069,7 @@ See [v0.3 AI Constraints Proposal](/doc/v0.3-ai-constraints.md) for full details
 
 ---
 
-## 17. Decision Streams
+## 18. Decision Streams
 
 ### 18.1 Motivation
 
@@ -998,9 +1152,9 @@ This is the genesis. All subsequent attestations link back to it.
 
 ---
 
-## 18. SP Registration Requirements
+## 19. SP Registration Requirements
 
-### 18.1 SP Registries
+### 19.1 SP Registries
 
 The Service Provider MUST maintain:
 
@@ -1016,7 +1170,9 @@ The Service Provider MUST maintain:
 - Environment scopes per domain owner
 - Authority grant/revoke timestamps
 
-### 18.2 Organization Onboarding
+The Domain Authority Registry is the SP-level complement to project-level authorization sources (see section 10). The SP registry tracks organizational registrations; project-level authorization sources define per-project personnel.
+
+### 19.2 Organization Onboarding
 
 Before any attestation can be issued, an organization MUST:
 
@@ -1024,16 +1180,16 @@ Before any attestation can be issued, an organization MUST:
 2. Declare which profiles they will use
 3. Register domain owners with their authorized domains and environments
 
-### 18.3 SP Validation Rules
+### 19.3 SP Validation Rules
 
 The SP MUST reject attestation requests when:
 
 - Profile is not registered
-- Requesting DID has no authority for claimed domain
+- Requesting DID has no authority for claimed domain (see section 10.5)
 - Domain is not required by the execution path
 - Organization is not registered
 
-### 18.4 Domain Authority Lifecycle
+### 19.4 Domain Authority Lifecycle
 
 | Event | Action |
 |-------|--------|
@@ -1044,9 +1200,9 @@ The SP MUST reject attestation requests when:
 
 ---
 
-## 19. Governance
+## 20. Governance
 
-### 19.1 SP Governance
+### 20.1 SP Governance
 
 Service Providers are trusted parties. Their governance must be explicit:
 
@@ -1066,7 +1222,7 @@ Service Providers are trusted parties. Their governance must be explicit:
 - Backdating timestamps → SP trust revocation
 - Refusing valid requests → escalation path required
 
-### 19.2 Multi-SP Ecosystem
+### 20.2 Multi-SP Ecosystem
 
 The protocol supports multiple SPs:
 
@@ -1080,7 +1236,7 @@ The protocol supports multiple SPs:
 - SPs MAY federate domain authority (SP-A trusts SP-B's authority registry)
 - Cross-SP verification MUST be possible if both SPs are trusted
 
-### 19.3 Profile Governance
+### 20.3 Profile Governance
 
 **Profile Creation**
 - Anyone can propose a profile
@@ -1092,7 +1248,7 @@ The protocol supports multiple SPs:
 - SPs MUST support profile version negotiation
 - Deprecated profiles SHOULD have sunset timeline
 
-### 19.4 Domain Authority Governance
+### 20.4 Domain Authority Governance
 
 **Within Organizations:**
 - Organization defines who grants domain authority
@@ -1103,7 +1259,7 @@ The protocol supports multiple SPs:
 - All authority grants/revocations MUST be logged
 - Logs MUST include: who granted, to whom, which domain, when, expiration
 
-### 19.5 Dispute Resolution
+### 20.5 Dispute Resolution
 
 When attestation validity is disputed:
 
@@ -1115,7 +1271,7 @@ When attestation validity is disputed:
 
 ---
 
-## 20. Open Questions
+## 21. Open Questions
 
 1. **Domain inheritance** — Can a domain "include" another domain's required fields?
 
@@ -1129,11 +1285,13 @@ When attestation validity is disputed:
 
 6. **Cross-organization decisions** — How do multi-org projects handle domain authority?
 
+7. **Authorization source federation** — How do authorization sources compose across repos/projects in the same organization? Can an org-level authorization source delegate to per-project overrides?
+
 ---
 
-## 21. Scope, Agents, and Future Work
+## 22. Scope, Agents, and Future Work
 
-### 21.1 The Core Principle
+### 22.1 The Core Principle
 
 > Bounds flow down, never up. The root is always human.
 
@@ -1148,7 +1306,7 @@ Human attests to bounds
 
 Agents can narrow bounds (delegate with tighter constraints). Agents cannot widen bounds (grant themselves more authority).
 
-### 21.2 Agent Workflows in v0.3
+### 22.2 Agent Workflows in v0.3
 
 HAP already supports agent workflows:
 
@@ -1175,7 +1333,7 @@ Audit shows:
   Human authorized these specific constraints.
 ```
 
-### 21.3 What v0.3 Does Not Address
+### 22.3 What v0.3 Does Not Address
 
 **High-frequency re-attestation**
 - Real-time constraint updates at machine speed
@@ -1192,7 +1350,7 @@ Audit shows:
 - Cross-SP conflict resolution
 - Decentralized trust models
 
-### 21.4 Guidance for Regulated Industries
+### 22.4 Guidance for Regulated Industries
 
 Organizations in regulated industries (healthcare, finance, safety-critical) should layer additional controls on top of HAP:
 
@@ -1203,7 +1361,7 @@ Organizations in regulated industries (healthcare, finance, safety-critical) sho
 
 HAP provides accountability infrastructure. Compliance requires additional organizational controls.
 
-### 21.5 Future Considerations (v0.4+)
+### 22.5 Future Considerations (v0.4+)
 
 | Topic | Description |
 |-------|-------------|
@@ -1216,7 +1374,7 @@ HAP provides accountability infrastructure. Compliance requires additional organ
 
 ---
 
-## 22. Next Steps
+## 23. Next Steps
 
 1. Review this proposal
 2. Implement in demo (deploy-gate profile)
