@@ -194,6 +194,11 @@ The **profile defines the execution context schema**. Each profile specifies:
         "source": "computed",
         "method": "constructed",
         "description": "Persistent link to the diff"
+      },
+      "output_ref": {
+        "source": "declared",
+        "description": "Reference to where the output of this action will be accessible",
+        "required": false
       }
     }
   }
@@ -238,10 +243,11 @@ The specific fields depend on the profile's execution context schema. Governance
   "profile": "deploy-gate@0.3",
   "execution_path": "deploy-prod-canary",
 
-  "repo": "owner/repo",
+  "repo": "https://github.com/owner/repo",
   "sha": "abc123def456...",
   "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"],
-  "diff_url": "https://github.com/owner/repo/compare/base...head"
+  "diff_url": "https://github.com/owner/repo/compare/base...head",
+  "output_ref": "https://myapp.com"
 }
 ```
 
@@ -526,11 +532,12 @@ The resolved execution context contains all declared and computed fields. The sp
 {
   "profile": "deploy-gate@0.3",
   "execution_path": "deploy-prod-canary",
-  "repo": "owner/repo",
+  "repo": "https://github.com/owner/repo",
   "sha": "abc123def456...",
   "base_sha": "def456abc123...",
   "diff_url": "https://github.com/owner/repo/compare/def456...abc123",
-  "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"]
+  "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"],
+  "output_ref": "https://myapp.com"
 }
 ```
 
@@ -558,6 +565,61 @@ The attestation IS the audit record. It contains:
 - `gate_content_hashes` → commits to what the human articulated (problem/objective/tradeoffs)
 
 Anyone can verify: "This attestation commits to this exact context, derived from this exact action state."
+
+### 9.6 Output Provenance
+
+#### 9.6.1 Problem
+
+The attestation proves a human committed to an action. But after execution, how does anyone verify that an observable output was produced by an attested action? Without a binding between attestation and output, any system could claim a `frame_hash` it did not earn.
+
+#### 9.6.2 Output Reference
+
+Profiles MAY define an `output_ref` field in the execution context schema. When present, it declares where the output of this action will be accessible.
+
+`output_ref` is:
+- **Declared** — the proposer specifies the output target
+- **Included in `execution_context_hash`** — domain owners attest to it
+- **Profile-defined format** — a URL for web deployments, an API endpoint for system actions, or a structured reference for multi-endpoint outputs
+
+Because `output_ref` is part of the execution context, it is hashed and signed. This creates a cryptographic binding between the attestation and the output location.
+
+#### 9.6.3 Output Provenance Metadata
+
+After execution, outputs SHOULD carry provenance metadata that references the attestation(s) that authorized them.
+
+**MUST include:**
+- `frame_hash` — the unifying identifier across all attestations for one action
+
+**MAY include:**
+- Full frame fields (profile-specific)
+- SP endpoint for attestation lookup
+- Attestation identifiers
+
+How provenance metadata is exposed is profile-specific:
+- Web deployment: `/.well-known/hap` endpoint or HTTP header
+- API service: response header or metadata endpoint
+- Agent: action log entries
+- System change: audit log entries
+
+#### 9.6.4 Verification Flow
+
+Given an observable output:
+
+1. Read `frame_hash` from the output's provenance metadata
+2. Fetch attestation(s) for that frame_hash from the SP
+3. Verify attestation signatures
+4. Verify `output_ref` in the attested execution context matches the output's actual location
+5. If match — the output is cryptographically bound to the attested action
+
+Step 4 is the critical binding. Without it, a `frame_hash` on an output is just a claim. With it, the claim is verified against what domain owners actually attested to.
+
+#### 9.6.5 Normative Rules
+
+1. Profiles MAY define `output_ref` in the execution context schema.
+2. When `output_ref` is present, it MUST be included in the execution context hash.
+3. Outputs SHOULD carry `frame_hash` as provenance metadata.
+4. Verifiers MUST check that the output's location matches the `output_ref` in the attested execution context.
+5. The format of `output_ref` and the method of exposing provenance metadata are profile-specific.
 
 ---
 
@@ -687,14 +749,15 @@ This section defines how the deploy-gate profile binds abstract protocol concept
 For deploy-gate, the declared execution context is stored as `.hap/decision.json` in the commit:
 
 - **Location:** `.hap/decision.json` in repository root
-- **Content:** Governance choices only (profile + execution_path)
+- **Content:** Governance choices only (profile, execution_path, and optional output_ref)
 - **Binding:** Included in commit SHA (immutable)
 - **Retrieval:** Via git or GitHub API
 
 ```json
 {
   "profile": "deploy-gate@0.3",
-  "execution_path": "deploy-prod-canary"
+  "execution_path": "deploy-prod-canary",
+  "output_ref": "https://myapp.com"
 }
 ```
 
@@ -704,13 +767,14 @@ The GitHub App resolves all deterministic values when processing the PR:
 
 | Value | Resolution Method |
 |-------|-------------------|
-| `repo` | From webhook payload (`repository.full_name`) |
+| `repo` | Full URL from webhook payload (`repository.html_url`) |
 | `sha` | From webhook payload (`pull_request.head.sha`) |
 | `base_sha` | From webhook payload (`pull_request.base.sha`) |
 | `changed_paths` | GitHub API: `GET /repos/{owner}/{repo}/pulls/{number}/files` |
 | `diff_url` | Constructed: `https://github.com/{owner}/{repo}/compare/{base}...{head}` |
 | `profile` | From `.hap/decision.json` in commit |
 | `execution_path` | From `.hap/decision.json` in commit |
+| `output_ref` | From `.hap/decision.json` in commit |
 
 ### 13.3 Frame Binding
 
@@ -725,7 +789,7 @@ For deploy-gate, the frame maps to git concepts:
 
 Frame structure:
 ```
-repo=owner/repo
+repo=https://github.com/owner/repo
 sha=abc123def456...
 env=prod
 profile=deploy-gate@0.3
@@ -746,7 +810,8 @@ Developer adds `.hap/decision.json` to their commit with governance choices:
 ```json
 {
   "profile": "deploy-gate@0.3",
-  "execution_path": "deploy-prod-canary"
+  "execution_path": "deploy-prod-canary",
+  "output_ref": "https://myapp.com"
 }
 ```
 
@@ -816,6 +881,7 @@ The abstract resolution flow (section 9.1) maps to git as follows:
 │  1. DEVELOPER commits .hap/decision.json (minimal)                      │
 │     • profile: "deploy-gate@0.3"                                        │
 │     • execution_path: "deploy-prod-canary"                              │
+│     • output_ref: "https://myapp.com" (optional)                        │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
@@ -844,15 +910,42 @@ The abstract resolution flow (section 9.1) maps to git as follows:
 
 | Field | Resolution Method |
 |-------|-------------------|
-| `repo` | From webhook payload (`repository.full_name`) |
+| `repo` | Full URL from webhook payload (`repository.html_url`) |
 | `sha` | From webhook payload (`pull_request.head.sha`) |
 | `base_sha` | From webhook payload (`pull_request.base.sha`) |
 | `changed_paths` | GitHub API: `GET /repos/{owner}/{repo}/pulls/{number}/files` |
 | `diff_url` | Constructed: `https://github.com/{owner}/{repo}/compare/{base}...{head}` |
 | `profile` | From `.hap/decision.json` in commit |
 | `execution_path` | From `.hap/decision.json` in commit |
+| `output_ref` | From `.hap/decision.json` in commit |
 
 All resolved values are deterministic — given the same PR state, the system always computes the same values.
+
+### 13.7 Output Provenance for Deploy-Gate
+
+For deploy-gate, the output provenance metadata is exposed at a well-known endpoint on the deployed service:
+
+```
+GET /.well-known/hap
+
+{
+  "frame_hash": "sha256:..."
+}
+```
+
+Alternatively, the service MAY expose provenance via HTTP response header:
+
+```
+X-HAP-Frame-Hash: sha256:...
+```
+
+**Verification:**
+
+1. Fetch `/.well-known/hap` from the deployed service
+2. Read `frame_hash` from the response
+3. Fetch attestation(s) for that `frame_hash` from the SP
+4. Verify `output_ref` in the attested execution context matches the service URL
+5. If match — the deployed service is cryptographically bound to the attested action
 
 ---
 
@@ -860,13 +953,15 @@ All resolved values are deterministic — given the same PR state, the system al
 
 | Aspect | v0.2 | v0.3 |
 |--------|------|------|
-| Declared content | Execution context with semantic fields | Governance choices only (profile + execution_path) |
+| Declared content | Execution context with semantic fields | Governance choices only (profile + execution_path + optional output_ref) |
 | Execution context source | Entered in UI | Declared + system-resolved from action |
 | Execution path selection | First attestor chooses | Proposer declares in committed file |
 | Execution context hash | Single, in frame | Complete resolved context hash in attestation |
 | Condition evaluation | N/A | None (explicit path choice) |
 | Auditability | "Someone approved" | Attestation = auditable record with resolved context |
 | Accountability | First attestor | Proposer declares, domains validate |
+| Output provenance | Not addressed | Optional `output_ref` in context + `frame_hash` on outputs |
+| Resource identification | Platform-specific | Platform-agnostic full URLs |
 
 ---
 
