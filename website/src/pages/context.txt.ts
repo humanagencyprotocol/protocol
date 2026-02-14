@@ -140,6 +140,22 @@ HAP is the infrastructure that keeps direction human.
 
 ---
 
+### Where Do You Need Human Direction Before Execution?
+
+HAP applies wherever AI executes consequential actions:
+
+- **Development / Deployments** — No deployment until the right owners commit to what ships and why. (Live demo available)
+- **AI Agents** — Agents execute within human-approved bounds; expansions require attestation.
+- **Infrastructure** — No production infrastructure change without domain owners signing off.
+- **Database & Data** — No schema change, destructive query, or export without a named human committing.
+- **Financial Operations** — No money movement without explicit human commitment.
+- **Access & Identity** — No permission grant or role escalation without a named owner signing off.
+- **Security-Sensitive Changes** — No security-impacting change without security owner attestation.
+- **Customer-Facing Product** — No user-impacting change without product owner commitment.
+- **Compliance & Regulated** — Cryptographic proof of required human oversight before execution.
+
+---
+
 ### Build With HAP
 
 - **Protocol** — How direction is described, measured, and enforced

@@ -623,6 +623,8 @@ How immutability is enforced depends on the environment:
 
 The protocol does not prescribe where the authorization source lives — only that it cannot be self-modified by the attester in the same action.
 
+**Exception — first adoption:** When no authorization source exists yet (e.g., a repository adopting HAP for the first time), the authorization source MAY be introduced alongside the action. This is safe because there is no prior authorization to bypass. Once established, the immutability rule applies to all subsequent actions.
+
 ### 10.5 SP Authorization Responsibilities
 
 Before signing an attestation, the SP MUST:
@@ -797,7 +799,10 @@ For deploy-gate, the authorization source (see section 10) is a file in the repo
 
 **Why base branch?** This enforces the immutability rule (section 10.4). The PR cannot modify the authorization rules that apply to itself. To change who can attest, a separate PR must first be merged — subject to attestation by existing authorized owners.
 
+**Bootstrap exception:** When a repository first adopts HAP, `.hap/owners.json` does not yet exist on the base branch. In this case, the system falls back to reading from the head (PR) branch. This is the only way HAP can be introduced into an existing repository. Once the initial PR merges, all subsequent PRs read from the base branch as normal. This exception is safe because no prior authorization exists to bypass — the file is being created, not modified.
+
 **Lifecycle:**
+- **First adoption:** The initial `.hap/owners.json` is introduced via PR. Since no prior authorization exists, the file is read from the PR branch.
 - Adding a new authorized owner requires a PR that modifies `.hap/owners.json`, attested by existing owners
 - Removing an owner follows the same process
 - The file is version-controlled, providing full audit history of authorization changes
