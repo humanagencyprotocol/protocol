@@ -36,7 +36,7 @@ export async function GET() {
 AI executes the how.
 Humans decide the why.
 
-**HAP ensures humans define the frame, accept the tradeoffs, and own the consequences.**
+**HAP makes irreversible digital actions impossible without explicit authorization.**
 
 ---
 
