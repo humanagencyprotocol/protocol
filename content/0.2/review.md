@@ -82,20 +82,26 @@ Execution context represents the structured constraints binding an executor. It 
 
 Any semantic content used to reach a decision (AI analysis, deliberation, reasoning) remains local and out of protocol scope.
 
-### 3.4 Terminology: Action vs. Execution
+### 3.4 Terminology Changes
+
+#### Executor Proxy → Gatekeeper
+
+The v0.2 role "Executor Proxy" is renamed to **Gatekeeper** in v0.3. The old name implied transparent forwarding; the actual role is enforcement — it verifies attestations and blocks execution if validation fails. "Gatekeeper" describes what it does: it guards the gate between human-attested direction and machine execution.
+
+#### Action vs. Execution
 
 The protocol uses two related but distinct terms:
 
-| Term | Meaning | Examples |
-|------|---------|----------|
-| **Action** | WHAT is being authorized | `action template`, `action params` |
-| **Execution** | HOW it is carried out, under what constraints | `execution path`, `execution context` |
+| Term | Meaning | Attested via |
+|------|---------|-------------|
+| **Action** | WHAT is being authorized | Frame fields (profile-specific, e.g. `repo` + `sha`) |
+| **Execution** | HOW it is carried out, under what constraints | `execution_path`, `execution_context_hash` |
 
-**Action** is the thing being authorized — deploy SHA X to environment Y. It defines the intent.
+**Action** is the thing being authorized — deploy SHA X to environment Y. The action is identified by the frame fields, which are hashed into `frame_hash` and signed in the attestation.
 
 **Execution** is the carrying out of that action under specific constraints — which governance path, what domains must approve, what context each domain commits to.
 
-The Executor Proxy receives an **action** (what to do) and validates that proper **execution** constraints were met (who committed, under what context).
+The Gatekeeper receives the frame fields and attestations, reconstructs `frame_hash`, and validates that every attestation matches. Only attested data is trusted — the Gatekeeper never accepts unattested parameters.
 
 ### 3.5 Protocol vs. Profile Layering
 
@@ -104,7 +110,7 @@ The protocol defines abstract concepts. Profiles define concrete implementations
 | Layer | Defines | Example |
 |-------|---------|---------|
 | **Protocol** | Execution context structure, frame binding, attestation format | "Execution context must be immutably bound to the action" |
-| **Profile** | How binding works in a specific context | "For GitHub PRs, declared fields live in `.hap/decision.json` in the commit" |
+| **Profile** | How binding works in a specific context | "For GitHub PRs, declared fields live in `.hap/binding.json` in the commit" |
 
 **Why this matters:**
 
@@ -277,7 +283,7 @@ The execution context MUST be:
 
 **Immutable** — The declared fields are committed with the action. The resolved fields are deterministic for a given action state.
 
-**Bound to action** — How binding works is profile-specific. For deploy-gate, declared fields live in `.hap/decision.json` in the commit.
+**Bound to action** — How binding works is profile-specific. For deploy-gate, declared fields live in `.hap/binding.json` in the commit.
 
 **Verifiable** — Anyone can re-resolve the execution context and compare to the attested hash.
 
@@ -331,11 +337,11 @@ If a domain owner disagrees with the proposal:
 
 ### 6.1 Frame Derivation
 
-A frame uniquely identifies an action and its execution context. The frame contains:
+A frame uniquely identifies an action and its governance context. The frame fields are profile-specific — each profile defines which fields identify the action. All frame fields MUST be attested (included in `frame_hash`).
 
 | Field | Source |
 |-------|--------|
-| `action_id` | Profile-specific action identifier |
+| Profile-specific action fields | From the action itself (e.g. `repo`, `sha` for deploy-gate) |
 | `profile` | From execution context |
 | `path` | From execution context |
 | `env` | From action context (optional) |
@@ -343,7 +349,7 @@ A frame uniquely identifies an action and its execution context. The frame conta
 **v0.3 Frame structure (abstract):**
 
 ```
-action_id=<profile-specific identifier>
+<profile-specific-fields>=<values>
 profile=<profile-id>
 path=<execution-path>
 env=<environment>
@@ -410,22 +416,20 @@ Each domain owner can independently prove:
 
 ---
 
-## 8. Executor Proxy Flow
+## 8. Gatekeeper Flow
 
 ### 8.1 Execution Request
 
-The client submits an execution request with all required attestations:
+The client submits the frame fields and attestations. The Gatekeeper only accepts data that is attested — every field in the request must be verifiable against `frame_hash` in the attestations.
 
 ```json
 {
-  "action": {
-    "template_id": "<profile-specific-template>",
-    "params": {
-      "action_id": "<profile-specific-identifier>",
-      "env": "prod",
-      "profile_id": "deploy-gate@0.3",
-      "execution_path": "deploy-prod-user-facing"
-    }
+  "frame": {
+    "repo": "https://github.com/owner/repo",
+    "sha": "a1b2c3...",
+    "env": "prod",
+    "profile": "deploy-gate@0.3",
+    "path": "deploy-prod-user-facing"
   },
   "attestations": [
     "base64-attestation-blob-domain-1...",
@@ -434,11 +438,11 @@ The client submits an execution request with all required attestations:
 }
 ```
 
-The `action_id` and `template_id` are profile-specific. For git-based profiles, these might be repository and SHA. For other contexts, they might be document IDs, request IDs, or other identifiers.
+The frame fields are profile-specific. For deploy-gate, they are `repo`, `sha`, `env`, `profile`, and `path`. The Gatekeeper reconstructs `frame_hash` from these fields and verifies it matches every attestation. No unattested parameters are accepted.
 
 ### 8.2 Validation Steps
 
-Executor Proxy performs:
+The Gatekeeper performs:
 
 1. **Reconstruct frame** from action params
 2. **Compute frame_hash**
@@ -456,7 +460,7 @@ Executor Proxy performs:
 
 ### 8.3 SP Consultation
 
-The Executor Proxy consults the Service Provider only to fetch the public key for signature verification:
+The Gatekeeper consults the Service Provider only to fetch the public key for signature verification:
 
 ```
 GET /api/sp/pubkey → { "public_key": "hex..." }
@@ -466,7 +470,7 @@ All validation logic runs locally. The SP is not a runtime dependency for valida
 
 ### 8.4 Stateless Design
 
-The Executor Proxy:
+The Gatekeeper:
 
 - Does not store attestations
 - Does not query attestation registries
@@ -716,8 +720,8 @@ New error codes for v0.3:
 | `MISSING_REQUIRED_DOMAIN` | A required domain has no valid attestation |
 | `DOMAIN_SCOPE_MISMATCH` | Attestation domain/env doesn't match requirement |
 | `EXECUTION_CONTEXT_VIOLATION` | Execution context missing required fields |
-| `DECISION_RECORD_MISSING` | Action has no bound execution context declaration |
-| `DECISION_RECORD_INVALID` | Declared execution context malformed or missing required fields |
+| `BINDING_FILE_MISSING` | Action has no bound execution context declaration |
+| `BINDING_FILE_INVALID` | Declared execution context malformed or missing required fields |
 
 ---
 
@@ -725,6 +729,7 @@ New error codes for v0.3:
 
 ### What changes
 
+- "Executor Proxy" renamed to **Gatekeeper** — reflects its actual role as enforcement point
 - Frame no longer includes `execution_context_hash`
 - Attestations include `execution_context_hash` at top level (shared context, not per-domain)
 - Attestations include `resolved_domains` for domain authority (domain, did, env)
@@ -735,7 +740,7 @@ New error codes for v0.3:
 
 - v0.2 attestations remain valid for v0.2 profiles
 - v0.3 profiles require v0.3 attestations
-- Executor Proxy checks `version` field and applies appropriate validation
+- Gatekeeper checks `version` field and applies appropriate validation
 - v0.3 requires declared execution context bound to action
 
 ---
@@ -746,9 +751,9 @@ This section defines how the deploy-gate profile binds abstract protocol concept
 
 ### 13.1 Execution Context Binding
 
-For deploy-gate, the declared execution context is stored as `.hap/decision.json` in the commit:
+For deploy-gate, the declared execution context is stored as `.hap/binding.json` in the commit:
 
-- **Location:** `.hap/decision.json` in repository root
+- **Location:** `.hap/binding.json` in repository root
 - **Content:** Governance choices only (profile, execution_path, and optional output_ref)
 - **Binding:** Included in commit SHA (immutable)
 - **Retrieval:** Via git or GitHub API
@@ -772,19 +777,20 @@ The GitHub App resolves all deterministic values when processing the PR:
 | `base_sha` | From webhook payload (`pull_request.base.sha`) |
 | `changed_paths` | GitHub API: `GET /repos/{owner}/{repo}/pulls/{number}/files` |
 | `diff_url` | Constructed: `https://github.com/{owner}/{repo}/compare/{base}...{head}` |
-| `profile` | From `.hap/decision.json` in commit |
-| `execution_path` | From `.hap/decision.json` in commit |
-| `output_ref` | From `.hap/decision.json` in commit |
+| `profile` | From `.hap/binding.json` in commit |
+| `execution_path` | From `.hap/binding.json` in commit |
+| `output_ref` | From `.hap/binding.json` in commit |
 
 ### 13.3 Frame Binding
 
 For deploy-gate, the frame maps to git concepts:
 
-| Abstract | Deploy-Gate Binding |
-|----------|---------------------|
-| `action_id` | `repo` + `sha` |
-| `profile` | From `.hap/decision.json` |
-| `path` | From `.hap/decision.json` |
+| Frame Field | Deploy-Gate Binding |
+|-------------|---------------------|
+| `repo` | Repository URL from webhook payload |
+| `sha` | Commit SHA from webhook payload |
+| `profile` | From `.hap/binding.json` |
+| `path` | From `.hap/binding.json` |
 | `env` | From deployment context |
 
 Frame structure:
@@ -806,7 +812,7 @@ path=deploy-prod-user-facing
 
 **Step 2: Declare execution context**
 
-Developer adds `.hap/decision.json` to their commit with governance choices:
+Developer adds `.hap/binding.json` to their commit with governance choices:
 ```json
 {
   "profile": "deploy-gate@0.3",
@@ -818,7 +824,7 @@ Developer adds `.hap/decision.json` to their commit with governance choices:
 **Step 3: System resolves execution context**
 
 On PR webhook:
-1. Read declared fields from `.hap/decision.json`
+1. Read declared fields from `.hap/binding.json`
 2. Compute `changed_paths` from PR diff
 3. Construct `diff_url` from base/head SHAs
 4. Build complete execution context (declared + resolved)
@@ -840,7 +846,7 @@ On PR webhook:
 **Step 6: Verification**
 
 Anyone can verify:
-1. Fetch `.hap/decision.json` from the commit
+1. Fetch `.hap/binding.json` from the commit
 2. Re-compute the resolved context from git
 3. Hash and compare to `execution_context_hash` in attestation
 4. Match = attestation is valid for this exact PR state
@@ -878,7 +884,7 @@ The abstract resolution flow (section 9.1) maps to git as follows:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│  1. DEVELOPER commits .hap/decision.json (minimal)                      │
+│  1. DEVELOPER commits .hap/binding.json (minimal)                      │
 │     • profile: "deploy-gate@0.3"                                        │
 │     • execution_path: "deploy-prod-canary"                              │
 │     • output_ref: "https://myapp.com" (optional)                        │
@@ -915,9 +921,9 @@ The abstract resolution flow (section 9.1) maps to git as follows:
 | `base_sha` | From webhook payload (`pull_request.base.sha`) |
 | `changed_paths` | GitHub API: `GET /repos/{owner}/{repo}/pulls/{number}/files` |
 | `diff_url` | Constructed: `https://github.com/{owner}/{repo}/compare/{base}...{head}` |
-| `profile` | From `.hap/decision.json` in commit |
-| `execution_path` | From `.hap/decision.json` in commit |
-| `output_ref` | From `.hap/decision.json` in commit |
+| `profile` | From `.hap/binding.json` in commit |
+| `execution_path` | From `.hap/binding.json` in commit |
+| `output_ref` | From `.hap/binding.json` in commit |
 
 All resolved values are deterministic — given the same PR state, the system always computes the same values.
 
@@ -1377,7 +1383,7 @@ When attestation validity is disputed:
 
 2. **Attestation aggregation** — Should there be a way to combine multiple domain attestations into one signed bundle?
 
-3. **Decision file validation** — Should the Local App validate the decision file against a JSON schema before allowing attestation?
+3. **Binding file validation** — Should the Local App validate the binding file against a JSON schema before allowing attestation?
 
 4. **SP federation** — How do multiple SPs coordinate? Should there be a root trust anchor?
 
