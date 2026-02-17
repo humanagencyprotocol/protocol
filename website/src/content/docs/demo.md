@@ -69,7 +69,7 @@ Profiles define everything about a specific use case: which gates exist, what ex
 
 ```
 ┌──────────────────┐     ┌───────────────────┐     ┌──────────────────┐
-│   Local App      │     │  Service Provider  │     │  Executor Proxy  │
+│   Local App      │     │  Service Provider  │     │   Gatekeeper     │
 │   (UI)           │────→│  (SP)              │     │                  │
 │                  │     │                    │     │  Validates:      │
 │  • 6-gate wizard │     │  • Verifies        │     │  • Signature     │
@@ -97,7 +97,7 @@ Profiles define everything about a specific use case: which gates exist, what ex
 
 **Attestation Store** — Persists attestation blobs keyed by `{frameHash}:{domain}`. In production uses Vercel KV (Upstash Redis); locally uses an in-memory store.
 
-**Executor Proxy** — The enforcement point. Reconstructs the frame from action parameters, fetches the profile, looks up required domains, and validates each attestation (signature, frame hash, TTL, domain scope). Authorizes execution only when all required domains have valid attestations. Stateless — validates locally.
+**Gatekeeper** — The enforcement point. Reconstructs the frame from action parameters, fetches the profile, looks up required domains, and validates each attestation (signature, frame hash, TTL, domain scope). Authorizes execution only when all required domains have valid attestations. Stateless — validates locally.
 
 ---
 
@@ -125,7 +125,7 @@ Review the execution context. Everything shown here is deterministic — two rev
 
 | Source | Fields | Origin |
 |---|---|---|
-| **Declared** | `profile`, `execution_path` | `.hap/decision.json` in the repo |
+| **Declared** | `profile`, `execution_path` | `.hap/binding.json` in the repo |
 | **From action** | `repo`, `sha`, `base_sha` | GitHub PR metadata |
 | **Computed** | `changed_paths`, `diff_url` | Derived from PR files |
 
@@ -162,7 +162,7 @@ The execution context is the set of facts that bind an attestation to a specific
 ### Field Sources
 
 ```
-.hap/decision.json (committed to repo)    GitHub PR metadata
+.hap/binding.json (committed to repo)    GitHub PR metadata
 ┌───────────────────────┐                  ┌───────────────────────┐
 │ profile: deploy-gate@0.3  │  declared    │ repo: owner/repo      │  action
 │ execution_path: canary    │──────────┐   │ sha: 71b6e7e...       │──────────┐
@@ -182,7 +182,7 @@ The execution context is the set of facts that bind an attestation to a specific
                                               (SHA-256 of canonical form)
 ```
 
-### decision.json
+### binding.json
 
 The only human-authored governance file. Contains exactly two fields:
 
@@ -193,7 +193,7 @@ The only human-authored governance file. Contains exactly two fields:
 }
 ```
 
-This file is committed to the repository at `.hap/decision.json`. The profile determines what gates exist and what domains are required. The execution path selects which deployment strategy applies.
+This file is committed to the repository at `.hap/binding.json`. The profile determines what gates exist and what domains are required. The execution path selects which deployment strategy applies.
 
 ### Determinism Guarantee
 
@@ -205,7 +205,7 @@ All execution context fields are deterministic, verifiable, and persistent. Two 
 
 ### What Gets Verified
 
-The Executor Proxy performs five checks before authorizing execution:
+The Gatekeeper performs five checks before authorizing execution:
 
 1. **Signature** — Ed25519 signature from the SP is valid
 2. **Frame hash** — Attestation's frame hash matches the reconstructed frame
@@ -276,7 +276,7 @@ demo/
 │       └── src/
 │           ├── app/api/
 │           │   ├── sp/      # SP endpoints (attest, verify, pubkey)
-│           │   ├── proxy/   # Executor Proxy
+│           │   ├── gatekeeper/ # Gatekeeper
 │           │   └── github/  # Webhook handler
 │           └── lib/         # Attestation store, key management
 ├── packages/
@@ -412,12 +412,12 @@ Full endpoint documentation with request/response schemas is available on the [s
 | `POST` | `/api/attestations` | Publish attestation |
 | `GET` | `/api/attestations?owner=&repo=&sha=` | Get attestation status for a PR |
 
-### Executor Proxy
+### Gatekeeper
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/api/proxy/execute/deploy` | Validate and authorize deployment |
-| `POST` | `/api/executor/authorize` | Validate attestation coverage |
+| `POST` | `/api/gatekeeper/execute/deploy` | Validate and authorize deployment |
+| `POST` | `/api/gatekeeper/authorize` | Validate attestation coverage |
 
 ### Context Resolution
 
@@ -474,7 +474,7 @@ This demo implements **HAP v0.3** as specified in the [review draft](https://hum
 | §5 Frames | Canonical frame hashing (`SHA-256` of key-ordered fields) |
 | §6 Attestations | Ed25519 signatures, TTL enforcement, gate content hashes |
 | §7 Domains | Role-based attestations with per-path required domain lists |
-| §8 Executor Proxy | Stateless validation of signature, frame, TTL, and domain coverage |
+| §8 Gatekeeper | Stateless validation of signature, frame, TTL, and domain coverage |
 | §10 Identity | DID-based identity model, authorization mapping via `owners.json` |
 | §17.1 AI Constraints | AI as reading aid only; no auto-generation of gate content |
 

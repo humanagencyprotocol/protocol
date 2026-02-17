@@ -86,7 +86,7 @@ Any semantic content used to reach a decision (AI analysis, deliberation, reason
 
 #### Executor Proxy → Gatekeeper
 
-The v0.2 role "Executor Proxy" is renamed to **Gatekeeper** in v0.3. The old name implied transparent forwarding; the actual role is enforcement — it verifies attestations and blocks execution if validation fails. "Gatekeeper" describes what it does: it guards the gate between human-attested direction and machine execution.
+The v0.2 role "Executor Proxy" is renamed to **Gatekeeper** in v0.3. The old name implied transparent forwarding; the actual role is enforcement — it verifies attestations and blocks execution if validation fails. "Gatekeeper" describes what it does: it guards the gate between human-attested direction and machine execution. The Gatekeeper is a mandatory protocol component — every attested action MUST pass through attestation verification before execution proceeds. See section 8 for requirements.
 
 #### Action vs. Execution
 
@@ -416,7 +416,22 @@ Each domain owner can independently prove:
 
 ---
 
-## 8. Gatekeeper Flow
+## 8. Gatekeeper
+
+### 8.0 Role
+
+The Gatekeeper is the mandatory enforcement point between human-attested authorization and machine execution. No action may proceed to execution without passing through attestation verification.
+
+> Every execution MUST be preceded by attestation verification.
+> The Gatekeeper is the component that performs this verification.
+
+The protocol does not prescribe how the Gatekeeper is deployed — it may be:
+
+- **A library** — embedded in the application (e.g., `verify()` call before execution)
+- **A sidecar** — co-located process that gates requests
+- **A service** — standalone verification endpoint
+
+What the protocol requires is that the verification logic defined in section 8.2 MUST execute before any attested action proceeds. Skipping verification — even when attestations exist — is a protocol violation.
 
 ### 8.1 Execution Request
 
@@ -478,6 +493,49 @@ The Gatekeeper:
 - Validates and decides
 
 Where attestations are stored (PR comments, database, registry) is an integration concern, not a protocol concern.
+
+**Normative:** The Gatekeeper MUST NOT have a "bypass" mode. If attestations are required by the profile, they must be verified. Development/testing environments MAY use test attestations with test keys, but the verification logic itself must still execute.
+
+### 8.5 Connector Model
+
+The Gatekeeper defines a standard verification interface. **Connectors** adapt this interface to specific execution environments.
+
+#### 8.5.1 Standard Interface
+
+Every Gatekeeper implementation MUST expose the following logical operations:
+
+| Operation | Input | Output |
+|-----------|-------|--------|
+| `verify` | Frame fields + attestation blobs | `{ valid: true }` or `{ valid: false, errors: [...] }` |
+
+The `verify` operation performs all steps defined in section 8.2. It is stateless and side-effect-free.
+
+Implementations MAY additionally provide:
+
+| Operation | Purpose |
+|-----------|---------|
+| `verifyAndExecute` | Verify attestations, then trigger execution if valid |
+| `middleware` | Framework-specific request interceptor (e.g., Express, Koa) |
+
+#### 8.5.2 Connector Examples
+
+Connectors adapt the standard interface to specific systems:
+
+| Connector | Integration Point | Example |
+|-----------|-------------------|---------|
+| **CI/CD** | Pipeline step that gates deployment | GitHub Actions step, GitLab CI job |
+| **API Gateway** | Request interceptor that verifies before forwarding | Express middleware, API gateway plugin |
+| **Webhook** | Incoming webhook handler that verifies before processing | Slack bot, deployment trigger |
+| **Infrastructure** | Admission controller that verifies before applying | Kubernetes admission webhook, Terraform sentinel |
+| **Agent runtime** | Pre-execution check in agent frameworks | LangChain tool wrapper, custom agent loop |
+
+#### 8.5.3 Normative Rules
+
+1. Every connector MUST implement the full verification logic defined in section 8.2.
+2. A connector MUST NOT partially verify (e.g., check signatures but skip domain validation).
+3. A connector MUST reject execution if verification fails — no "warn and proceed" mode for production use.
+4. Connectors SHOULD expose structured error responses using the error codes in section 11.
+5. Connectors MAY cache SP public keys to minimize network calls.
 
 ---
 
@@ -589,7 +647,7 @@ Because `output_ref` is part of the execution context, it is hashed and signed. 
 
 #### 9.6.3 Output Provenance Metadata
 
-After execution, outputs SHOULD carry provenance metadata that references the attestation(s) that authorized them.
+After execution, outputs MAY carry provenance metadata that references the attestation(s) that authorized them.
 
 **MUST include:**
 - `frame_hash` — the unifying identifier across all attestations for one action
@@ -621,7 +679,7 @@ Step 4 is the critical binding. Without it, a `frame_hash` on an output is just 
 
 1. Profiles MAY define `output_ref` in the execution context schema.
 2. When `output_ref` is present, it MUST be included in the execution context hash.
-3. Outputs SHOULD carry `frame_hash` as provenance metadata.
+3. Outputs MAY carry `frame_hash` as provenance metadata.
 4. Verifiers MUST check that the output's location matches the `output_ref` in the attested execution context.
 5. The format of `output_ref` and the method of exposing provenance metadata are profile-specific.
 
@@ -705,7 +763,7 @@ Before signing an attestation, the SP MUST:
 1. The SP MUST verify attester identity before signing an attestation.
 2. The SP MUST verify the attester is authorized for the claimed domain before signing.
 3. The authorization source MUST NOT be modifiable by the attester as part of the same action being attested.
-4. Changes to the authorization source MUST themselves be subject to governance (e.g., existing authorized owners must approve changes to the owner list).
+4. Changes to the authorization source MUST be made by an authorized party and MUST be auditable. The authorization governance model is organization-specific — it may be peer-governed (existing owners approve changes), hierarchical (supervisors assign authority), or system-managed (identity provider controls role membership). The protocol does not prescribe which model to use. What it requires is that no one can authorize themselves for the same action, and all changes are traceable.
 5. The authorization source SHOULD be auditable — it must be possible to determine who was authorized at a given point in time.
 6. The verified DID MUST be included in the attestation's `did` field.
 
@@ -730,6 +788,7 @@ New error codes for v0.3:
 ### What changes
 
 - "Executor Proxy" renamed to **Gatekeeper** — reflects its actual role as enforcement point
+- Gatekeeper is now a **mandatory** protocol component — every execution must pass through attestation verification (section 8)
 - Frame no longer includes `execution_context_hash`
 - Attestations include `execution_context_hash` at top level (shared context, not per-domain)
 - Attestations include `resolved_domains` for domain authority (domain, did, env)
@@ -967,6 +1026,7 @@ X-HAP-Frame-Hash: sha256:...
 | Auditability | "Someone approved" | Attestation = auditable record with resolved context |
 | Accountability | First attestor | Proposer declares, domains validate |
 | Output provenance | Not addressed | Optional `output_ref` in context + `frame_hash` on outputs |
+| Enforcement | Not specified | Gatekeeper is mandatory — every execution passes through attestation verification |
 | Resource identification | Platform-specific | Platform-agnostic full URLs |
 
 ---
