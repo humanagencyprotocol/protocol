@@ -201,6 +201,11 @@ The **profile defines the execution context schema**. Each profile specifies:
         "method": "constructed",
         "description": "Persistent link to the diff"
       },
+      "preview_ref": {
+        "source": "declared",
+        "description": "URL where the staged output can be reviewed before attestation",
+        "required": false
+      },
       "output_ref": {
         "source": "declared",
         "description": "Reference to where the output of this action will be accessible",
@@ -253,6 +258,7 @@ The specific fields depend on the profile's execution context schema. Governance
   "sha": "abc123def456...",
   "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"],
   "diff_url": "https://github.com/owner/repo/compare/base...head",
+  "preview_ref": "https://staging.myapp.com",
   "output_ref": "https://myapp.com"
 }
 ```
@@ -344,7 +350,6 @@ A frame uniquely identifies an action and its governance context. The frame fiel
 | Profile-specific action fields | From the action itself (e.g. `repo`, `sha` for deploy-gate) |
 | `profile` | From execution context |
 | `path` | From execution context |
-| `env` | From action context (optional) |
 
 **v0.3 Frame structure (abstract):**
 
@@ -352,7 +357,6 @@ A frame uniquely identifies an action and its governance context. The frame fiel
 <profile-specific-fields>=<values>
 profile=<profile-id>
 path=<execution-path>
-env=<environment>
 ```
 
 The frame MUST be deterministically derivable from the action and execution context. If the declared execution context changes, the frame changes.
@@ -389,8 +393,7 @@ Each attestation includes the shared execution context hash and the domains it c
   "resolved_domains": [
     {
       "domain": "engineering",
-      "did": "did:key:...",
-      "env": "prod"
+      "did": "did:key:..."
     }
   ],
   "issued_at": 1735888000,
@@ -401,7 +404,7 @@ Each attestation includes the shared execution context hash and the domains it c
 **Normative rules:**
 
 1. The `execution_context_hash` is computed from the shared execution context (all domains see the same context).
-2. For every domain this attestation covers, include: `domain`, `did`, `env`.
+2. For every domain this attestation covers, include: `domain`, `did`.
 3. One attestation typically covers one domain (one person, one scope).
 4. Multi-domain decisions require multiple attestations from different owners.
 
@@ -442,7 +445,6 @@ The client submits the frame fields and attestations. The Gatekeeper only accept
   "frame": {
     "repo": "https://github.com/owner/repo",
     "sha": "a1b2c3...",
-    "env": "prod",
     "profile": "deploy-gate@0.3",
     "path": "deploy-prod-user-facing"
   },
@@ -453,7 +455,7 @@ The client submits the frame fields and attestations. The Gatekeeper only accept
 }
 ```
 
-The frame fields are profile-specific. For deploy-gate, they are `repo`, `sha`, `env`, `profile`, and `path`. The Gatekeeper reconstructs `frame_hash` from these fields and verifies it matches every attestation. No unattested parameters are accepted.
+The frame fields are profile-specific. For deploy-gate, they are `repo`, `sha`, `profile`, and `path`. The Gatekeeper reconstructs `frame_hash` from these fields and verifies it matches every attestation. No unattested parameters are accepted.
 
 ### 8.2 Validation Steps
 
@@ -469,7 +471,7 @@ The Gatekeeper performs:
    - Verify signature
    - Verify `frame_hash` matches
    - Verify TTL not expired
-   - Verify scope is sufficient (`domain` + `env`)
+   - Verify scope is sufficient (`domain`)
 6. **If any required domain missing or invalid** → reject with structured error
 7. **If all valid** → authorize execution
 
@@ -579,7 +581,7 @@ Each field in the execution context has a source type:
 | Source | Resolved By | Deterministic? | Example |
 |--------|-------------|----------------|---------|
 | `declared` | Proposer (bound to action) | ✓ Yes | `profile`, `execution_path` |
-| `action` | Derived from the action itself | ✓ Yes | Action identifier, environment |
+| `action` | Derived from the action itself | ✓ Yes | Action identifier (e.g., `repo`, `sha`) |
 | `computed` | System computes from deterministic inputs | ✓ Yes | Derived data, constructed references |
 
 All resolved values MUST be deterministic — given the same action state, the system always computes the same values. The specific fields and resolution methods are defined by the profile's execution context schema (see section 4.2).
@@ -599,6 +601,7 @@ The resolved execution context contains all declared and computed fields. The sp
   "base_sha": "def456abc123...",
   "diff_url": "https://github.com/owner/repo/compare/def456...abc123",
   "changed_paths": ["src/api/auth.ts", "src/lib/crypto.ts"],
+  "preview_ref": "https://staging.myapp.com",
   "output_ref": "https://myapp.com"
 }
 ```
@@ -776,7 +779,7 @@ New error codes for v0.3:
 | Code | Description |
 |------|-------------|
 | `MISSING_REQUIRED_DOMAIN` | A required domain has no valid attestation |
-| `DOMAIN_SCOPE_MISMATCH` | Attestation domain/env doesn't match requirement |
+| `DOMAIN_SCOPE_MISMATCH` | Attestation domain doesn't match requirement |
 | `EXECUTION_CONTEXT_VIOLATION` | Execution context missing required fields |
 | `BINDING_FILE_MISSING` | Action has no bound execution context declaration |
 | `BINDING_FILE_INVALID` | Declared execution context malformed or missing required fields |
@@ -791,7 +794,7 @@ New error codes for v0.3:
 - Gatekeeper is now a **mandatory** protocol component — every execution must pass through attestation verification (section 8)
 - Frame no longer includes `execution_context_hash`
 - Attestations include `execution_context_hash` at top level (shared context, not per-domain)
-- Attestations include `resolved_domains` for domain authority (domain, did, env)
+- Attestations include `resolved_domains` for domain authority (domain, did)
 - Execution paths explicitly define `requiredDomains`
 - Execution context declared in committed file, resolved by system (binding is profile-specific)
 
@@ -813,7 +816,7 @@ This section defines how the deploy-gate profile binds abstract protocol concept
 For deploy-gate, the declared execution context is stored as `.hap/binding.json` in the commit:
 
 - **Location:** `.hap/binding.json` in repository root
-- **Content:** Governance choices only (profile, execution_path, and optional output_ref)
+- **Content:** Governance choices only (profile, execution_path, and optional preview_ref / output_ref)
 - **Binding:** Included in commit SHA (immutable)
 - **Retrieval:** Via git or GitHub API
 
@@ -821,6 +824,7 @@ For deploy-gate, the declared execution context is stored as `.hap/binding.json`
 {
   "profile": "deploy-gate@0.3",
   "execution_path": "deploy-prod-canary",
+  "preview_ref": "https://staging.myapp.com",
   "output_ref": "https://myapp.com"
 }
 ```
@@ -838,6 +842,7 @@ The GitHub App resolves all deterministic values when processing the PR:
 | `diff_url` | Constructed: `https://github.com/{owner}/{repo}/compare/{base}...{head}` |
 | `profile` | From `.hap/binding.json` in commit |
 | `execution_path` | From `.hap/binding.json` in commit |
+| `preview_ref` | From `.hap/binding.json` in commit |
 | `output_ref` | From `.hap/binding.json` in commit |
 
 ### 13.3 Frame Binding
@@ -850,13 +855,11 @@ For deploy-gate, the frame maps to git concepts:
 | `sha` | Commit SHA from webhook payload |
 | `profile` | From `.hap/binding.json` |
 | `path` | From `.hap/binding.json` |
-| `env` | From deployment context |
 
 Frame structure:
 ```
 repo=https://github.com/owner/repo
 sha=abc123def456...
-env=prod
 profile=deploy-gate@0.3
 path=deploy-prod-user-facing
 ```
@@ -876,6 +879,7 @@ Developer adds `.hap/binding.json` to their commit with governance choices:
 {
   "profile": "deploy-gate@0.3",
   "execution_path": "deploy-prod-canary",
+  "preview_ref": "https://staging.myapp.com",
   "output_ref": "https://myapp.com"
 }
 ```
@@ -946,6 +950,7 @@ The abstract resolution flow (section 9.1) maps to git as follows:
 │  1. DEVELOPER commits .hap/binding.json (minimal)                      │
 │     • profile: "deploy-gate@0.3"                                        │
 │     • execution_path: "deploy-prod-canary"                              │
+│     • preview_ref: "https://staging.myapp.com" (optional)               │
 │     • output_ref: "https://myapp.com" (optional)                        │
 └─────────────────────────────────────────────────────────────────────────┘
                                    ↓
@@ -982,6 +987,7 @@ The abstract resolution flow (section 9.1) maps to git as follows:
 | `diff_url` | Constructed: `https://github.com/{owner}/{repo}/compare/{base}...{head}` |
 | `profile` | From `.hap/binding.json` in commit |
 | `execution_path` | From `.hap/binding.json` in commit |
+| `preview_ref` | From `.hap/binding.json` in commit |
 | `output_ref` | From `.hap/binding.json` in commit |
 
 All resolved values are deterministic — given the same PR state, the system always computes the same values.
@@ -1018,14 +1024,14 @@ X-HAP-Frame-Hash: sha256:...
 
 | Aspect | v0.2 | v0.3 |
 |--------|------|------|
-| Declared content | Execution context with semantic fields | Governance choices only (profile + execution_path + optional output_ref) |
+| Declared content | Execution context with semantic fields | Governance choices only (profile + execution_path + optional preview_ref / output_ref) |
 | Execution context source | Entered in UI | Declared + system-resolved from action |
 | Execution path selection | First attestor chooses | Proposer declares in committed file |
 | Execution context hash | Single, in frame | Complete resolved context hash in attestation |
 | Condition evaluation | N/A | None (explicit path choice) |
 | Auditability | "Someone approved" | Attestation = auditable record with resolved context |
 | Accountability | First attestor | Proposer declares, domains validate |
-| Output provenance | Not addressed | Optional `output_ref` in context + `frame_hash` on outputs |
+| Output provenance | Not addressed | Optional `preview_ref` + `output_ref` in context, `frame_hash` on outputs |
 | Enforcement | Not specified | Gatekeeper is mandatory — every execution passes through attestation verification |
 | Resource identification | Platform-specific | Platform-agnostic full URLs |
 
@@ -1133,8 +1139,7 @@ At attestation time, the content of each gate is hashed and included in the atte
   "resolved_domains": [
     {
       "domain": "engineering",
-      "did": "did:key:...",
-      "env": "prod"
+      "did": "did:key:..."
     }
   ],
   "gate_content_hashes": {
@@ -1333,7 +1338,6 @@ The Service Provider MUST maintain:
 **Domain Authority Registry**
 - Organizations registered with the SP
 - Domain owners per organization (DID → domain mapping)
-- Environment scopes per domain owner
 - Authority grant/revoke timestamps
 
 The Domain Authority Registry is the SP-level complement to project-level authorization sources (see section 10). The SP registry tracks organizational registrations; project-level authorization sources define per-project personnel.
@@ -1344,7 +1348,7 @@ Before any attestation can be issued, an organization MUST:
 
 1. Register with at least one SP
 2. Declare which profiles they will use
-3. Register domain owners with their authorized domains and environments
+3. Register domain owners with their authorized domains
 
 ### 19.3 SP Validation Rules
 
@@ -1359,7 +1363,7 @@ The SP MUST reject attestation requests when:
 
 | Event | Action |
 |-------|--------|
-| New domain owner | Organization registers DID + domain + env with SP |
+| New domain owner | Organization registers DID + domain with SP |
 | Role change | Organization updates domain mapping |
 | Departure | Organization revokes authority |
 | Audit | SP provides authority history per DID |
