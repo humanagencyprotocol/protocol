@@ -423,18 +423,19 @@ Each domain owner can independently prove:
 
 ### 8.0 Role
 
-The Gatekeeper is the mandatory enforcement point between human-attested authorization and machine execution. No action may proceed to execution without passing through attestation verification.
+The Gatekeeper is the verification obligation that every execution environment MUST satisfy before proceeding with an attested action. It is not a prescribed component or deployment topology — it is the guarantee that attestation verification has occurred.
 
-> Every execution MUST be preceded by attestation verification.
-> The Gatekeeper is the component that performs this verification.
+> **Normative:** Every execution MUST be preceded by attestation verification as defined in section 8.2. An implementation that stores or transmits attestations but does not verify them before execution is non-compliant.
 
-The protocol does not prescribe how the Gatekeeper is deployed — it may be:
+The Gatekeeper obligation may be satisfied by:
 
-- **A library** — embedded in the application (e.g., `verify()` call before execution)
-- **A sidecar** — co-located process that gates requests
-- **A service** — standalone verification endpoint
+- **An embedded library** — a `verify()` call in application code before execution proceeds
+- **A sidecar process** — a co-located service that gates requests to the executor
+- **A standalone service** — a dedicated verification endpoint
 
-What the protocol requires is that the verification logic defined in section 8.2 MUST execute before any attested action proceeds. Skipping verification — even when attestations exist — is a protocol violation.
+All three are equally valid. The protocol makes no architectural preference. What matters is that the verification steps in section 8.2 execute completely and that execution is blocked on a negative result.
+
+A system that has attestations but skips verification is in violation — the attestation alone is not proof of compliance; verified attestation is.
 
 ### 8.1 Execution Request
 
@@ -500,44 +501,109 @@ Where attestations are stored (PR comments, database, registry) is an integratio
 
 ### 8.5 Connector Model
 
-The Gatekeeper defines a standard verification interface. **Connectors** adapt this interface to specific execution environments.
+A **connector** is an environment-specific implementation of the Gatekeeper verification obligation. It adapts the standard verification interface (section 8.5.1) to a particular execution environment — CI/CD pipeline, API gateway, agent runtime, etc.
+
+**Connectors ARE Gatekeeper implementations**, not clients of a separate Gatekeeper service. Each connector embeds the full verification logic from section 8.2. There is no separate "Gatekeeper server" that connectors call — the verification runs within the connector itself.
 
 #### 8.5.1 Standard Interface
 
-Every Gatekeeper implementation MUST expose the following logical operations:
+Every connector MUST implement the `verify` operation:
 
-| Operation | Input | Output |
-|-----------|-------|--------|
-| `verify` | Frame fields + attestation blobs | `{ valid: true }` or `{ valid: false, errors: [...] }` |
+**Request:**
 
-The `verify` operation performs all steps defined in section 8.2. It is stateless and side-effect-free.
+```json
+{
+  "frame": {
+    "repo": "https://github.com/owner/repo",
+    "sha": "a1b2c3...",
+    "profile": "deploy-gate@0.3",
+    "path": "deploy-prod-user-facing"
+  },
+  "attestations": [
+    "base64-attestation-blob..."
+  ]
+}
+```
 
-Implementations MAY additionally provide:
+Frame fields are profile-specific. The fields above are for `deploy-gate`. Other profiles define their own frame fields.
+
+**Success response:**
+
+```json
+{
+  "valid": true,
+  "frame_hash": "sha256-hex...",
+  "verified_domains": ["technical-review", "security-review"],
+  "profile": "deploy-gate@0.3"
+}
+```
+
+**Failure response:**
+
+```json
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "DOMAIN_NOT_COVERED",
+      "domain": "security-review",
+      "message": "No valid attestation covers the security-review domain"
+    },
+    {
+      "code": "SIGNATURE_INVALID",
+      "domain": "technical-review",
+      "message": "Attestation signature verification failed"
+    }
+  ]
+}
+```
+
+**Error codes** (see also section 11):
+
+| Code | Meaning |
+|------|---------|
+| `FRAME_HASH_MISMATCH` | Recomputed frame_hash does not match attestation |
+| `SIGNATURE_INVALID` | Attestation signature verification failed |
+| `DOMAIN_NOT_COVERED` | Required domain has no valid attestation |
+| `TTL_EXPIRED` | Attestation has exceeded its time-to-live |
+| `PROFILE_NOT_FOUND` | Referenced profile could not be resolved |
+| `SCOPE_INSUFFICIENT` | Attestation scope does not cover the required domain |
+
+Connectors MAY additionally provide:
 
 | Operation | Purpose |
 |-----------|---------|
-| `verifyAndExecute` | Verify attestations, then trigger execution if valid |
-| `middleware` | Framework-specific request interceptor (e.g., Express, Koa) |
+| `verifyAndExecute` | Verify then trigger execution if valid |
+| `middleware` | Framework-specific request interceptor |
 
 #### 8.5.2 Connector Examples
 
-Connectors adapt the standard interface to specific systems:
+| Connector | Where it runs | How it gates |
+|-----------|---------------|--------------|
+| **CI/CD** | Pipeline step | Blocks deployment job until `verify` returns `valid: true` |
+| **API Gateway** | Request middleware | Intercepts requests, extracts attestations from headers, verifies before forwarding |
+| **Webhook** | Incoming handler | Verifies attestations in webhook payload before processing |
+| **Infrastructure** | Admission controller | Kubernetes admission webhook or Terraform sentinel that calls `verify` |
+| **Agent runtime** | Pre-execution hook | Wraps tool execution in agent frameworks — `verify` before every tool call |
 
-| Connector | Integration Point | Example |
-|-----------|-------------------|---------|
-| **CI/CD** | Pipeline step that gates deployment | GitHub Actions step, GitLab CI job |
-| **API Gateway** | Request interceptor that verifies before forwarding | Express middleware, API gateway plugin |
-| **Webhook** | Incoming webhook handler that verifies before processing | Slack bot, deployment trigger |
-| **Infrastructure** | Admission controller that verifies before applying | Kubernetes admission webhook, Terraform sentinel |
-| **Agent runtime** | Pre-execution check in agent frameworks | LangChain tool wrapper, custom agent loop |
+#### 8.5.3 SP Key Resolution
 
-#### 8.5.3 Normative Rules
+Connectors retrieve SP public keys for signature verification:
+
+```
+GET {sp_endpoint}/api/sp/pubkey → { "public_key": "hex..." }
+```
+
+Connectors SHOULD cache public keys with a TTL. The SP is not a runtime dependency for verification — only for initial key retrieval.
+
+#### 8.5.4 Normative Rules
 
 1. Every connector MUST implement the full verification logic defined in section 8.2.
-2. A connector MUST NOT partially verify (e.g., check signatures but skip domain validation).
-3. A connector MUST reject execution if verification fails — no "warn and proceed" mode for production use.
-4. Connectors SHOULD expose structured error responses using the error codes in section 11.
-5. Connectors MAY cache SP public keys to minimize network calls.
+2. A connector MUST NOT partially verify (e.g., check signatures but skip domain coverage).
+3. A connector MUST reject execution if verification fails — no "warn and proceed" mode in production.
+4. Connectors MUST return structured error responses using the error codes above.
+5. Connectors SHOULD cache SP public keys to minimize network calls.
+6. Connectors MUST be stateless — all proof is received in the request (see section 8.4).
 
 ---
 
