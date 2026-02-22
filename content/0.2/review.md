@@ -497,6 +497,8 @@ The Gatekeeper:
 
 Where attestations are stored (PR comments, database, registry) is an integration concern, not a protocol concern.
 
+**Normative:** TTL governs whether the Gatekeeper accepts an attestation for execution — not whether the attestation continues to exist. Attestations MUST remain available for post-hoc verification (audit, dispute resolution, output provenance) beyond TTL expiry. How and where they are stored is an integration concern; that they are retained is a protocol requirement.
+
 **Normative:** The Gatekeeper MUST NOT have a "bypass" mode. If attestations are required by the profile, they must be verified. Development/testing environments MAY use test attestations with test keys, but the verification logic itself must still execute.
 
 ### 8.5 Connector Model
@@ -696,6 +698,22 @@ The attestation IS the audit record. It contains:
 - `gate_content_hashes` → commits to what the human articulated (problem/objective/tradeoffs)
 
 Anyone can verify: "This attestation commits to this exact context, derived from this exact action state."
+
+**Normative:** Because the attestation IS the audit record, implementations MUST retain signed attestations beyond TTL expiry for at least the profile-defined minimum retention period. An attestation that is discarded on expiry destroys the audit trail.
+
+#### 9.5.1 TTL vs Retention
+
+TTL and retention serve different purposes and operate on different timescales:
+
+| Concept | Controls | Who enforces | Duration |
+|---------|----------|-------------|----------|
+| **TTL** | Whether Gatekeeper accepts for execution | Gatekeeper | Minutes–hours |
+| **Retention** | How long the attestation remains verifiable | Integration | Months–years |
+
+- TTL expiry means the Gatekeeper MUST reject the attestation for new executions
+- TTL expiry does NOT mean the attestation should be discarded
+- Expired attestations retain full cryptographic validity — signatures, hashes, and bindings remain verifiable indefinitely
+- Profiles MUST define `retention_minimum` alongside TTL
 
 ### 9.6 Output Provenance
 
@@ -1450,6 +1468,8 @@ Service Providers are trusted parties. Their governance must be explicit:
 **SP Accountability**
 - SPs MUST publish their signing public key
 - SPs MUST log all attestations issued
+- SPs MUST retain attestation logs for at least the profile-defined retention period
+- Attestation logs MUST be append-only
 - SPs SHOULD publish attestation counts and statistics
 - SPs MUST NOT issue attestations without verifying domain authority
 
@@ -1590,7 +1610,7 @@ Audit shows:
 
 Organizations in regulated industries (healthcare, finance, safety-critical) should layer additional controls on top of HAP:
 
-- **Retention:** Retain attestations for required periods (often 7+ years)
+- **Retention:** The protocol defines baseline retention via profile `retention_minimum`. Regulated industries may require longer periods. Organizations SHOULD configure retention to meet their regulatory obligations
 - **Disclosure:** If mandatory disclosure is required, do not rely on optional publication
 - **Training:** Document that signers received appropriate training (outside HAP scope)
 - **AI disclosure:** If regulations require AI involvement disclosure, track this separately
