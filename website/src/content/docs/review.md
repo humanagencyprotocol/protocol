@@ -224,6 +224,64 @@ The **profile defines the execution context schema**. Each profile specifies:
 | `action` | Derived from the action being authorized | `repo`, `sha` |
 | `computed` | System computes from deterministic sources | `changed_paths`, `diff_url` |
 
+#### 4.2.1 Field Constraints
+
+The profile defines the **constraint types** that fields support. Constraint types declare what kinds of boundaries a human can set on a field — not the boundary values themselves. The human sets the specific values in the authorization frame (see section 8.6).
+
+```json
+{
+  "executionContextSchema": {
+    "fields": {
+      "amount": {
+        "source": "declared",
+        "description": "Maximum transaction amount",
+        "required": true,
+        "constraint": {
+          "type": "number",
+          "enforceable": ["max", "min"]
+        }
+      },
+      "currency": {
+        "source": "declared",
+        "description": "Permitted currency",
+        "required": true,
+        "constraint": {
+          "type": "string",
+          "enforceable": ["enum"]
+        }
+      },
+      "target_env": {
+        "source": "declared",
+        "description": "Target environment for execution",
+        "required": true,
+        "constraint": {
+          "type": "string",
+          "enforceable": ["enum"]
+        }
+      }
+    }
+  }
+}
+```
+
+**Constraint types:**
+
+| Type | Supported enforceable constraints | Meaning |
+|------|----------------------------------|---------|
+| `number` | `min`, `max` | Numeric boundaries |
+| `string` | `enum`, `pattern` | Allowed values or patterns |
+| `boolean` | (value itself) | Explicit true/false |
+| `array` | `maxItems`, `itemConstraints` | Collection boundaries |
+
+The profile defines the *shape* of constraints. The human sets the *values* in the authorization frame. The agent operates within those values.
+
+**Normative rules for field constraints:**
+
+1. Constraint types are a protocol-level concept. The specific constraint types available per field are defined by profiles.
+2. The profile defines what *can* be constrained. The authorization frame defines what *is* constrained.
+3. Constraint types are immutable for a given profile version. Changing constraint types requires a new profile version.
+4. Constraint types are publicly inspectable — any party can read the profile and know what kinds of boundaries are possible.
+
 **Normative rules:**
 
 1. Execution context MUST consist of deterministic, verifiable, and persistent values — either as direct content or as references to persistent sources.
@@ -497,6 +555,8 @@ The Gatekeeper:
 
 Where attestations are stored (PR comments, database, registry) is an integration concern, not a protocol concern.
 
+**Normative:** TTL governs whether the Gatekeeper accepts an attestation for execution — not whether the attestation continues to exist. Attestations MUST remain available for post-hoc verification (audit, dispute resolution, output provenance) beyond TTL expiry. How and where they are stored is an integration concern; that they are retained is a protocol requirement.
+
 **Normative:** The Gatekeeper MUST NOT have a "bypass" mode. If attestations are required by the profile, they must be verified. Development/testing environments MAY use test attestations with test keys, but the verification logic itself must still execute.
 
 ### 8.5 Connector Model
@@ -568,6 +628,24 @@ Frame fields are profile-specific. The fields above are for `deploy-gate`. Other
 | `TTL_EXPIRED` | Attestation has exceeded its time-to-live |
 | `PROFILE_NOT_FOUND` | Referenced profile could not be resolved |
 | `SCOPE_INSUFFICIENT` | Attestation scope does not cover the required domain |
+| `BOUND_EXCEEDED` | Execution request value exceeds authorization frame bound |
+
+**Bound exceeded response example:**
+
+```json
+{
+  "valid": false,
+  "errors": [
+    {
+      "code": "BOUND_EXCEEDED",
+      "field": "amount",
+      "message": "Execution value 120 exceeds authorization bound max: 80",
+      "bound": { "max": 80 },
+      "actual": 120
+    }
+  ]
+}
+```
 
 Connectors MAY additionally provide:
 
@@ -604,6 +682,87 @@ Connectors SHOULD cache public keys with a TTL. The SP is not a runtime dependen
 4. Connectors MUST return structured error responses using the error codes above.
 5. Connectors SHOULD cache SP public keys to minimize network calls.
 6. Connectors MUST be stateless — all proof is received in the request (see section 8.4).
+
+### 8.6 Bounded Execution
+
+For profiles that support agent execution, the Gatekeeper performs two distinct verifications: **authorization verification** and **bounds verification**.
+
+#### 8.6.1 Authorization Frame vs. Execution Request
+
+The **authorization frame** is what the human attests to. It defines the bounds — the boundaries within which an agent may act. The authorization frame is hashed into `frame_hash` and signed in the attestation.
+
+The **execution request** is what the agent submits when it wants to act. It contains the specific values for a single action within the attested bounds.
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  AUTHORIZATION FRAME (human attests)                                    │
+│                                                                         │
+│  "I authorize payments up to 80 EUR to approved recipients"             │
+│                                                                         │
+│  amount: { max: 80 }                                                    │
+│  currency: { enum: ["EUR"] }                                            │
+│  target_env: { enum: ["production"] }                                   │
+│                                                                         │
+│  → hashed into frame_hash, signed by domain owners                      │
+└─────────────────────────────────────────────────────────────────────────┘
+                                   ↓
+┌─────────────────────────────────────────────────────────────────────────┐
+│  EXECUTION REQUEST (agent submits)                                      │
+│                                                                         │
+│  amount: 5                          → 5 ≤ 80 ✓                          │
+│  currency: "EUR"                    → in ["EUR"] ✓                      │
+│  target_env: "production"           → in ["production"] ✓               │
+│                                                                         │
+│  → Gatekeeper checks values against authorization frame bounds          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+#### 8.6.2 Gatekeeper Validation for Bounded Execution
+
+The Gatekeeper performs:
+
+1. **Verify authorization** (section 8.2 steps 1–7) — the authorization frame is validly attested, all domains covered, signatures valid, TTL not expired
+2. **Verify bounds** — for each constrained field in the authorization frame:
+   - Read the bound value from the authorization frame
+   - Read the actual value from the execution request
+   - Verify the actual value satisfies the bound
+   - If any bound is violated → reject with `BOUND_EXCEEDED`
+3. **If all valid** → authorize execution
+
+#### 8.6.3 Execution Request Structure
+
+```json
+{
+  "authorization": {
+    "frame": {
+      "amount_max": 80,
+      "currency": "EUR",
+      "target_env": "production",
+      "profile": "payment-gate@0.3",
+      "path": "payment-routine"
+    },
+    "attestations": [
+      "base64-attestation-blob..."
+    ]
+  },
+  "execution": {
+    "amount": 5,
+    "currency": "EUR",
+    "target_env": "production",
+    "recipient": "supplier-x"
+  }
+}
+```
+
+The `authorization` block contains the attested frame and attestations — verified via `frame_hash` as in section 8.2. The `execution` block contains the agent's specific action values — verified against the authorization frame's bounds.
+
+#### 8.6.4 Normative Rules
+
+1. Bounded execution does not replace exact-match verification. Profiles declare which mode applies. Profiles that do not define constraint types use exact-match verification only (section 8.2).
+2. The authorization frame defines the outer boundary. The agent's execution request MUST fall within it.
+3. A single authorization frame MAY be used for multiple execution requests, as long as TTL has not expired and each request falls within bounds.
+4. The Gatekeeper MUST verify the authorization (step 1) before checking bounds (step 2). Invalid attestations are rejected regardless of whether bounds are satisfied.
+5. Bounds are enforced on the values declared in the profile's constraint types. Fields without constraint types are not bounds-checked.
 
 ---
 
@@ -696,6 +855,22 @@ The attestation IS the audit record. It contains:
 - `gate_content_hashes` → commits to what the human articulated (problem/objective/tradeoffs)
 
 Anyone can verify: "This attestation commits to this exact context, derived from this exact action state."
+
+**Normative:** Because the attestation IS the audit record, implementations MUST retain signed attestations beyond TTL expiry for at least the profile-defined minimum retention period. An attestation that is discarded on expiry destroys the audit trail.
+
+#### 9.5.1 TTL vs Retention
+
+TTL and retention serve different purposes and operate on different timescales:
+
+| Concept | Controls | Who enforces | Duration |
+|---------|----------|-------------|----------|
+| **TTL** | Whether Gatekeeper accepts for execution | Gatekeeper | Minutes–hours |
+| **Retention** | How long the attestation remains verifiable | Integration | Months–years |
+
+- TTL expiry means the Gatekeeper MUST reject the attestation for new executions
+- TTL expiry does NOT mean the attestation should be discarded
+- Expired attestations retain full cryptographic validity — signatures, hashes, and bindings remain verifiable indefinitely
+- Profiles MUST define `retention_minimum` alongside TTL
 
 ### 9.6 Output Provenance
 
@@ -863,6 +1038,11 @@ New error codes for v0.3:
 - Attestations include `resolved_domains` for domain authority (domain, did)
 - Execution paths explicitly define `requiredDomains`
 - Execution context declared in committed file, resolved by system (binding is profile-specific)
+- Profiles MAY define field-level constraint types on execution context fields (section 4.2.1)
+- New Gatekeeper verification mode: bounded execution — authorization frame defines bounds, execution requests are checked against them (section 8.6)
+- A single authorization frame MAY be used for multiple agent execution requests within TTL
+- New error code: `BOUND_EXCEEDED`
+- Profiles without constraint types continue to use exact-match verification only
 
 ### Migration path
 
@@ -1450,6 +1630,8 @@ Service Providers are trusted parties. Their governance must be explicit:
 **SP Accountability**
 - SPs MUST publish their signing public key
 - SPs MUST log all attestations issued
+- SPs MUST retain attestation logs for at least the profile-defined retention period
+- Attestation logs MUST be append-only
 - SPs SHOULD publish attestation counts and statistics
 - SPs MUST NOT issue attestations without verifying domain authority
 
@@ -1542,31 +1724,43 @@ Human attests to bounds
 
 Agents can narrow bounds (delegate with tighter constraints). Agents cannot widen bounds (grant themselves more authority).
 
+**Field-level constraints make bounds enforceable.** The profile defines what *kinds* of bounds can exist (constraint types, section 4.2.1). The human sets the *specific* bounds in the authorization frame. The Gatekeeper verifies that every agent execution request falls within those bounds (section 8.6).
+
+Without constraints, "bounds" is a narrative claim — the attestation proves a human committed, but nothing prevents execution outside what was committed to. With constraints, the Gatekeeper enforces the actual boundary values the human set.
+
 ### 22.2 Agent Workflows in v0.3
 
-HAP already supports agent workflows:
+HAP supports agent workflows through bounded execution (section 8.6):
 
 | Component | Role |
 |-----------|------|
-| **Human** | Attests to execution context (the bounds) |
-| **Agent** | Executes within those committed bounds |
-| **Attestation** | Proves what bounds were authorized |
+| **Profile** | Defines constraint types — what kinds of bounds can exist |
+| **Human** | Sets bound values in the authorization frame and attests |
+| **Agent** | Submits execution requests within those bounds |
+| **Gatekeeper** | Verifies attestation validity AND that execution falls within bounds |
 
-The execution context IS the pre-authorization. The agent is bound by what the human committed to.
+The authorization frame IS the pre-authorization. The agent is bound by the values the human committed to. The Gatekeeper enforces both.
 
 **Example:**
 ```
-Human attests:
-  "For this deployment:
-   - rollback if error rate > 1%
-   - canary to 10% first
-   - alert on anomaly"
+Profile (payment-gate@0.3) defines:
+  amount: number, enforceable: [max]
+  currency: string, enforceable: [enum]
 
-Agent executes:
-  Deploys, monitors, rolls back — all within attested bounds.
+Human attests (authorization frame):
+  amount_max: 80
+  currency: ["EUR"]
+  path: "payment-routine"
+  → frame_hash signed by finance domain owner
 
-Audit shows:
-  Human authorized these specific constraints.
+Agent executes freely within bounds:
+  Request 1: amount: 5, currency: "EUR"    → ✓ within bounds
+  Request 2: amount: 30, currency: "EUR"   → ✓ within bounds
+  Request 3: amount: 120, currency: "EUR"  → ✗ BOUND_EXCEEDED
+  Request 4: amount: 50, currency: "USD"   → ✗ BOUND_EXCEEDED
+
+No human involvement for requests 1 and 2.
+Requests 3 and 4 are blocked by the Gatekeeper.
 ```
 
 ### 22.3 What v0.3 Does Not Address
@@ -1590,7 +1784,7 @@ Audit shows:
 
 Organizations in regulated industries (healthcare, finance, safety-critical) should layer additional controls on top of HAP:
 
-- **Retention:** Retain attestations for required periods (often 7+ years)
+- **Retention:** The protocol defines baseline retention via profile `retention_minimum`. Regulated industries may require longer periods. Organizations SHOULD configure retention to meet their regulatory obligations
 - **Disclosure:** If mandatory disclosure is required, do not rely on optional publication
 - **Training:** Document that signers received appropriate training (outside HAP scope)
 - **AI disclosure:** If regulations require AI involvement disclosure, track this separately
