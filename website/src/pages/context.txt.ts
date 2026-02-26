@@ -30,13 +30,10 @@ export async function GET() {
 
 ## Homepage
 
-### AI executes. Humans decide.
-### HAP enforces human-authored direction. Execution is impossible without a Decision Owner.
+### Protect the Real World from Rogue AI Actions.
+### Irreversible real-world actions execute only within Decision Owner–defined limits.
 
-AI executes the how.
-Humans decide the why.
-
-**HAP makes irreversible digital actions impossible without explicit authorization.**
+Those limits are committed in advance and cryptographically enforced — enabling autonomous execution within clear bounds.
 
 ---
 
