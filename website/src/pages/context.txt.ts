@@ -37,35 +37,32 @@ Those limits are committed in advance and cryptographically enforced — enablin
 
 ---
 
-### The Scarcity of Direction
+### AI Does Not Feel Consequences.
 
-Modern AI doesn't wait. It predicts, escalates, and acts at machine speed. But without human leadership, AI moves into a **decision vacuum—substituting statistical probability for the unique human innovation that creates real value.**
+An agent can transfer funds, deploy to production, grant access, or publish externally in seconds.
+It will never experience financial loss, regulatory penalties, reputational damage, or operational fallout.
 
-To remain in control, we must enforce a fundamental boundary:
+That asymmetry creates new structural risks:
+- Money moved beyond intended authority
+- Data exported beyond intended scope
+- Goals reinterpreted beyond intended direction
+- Commitments made without explicit human consent
 
-> “No consequential action may be taken in a human system without an identifiable human who has explicitly authorized it, understood its tradeoffs, and accepted responsibility for its outcomes.”
+Autonomy without consequence-bearing actors requires a new boundary.
 
-HAP turns this axiom into infrastructure. It ensures every action traces back to a human **Decision Owner** who provides the direction machine intelligence cannot duplicate. By forcing AI to pause at the point of irreversibility, HAP keeps authorship human and innovation possible.
+HAP enforces one rule:
+
+> Irreversible real-world actions execute only within limits defined by a Decision Owner.
 
 ---
 
 ### What AI Can Do vs. What Humans Must Do
 
 **AI can:**
-- generate options
-- simulate outcomes
-- execute tasks
-- correct mistakes
-- plan optimally
-- scale instantly
+optimize and execute.
 
 **AI cannot:**
-- set the frame
-- justify why to act (problem)
-- choose what to optimize (objective)
-- accept the tradeoff
-- make binding commitment
-- be a decision owner
+define what must be optimized, accept tradeoffs, or bear consequences.
 
 **Direction is human.**
 **Execution is machine.**
@@ -101,7 +98,7 @@ Authorship and Ownership are unified. No action is taken without an identifiable
 
 **Stop → Ask → Confirm → Proceed**
 
-1. **Stop** — AI detects missing or ambiguous decision states: frame, problem, objective, tradeoff, commitment, or decision owner.
+1. **Stop** — Execution is blocked if required decision states are unresolved.
 2. **Ask** — HAP triggers a structured question that forces human direction.
 3. **Confirm** — The human confirms the decision the AI must follow.
 4. **Proceed** — Only then does the system continue.
@@ -126,14 +123,13 @@ HAP is the how. It enforces human oversight at the protocol level — not throug
 
 ### Why This Matters Now
 
-As AI accelerates, execution becomes free.
-Abundance becomes default.
+As AI accelerates, execution becomes cheap.
+Unbounded execution becomes dangerous.
+Direction must be explicit and enforceable.
 
-The real scarcity becomes **human direction** — decisions that commit someone and shape a trajectory.
+When agents can initiate irreversible actions at machine speed, governance cannot rely on assumption or oversight.
 
-If humans stop making the hard calls, machines will make them by default — quietly, through convenience.
-
-HAP is the infrastructure that keeps direction human.
+HAP makes human direction a structural requirement of execution.
 
 ---
 

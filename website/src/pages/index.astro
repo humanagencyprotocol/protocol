@@ -123,19 +123,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </div>
     </section>
 
-    <!-- Who's Actually Deciding? -->
-    <section id="why-exists" class="content-section">
-        <h2 class="section-title">Who's Actually Deciding?</h2>
-        <div class="section-body">
-            <p>Modern AI doesn't wait. It predicts, escalates, and acts at machine speed. But without human leadership, AI moves into a <strong>decision vacuum—substituting statistical probability for the unique human innovation that creates real value.</strong></p>
-            
-            <p>To remain in control, we must enforce a fundamental boundary:</p>
+    <!-- AI Does Not Feel Consequences -->
+    <section id="why-exists" class="consequences-section">
+        <h2 class="section-title">AI Does Not Feel Consequences.</h2>
+        <div class="consequences-body">
+            <p>An agent can transfer funds, deploy to production, grant access, or publish externally in seconds.<br>It will never experience financial loss, regulatory penalties, reputational damage, or operational fallout.</p>
 
+            <p>That asymmetry creates new structural risks:</p>
+            <ul>
+                <li>Money moved beyond intended authority</li>
+                <li>Data exported beyond intended scope</li>
+                <li>Goals reinterpreted beyond intended direction</li>
+                <li>Commitments made without explicit human consent</li>
+            </ul>
+
+            <p>HAP enforces one rule:</p>
             <blockquote class="axiom-block">
-                “No consequential action may be taken in a human system without an identifiable human who has explicitly authorized it, understood its tradeoffs, and accepted responsibility for its outcomes.”
+                Irreversible real-world actions execute only within limits defined by a Decision Owner.
             </blockquote>
-
-            <p>HAP turns this axiom into infrastructure. It ensures every action traces back to a human <strong>Decision Owner</strong> who provides the direction machine intelligence cannot duplicate. By forcing AI to pause at the point of irreversibility, HAP keeps authorship human and innovation possible.</p>
         </div>
     </section>
 
@@ -146,26 +151,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <div class="comparison-grid">
             <div class="comparison-card">
                 <h3>AI can:</h3>
-                <ul>
-                    <li>generate options</li>
-                    <li>simulate outcomes</li>
-                    <li>execute tasks</li>
-                    <li>correct mistakes</li>
-                    <li>plan optimally</li>
-                    <li>scale instantly</li>
-                </ul>
+                <p>optimize and execute.</p>
             </div>
 
             <div class="comparison-card highlight">
                 <h3>AI cannot:</h3>
-                <ul>
-                    <li>set the frame</li>
-                    <li>justify why to act (problem)</li>
-                    <li>choose what to optimize (objective)</li>
-                    <li>accept the tradeoff</li>
-                    <li>make binding commitment</li>
-                    <li>be a decision owner</li>
-                </ul>
+                <p>define what must be optimized, accept tradeoffs, or bear consequences.</p>
             </div>
         </div>
 
@@ -176,55 +167,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         </p>
     </section>
 
-    <!-- The HAP Checkpoints -->
-    <section class="checkpoints-section">
-        <h2 class="section-title">The Six Human Gates</h2>
-        <p class="section-intro">AI can simulate a thousand paths, but it cannot open the gate to any of them. HAP enforces these mandatory preconditions before any execution begins.</p>
-
-        <div class="checkpoints">
-            <div class="checkpoint">
-                <div class="checkpoint-content">
-                    <h4>Frame — The Boundary</h4>
-                    <p>Humans define what we are deciding. AI has no context until a human sets the decision boundary.</p>
-                </div>
-            </div>
-
-            <div class="checkpoint">
-                <div class="checkpoint-content">
-                    <h4>Problem — The Justification</h4>
-                    <p>Every action needs a reason. AI calculates solutions; only humans determine if the problem is worth solving.</p>
-                </div>
-            </div>
-
-            <div class="checkpoint">
-                <div class="checkpoint-content">
-                    <h4>Objective — The Optimization</h4>
-                    <p>AI optimizes for any metric. Only humans can choose which outcome actually matters.</p>
-                </div>
-            </div>
-
-            <div class="checkpoint">
-                <div class="checkpoint-content">
-                    <h4>Tradeoff — The Cost</h4>
-                    <p>Every choice abandons alternatives. Only humans can accept the loss of what is sacrificed.</p>
-                </div>
-            </div>
-
-            <div class="checkpoint">
-                <div class="checkpoint-content">
-                    <h4>Commitment — The Point of No Return</h4>
-                    <p>Commitment makes a choice binding. Only a human can make an AI action irreversible.</p>
-                </div>
-            </div>
-
-            <div class="checkpoint">
-                <div class="checkpoint-content">
-                    <h4>Decision Owner — The Responsibility</h4>
-                    <p>Authorship and Ownership are unified. No action is taken without an identifiable human who bears the consequences.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+   
 
     <!-- How HAP Works -->
     <section class="how-it-works">
@@ -235,7 +178,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
             <div class="step">
                 <div class="step-number">1</div>
                 <h4>Stop</h4>
-                <p>AI detects missing or ambiguous decision states: frame, problem, objective, tradeoff, commitment, or decision owner.</p>
+                <p>Execution is blocked if required decision states are unresolved.</p>
             </div>
 
             <div class="step">
@@ -294,11 +237,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <section class="matters-now">
         <h2 class="section-title">Why This Matters Now</h2>
         <div class="matters-content">
-            <p>As AI accelerates, execution becomes free.<br>Abundance becomes default.</p>
-            <p class="key-insight">The real scarcity becomes <strong>human direction</strong> — decisions that commit someone and shape a trajectory.</p>
-            <p>If humans stop making the hard calls, machines will make them by default — quietly, through convenience.</p>
-            <p class="conclusion">HAP is the infrastructure that keeps direction human.</p>
+            <p class="key-insight">As AI accelerates, execution becomes cheap.<br>Unbounded execution becomes dangerous.<br>Direction must be explicit and enforceable.</p>
+            <p>When agents can initiate irreversible actions at machine speed, governance cannot rely on assumption or oversight.</p>
         </div>
+        <p class="section-conclusion"><strong>HAP makes human direction a structural requirement of execution.</strong></p>
     </section>
 
     <!-- Build With HAP -->
@@ -737,6 +679,24 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         max-width: 1200px;
         margin: 8rem auto;
         padding: 0 1.5rem;
+    }
+
+    /* AI Does Not Feel Consequences */
+    .consequences-section {
+        max-width: 1200px;
+        margin: 8rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .consequences-body {
+        max-width: 800px;
+    }
+
+    .consequences-body p {
+        font-size: clamp(1.05rem, 2vw, 1.2rem);
+        line-height: 1.8;
+        margin-bottom: 1.5rem;
+        color: var(--text-primary);
     }
 
     /* Comparison Section */
