@@ -68,10 +68,10 @@ HAP enforces that boundary.
 ### What AI Can Do vs. What Humans Must Do
 
 **AI can:**
-optimize and execute.
+optimize, coordinate and execute.
 
-**AI cannot:**
-define what must be optimized, accept tradeoffs, or bear consequences.
+**Humans must:**
+define what to optimize, set objectives, accept tradeoffs and bear consequences.
 
 **Direction is human.**
 **Execution is machine.**
