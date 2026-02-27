@@ -56,6 +56,15 @@ HAP enforces one rule:
 
 ---
 
+AI systems reason probabilistically.
+Real-world consequences are not probabilistic — money moves, access changes, data leaves.
+
+When probabilistic systems can trigger irreversible execution, authority must be predefined and bounded.
+
+HAP enforces that boundary.
+
+---
+
 ### What AI Can Do vs. What Humans Must Do
 
 **AI can:**
