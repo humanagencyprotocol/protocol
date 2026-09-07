@@ -1,6 +1,14 @@
-# Documentation folder (excluded)
+# Working documents — design docs with open work (doc/) and throwaway scratch
+# (temp/, further down). Never tracked, so nothing here may be the ONLY record
+# of a decision; see CLAUDE.md → Conventions → "Where a document goes".
+# The old root docs/ folder was merged into doc/ on 2026-09-07.
 doc/
-docs/
+
+# Generated: sync-content.js rebuilds this from content/<version>/ on every
+# `npm run build` (which CI runs), so the source of truth is content/, not here.
+# This used to be covered accidentally by a bare `docs/` rule — kept explicit
+# so deleting that rule doesn't start tracking six generated files.
+website/src/content/docs/
 
 # Claude AI folder (excluded)
 .claude/

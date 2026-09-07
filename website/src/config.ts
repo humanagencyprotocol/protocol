@@ -23,7 +23,7 @@ export const siteConfig = {
    * frontmatter (`content/<version>/*.md`) and the `description` prop on
    * BaseLayout. This string is the last resort, so it has to stand on its own.
    *
-   * Wording follows docs/essence.md: the ticket is a precondition, not a log.
+   * Wording follows doc/essence.md: the ticket is a precondition, not a log.
    */
   description:
     'The open protocol for bounded AI-agent authority: humans authorize, agents execute, and every consequential action requires a signed mandate ticket before it runs.',
